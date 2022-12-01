@@ -65,7 +65,7 @@ inline std::string BuildAndBitnesString()
 
 inline std::string WindowTitleAO()
 {
-    return "R.E.L.I.V.E. Oddworld Abe's Oddysee" + BuildAndBitnesString();
+    return "the wiener mod: xtreme meat oddition" + BuildAndBitnesString();
 }
 
 inline std::string WindowTitleAE()

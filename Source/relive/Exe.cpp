@@ -240,10 +240,12 @@ s32 WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 {
     Install_Crash_Handler();
 #if _WIN32
+    #if _DEBUG
     ::AllocConsole();
     ::freopen("CONOUT$", "w", stdout);
     ::SetConsoleTitleA("Debug Console");
     ::SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
+    #endif
     RedirectIoStream(true);
 
     ExportHooker hooker(hInstance);

@@ -20,7 +20,7 @@ ScreenShake* ScreenShake::ctor_4624D0(s16 enableShakeEvent)
 
     field_6_flags.Set(Options::eDrawable_Bit4);
 
-    field_30_shakeNumber = 16;
+    field_30_shakeNumber = 8;
     field_32_enableShakeEvent = enableShakeEvent;
 
     gObjList_drawables_504618->Push_Back(this);
