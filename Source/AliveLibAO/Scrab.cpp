@@ -461,6 +461,8 @@ s16 Scrab::VTakeDamage_45BC10(BaseGameObject* pFrom)
                         field_B8_vely,
                         field_BC_sprite_scale);
                 }
+                field_100_health = FP_FromInteger(0);
+                SetBrain(&Scrab::Brain_Death_45CB80);
                 field_6_flags.Set(BaseGameObject::eDead_Bit3);
                 return 1;
             }

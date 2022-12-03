@@ -290,6 +290,8 @@ BaseAliveGameObject* Bullet::ShootObject_409400(PSX_RECT* pRect)
 
                     || pObjIter->field_4_typeId == Types::eMudokon_75
                     || pObjIter->field_4_typeId == Types::eAbe_43
+                    || pObjIter->field_4_typeId == Types::eScrab_77
+                    || pObjIter->field_4_typeId == Types::eParamite_62
                     || (pObjIter->field_4_typeId == Types::eSlig_88 && sControlledCharacter_50767C == pObjIter))
                 {
                     PSX_RECT bRect = {};
