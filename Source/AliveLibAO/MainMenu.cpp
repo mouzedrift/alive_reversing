@@ -205,7 +205,7 @@ struct SaveName final
     char_type field_0_mName[32];
 };
 
-ALIVE_ARY(1, 0x9F1DD8, SaveName, 128, sSaveNames_9F1DD8, {}); // Got more than 128 saves? Hard luck mate
+ALIVE_ARY(1, 0x9F1DD8, SaveName, 2048, sSaveNames_9F1DD8, {}); // Got more than 128 saves? Hard luck mate
 
 ALIVE_VAR(1, 0x507694, s16, gDemoPlay_507694, 0);
 ALIVE_VAR(1, 0x50769C, u8, sJoyResId_50769C, 0);
