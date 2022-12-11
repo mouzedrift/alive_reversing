@@ -6962,6 +6962,7 @@ s16 Slig::vTakeDamage_4B2470(BaseGameObject* pFrom)
     switch (pFrom->Type())
     {
         case AETypes::eBullet_15:
+        case AETypes::eScrab_112:
         {
             if (field_10C_health <= FP_FromInteger(0) && sControlledCharacter_5C1B8C != this)
             {

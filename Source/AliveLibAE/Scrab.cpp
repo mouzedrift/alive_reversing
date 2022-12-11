@@ -4068,7 +4068,9 @@ void Scrab::KillTarget_4A7F20(BaseAliveGameObject* pTarget)
                                 pObj->Type() == AETypes::eMudokon_110 ||
                                 pObj->Type() == AETypes::eNevetSet_127 ||
                                 pObj->Type() == AETypes::eFleech_50 ||
-                                pObj->Type() == AETypes::eScrab_112) &&
+                                pObj->Type() == AETypes::eScrab_112 ||
+                                pObj->Type() == AETypes::eSlig_125 ||
+                                pObj->Type() == AETypes::eParamite_96) &&
                                 field_D6_scale == pObj->field_D6_scale && pObj->field_10C_health > FP_FromInteger(0))
                             {
                                 const FP xDist = pObj->field_B8_xpos - field_B8_xpos;

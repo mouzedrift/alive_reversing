@@ -55,6 +55,7 @@
 #include "TestAnimation.hpp"
 #include "Sys_common.hpp"
 #include "Grid.hpp"
+#include "Text.hpp"
 
 using TAbeMotionFunction = decltype(&Abe::Motion_0_Idle_44EEB0);
 
@@ -1256,6 +1257,15 @@ BaseGameObject* Abe::VDestructor(s32 flags)
 
 void Abe::VUpdate()
 {
+    if (mQuicksaveDeath)
+    {
+        if (sGnFrame_5C1B84 > mTextTimer)
+        {
+            auto pText = ae_new<Text>();
+            pText->ctor_46ADA0("its over", 30, 0);
+            mQuicksaveDeath = false;
+        }
+    }
     Update_449DC0();
 }
 
@@ -2636,7 +2646,7 @@ void Abe::vOn_TLV_Collision_44B5D0(Path_TLV* pTlv)
         if (pTlv->field_4_type == TlvTypes::ContinuePoint_0)
         {
             auto pContinuePoint = static_cast<Path_ContinuePoint*>(pTlv);
-            if (pContinuePoint->field_1_tlv_state == 0)
+            if (pContinuePoint->field_12_save_file_id != mPrevCheckpointSaveId || mPrevCheckpointSaveId == 0)
             {
                 if ((pContinuePoint->field_10_scale != Path_ContinuePoint::Scale::eHalf_1 || field_CC_sprite_scale == FP_FromInteger(1)) && (pContinuePoint->field_10_scale != Path_ContinuePoint::Scale::eFull_2 || field_CC_sprite_scale == FP_FromDouble(0.5))
                     && field_10C_health > FP_FromInteger(0) && !(field_114_flags.Get(Flags_114::e114_Bit7_Electrocuted)))
@@ -2644,6 +2654,28 @@ void Abe::vOn_TLV_Collision_44B5D0(Path_TLV* pTlv)
                     pContinuePoint->field_1_tlv_state = 1;
                     field_1AE_flags.Set(Flags_1AE::e1AE_Bit2_do_quicksave);
                     field_1B0_save_num = pContinuePoint->field_12_save_file_id;
+                    mPrevCheckpointSaveId = pContinuePoint->field_12_save_file_id;
+                    Quicksave_SaveToMemory_4C91A0(&mCheckpointSave);
+
+                    const FP camXPos = FP_NoFractional(pScreenManager_5BB5F4->field_20_pCamPos->field_0_x);
+
+                    FP indicator_xpos = {};
+                    if (field_B8_xpos - camXPos >= FP_FromInteger(384 / 2)) // mid screen x
+                    {
+                        indicator_xpos = field_B8_xpos - ScaleToGridSize_4498B0(field_CC_sprite_scale);
+                    }
+                    else
+                    {
+                        indicator_xpos = ScaleToGridSize_4498B0(field_CC_sprite_scale) + field_B8_xpos;
+                    }
+                    const FP indicator_ypos = field_BC_ypos + (field_CC_sprite_scale * FP_FromInteger(-50));
+
+                    auto pCheckpointIndicator = ae_new<ThrowableTotalIndicator>();
+                    if (pCheckpointIndicator)
+                    {
+                        pCheckpointIndicator->ctor_431CB0(indicator_xpos, indicator_ypos, field_20_animation.field_C_render_layer,
+                            field_20_animation.field_14_scale, 11, 1);
+                    }
                 }
             }
         }

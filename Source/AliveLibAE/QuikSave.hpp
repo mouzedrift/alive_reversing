@@ -78,3 +78,4 @@ EXPORT void CC Quicksave_FindSaves_4D4150();
 void QuikSave_RestoreBlyData_D481890_4C9BE0(const u8* pSaveData);
 EXPORT void CC Quicksave_SaveSwitchResetterStates_4C9870();
 EXPORT void CC Quicksave_RestoreSwitchResetterStates_4C9A30();
+EXPORT void CC Quicksave_SaveToMemory_4C91A0(Quicksave* pSave);

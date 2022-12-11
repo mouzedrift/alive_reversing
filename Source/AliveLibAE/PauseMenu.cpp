@@ -18,6 +18,7 @@
 #include "Sys.hpp"
 #include "PathDataExtensions.hpp"
 #include "GameAutoPlayer.hpp"
+#include "Gibs.hpp"
 
 ALIVE_VAR(1, 0x5ca4d8, s8, sQuicksave_SaveNextFrame_5CA4D8, 0);
 ALIVE_VAR(1, 0x5ca4d9, s8, sQuicksave_LoadNextFrame_5CA4D9, 0);
@@ -53,7 +54,7 @@ ALIVE_ARY(1, 0x554474, u8, 32, pal_554474, {0x00, 0x00, 0x21, 0x84, 0x42, 0x88, 
 
 PauseMenuPageEntry PauseMenu__PageEntryList_Main_55E1C8[11] = {
     {2, 184, 48, 0, "continue", 128u, 16u, 255u, 1u},
-    {2, 184, 70, 0, "rage quit", 128u, 0u, 0u, 1u},
+    {2, 184, 70, 0, "quiksave", 128u, 16u, 255u, 1u},
 #if DEVELOPER_MODE
     {2, 184, 92, 0, "developer", 33u, 127u, 33u, 1u},
 #else
@@ -1062,15 +1063,53 @@ void PauseMenu::Page_Main_Update_4903E0()
                 return;
 
             case MainPages::ePage_QuickSave_1:
-                //word12C_flags &= ~1u;
-                //SFX_Play_46FBA0(SoundEffect::PossessEffect_17, 40, 2400);
-                //GetSoundAPI().SND_Restart();
+                word12C_flags &= ~1u;
+                SFX_Play_46FBA0(SoundEffect::PossessEffect_17, 40, 2400);
+                GetSoundAPI().SND_Restart();
                 //Quicksave_4C90D0();
 
-                field_136_unused = 2;
-                field_144_active_menu = sPM_Page_ReallyQuit_5465E0;
+                if (sActiveHero_5C1B68)
+                {
+                    sActiveHero_5C1B68->mQuicksaveDeath = true;
+                    sActiveHero_5C1B68->mTextTimer = sGnFrame_5C1B84 + 120;
+
+                    gMap_5C3030.LoadResource_4DBE00("ABEBLOW.BAN", ResourceManager::Resource_Animation, AEResourceID::kAbeblowResID, LoadMode::LoadResource_2);
+
+                    sActiveHero_5C1B68->field_114_flags.Set(Flags_114::e114_MotionChanged_Bit2);
+                    sActiveHero_5C1B68->field_10C_health = FP_FromInteger(0);
+                    sActiveHero_5C1B68->ToKnockback_44E700(1, 1);
+
+                    sActiveHero_5C1B68->field_D4_b = 30;
+                    sActiveHero_5C1B68->field_D2_g = 30;
+                    sActiveHero_5C1B68->field_D0_r = 30;
+
+                    auto pGibs = ae_new<Gibs>();
+                    pGibs->ctor_40FB40(
+                        GibType::Abe_0,
+                        sActiveHero_5C1B68->field_B8_xpos,
+                        sActiveHero_5C1B68->field_BC_ypos,
+                        FP_FromInteger(0),
+                        FP_FromInteger(0),
+                        sActiveHero_5C1B68->field_CC_sprite_scale,
+                        0);
+
+                    auto pMoreGibs = ae_new<Gibs>();
+                    pMoreGibs->ctor_40FB40(
+                        GibType::Abe_0,
+                        sActiveHero_5C1B68->field_B8_xpos,
+                        sActiveHero_5C1B68->field_BC_ypos,
+                        FP_FromInteger(0),
+                        FP_FromInteger(0),
+                        sActiveHero_5C1B68->field_CC_sprite_scale,
+                        0);
+
+                    sActiveHero_5C1B68->field_20_animation.field_4_flags.Clear(AnimFlags::eBit3_Render);
+                }
+
+                //field_136_unused = 2;
+                //field_144_active_menu = sPM_Page_ReallyQuit_5465E0;
                 field_134_index_main = MainPages::ePage_Continue_0;
-                break;
+                return;
 
             case MainPages::ePage_Controls_2:
 #if DEVELOPER_MODE
@@ -1213,14 +1252,17 @@ void PauseMenu::Page_Save_Update_491210()
         strcat(savFileName, ".sav");
         if (access_impl(savFileName, 4) || bWriteSaveFile_5C937C) // check file is writable
         {
-            Quicksave_4C90D0();
+            //Quicksave_4C90D0();
             bWriteSaveFile_5C937C = false;
             FILE* hFile = fopen(savFileName, "wb");
             if (hFile)
             {
-                fwrite(&sActiveQuicksaveData_BAF7F8, sizeof(Quicksave), 1u, hFile);
-                fclose(hFile);
-                sSavedGameToLoadIdx_BB43FC = 0;
+                if (sActiveHero_5C1B68)
+                {
+                    fwrite(&sActiveHero_5C1B68->mCheckpointSave, sizeof(Quicksave), 1u, hFile);
+                    fclose(hFile);
+                    sSavedGameToLoadIdx_BB43FC = 0;
+                }
             }
             word12C_flags &= ~1u;
             SFX_Play_46FBA0(SoundEffect::PossessEffect_17, 40, 2400);
