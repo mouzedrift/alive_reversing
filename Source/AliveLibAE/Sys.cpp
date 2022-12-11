@@ -899,7 +899,7 @@ static void KeyDownEvent(SDL_Scancode scanCode)
 
         Input_SetKeyState_4EDD80(vk, 1);
 
-        if (vk == VK_F5)
+        /*if (vk == VK_F5)
         {
             LOG_INFO("Save next frame for " << VK_F5);
             sQuicksave_SaveNextFrame_5CA4D8 = 1;
@@ -908,8 +908,9 @@ static void KeyDownEvent(SDL_Scancode scanCode)
         {
             LOG_INFO("Load next frame for " << VK_F6);
             sQuicksave_LoadNextFrame_5CA4D9 = 1;
-        }
-        else if (vk == VK_F10)
+        }*/
+
+        if (vk == VK_F10)
         {
             s_VGA_FilterScreen = !s_VGA_FilterScreen;
         }

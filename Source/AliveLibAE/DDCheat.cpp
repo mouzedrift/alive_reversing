@@ -218,7 +218,7 @@ DDCheat* DDCheat::ctor_4153C0()
     AddPropertyEntry("Visited Barracks ", DDCheatValueType::eShort_1, &sVisitedBarracks_5C1C04);
     AddPropertyEntry("Visited Feeco Ender ", DDCheatValueType::eShort_1, &sVisitedFeecoEnder_5C1C06);
 
-#if FORCE_DDCHEAT
+#if _DEBUG
     sCommandLine_DDCheatEnabled_5CA4B5 = true;
 #endif
 

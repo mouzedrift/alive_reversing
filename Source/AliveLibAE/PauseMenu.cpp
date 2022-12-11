@@ -53,7 +53,7 @@ ALIVE_ARY(1, 0x554474, u8, 32, pal_554474, {0x00, 0x00, 0x21, 0x84, 0x42, 0x88, 
 
 PauseMenuPageEntry PauseMenu__PageEntryList_Main_55E1C8[11] = {
     {2, 184, 48, 0, "continue", 128u, 16u, 255u, 1u},
-    {2, 184, 70, 0, "quiksave", 128u, 16u, 255u, 1u},
+    {2, 184, 70, 0, "rage quit", 128u, 0u, 0u, 1u},
 #if DEVELOPER_MODE
     {2, 184, 92, 0, "developer", 33u, 127u, 33u, 1u},
 #else
@@ -201,7 +201,7 @@ PauseMenuPageEntry PauseMenu__PageEntryList_Load_55e3a0[9] = {
     {1, 184, 105, 0, "", 128, 16, 255, Centre},
     {1, 184, 130, 0, "", 128, 16, 255, Centre},
     {1, 184, 188, 0, "", 128, 16, 255, Centre},
-    {1, 184, 213, 0, "Esc  Cancel        F6  Load QuikSave", 128, 16, 255, Centre},
+    {1, 184, 213, 0, "Esc  Cancel", 128, 16, 255, Centre},
     {1, 0, 0, 0, nullptr, 0u, 0u, 0u, 0u}};
 
 
@@ -1062,11 +1062,15 @@ void PauseMenu::Page_Main_Update_4903E0()
                 return;
 
             case MainPages::ePage_QuickSave_1:
-                word12C_flags &= ~1u;
-                SFX_Play_46FBA0(SoundEffect::PossessEffect_17, 40, 2400);
-                GetSoundAPI().SND_Restart();
-                Quicksave_4C90D0();
-                return;
+                //word12C_flags &= ~1u;
+                //SFX_Play_46FBA0(SoundEffect::PossessEffect_17, 40, 2400);
+                //GetSoundAPI().SND_Restart();
+                //Quicksave_4C90D0();
+
+                field_136_unused = 2;
+                field_144_active_menu = sPM_Page_ReallyQuit_5465E0;
+                field_134_index_main = MainPages::ePage_Continue_0;
+                break;
 
             case MainPages::ePage_Controls_2:
 #if DEVELOPER_MODE
@@ -1092,7 +1096,6 @@ void PauseMenu::Page_Main_Update_4903E0()
                 field_13E_unused = -1;
                 word12C_flags |= 0x400;
                 field_13A_unused = 0;
-                Quicksave_4C90D0();
                 // Set the default save name to be the current level/path/camera
                 Path_Format_CameraName_460FB0(
                     sSaveString_5C931C,
@@ -1210,6 +1213,7 @@ void PauseMenu::Page_Save_Update_491210()
         strcat(savFileName, ".sav");
         if (access_impl(savFileName, 4) || bWriteSaveFile_5C937C) // check file is writable
         {
+            Quicksave_4C90D0();
             bWriteSaveFile_5C937C = false;
             FILE* hFile = fopen(savFileName, "wb");
             if (hFile)
