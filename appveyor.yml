@@ -33,7 +33,7 @@ for:
       - cmake --version
       - mkdir build
       - cd build
-      - cmake -G "Unix Makefiles" ..
+      - cmake -G "Unix Makefiles" .. -P "../options.cmake"
       - ls -R ..
       - echo "pog!"
       - make -j4
