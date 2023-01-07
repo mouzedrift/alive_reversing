@@ -36,6 +36,8 @@ for:
       - cmake -G "Unix Makefiles" ..
       - ls .. -R
       - echo "pog!"
+      - make -j4
+      - cpack -G DragNDrop
 
     install:
       - git submodule update --init --recursive --depth=1
