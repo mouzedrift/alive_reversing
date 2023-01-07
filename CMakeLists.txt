@@ -184,6 +184,7 @@ target_precompile_headers(
 #endif()
 # -----------------------------------------------------------------------------
 
+add_dependencies(relive_api UpdateConfigHeader)
 add_dependencies(relive_lib UpdateConfigHeader)
 add_dependencies(AliveLibAO UpdateConfigHeader)
 add_dependencies(AliveLibAE UpdateConfigHeader)
