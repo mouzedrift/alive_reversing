@@ -34,8 +34,8 @@ for:
       - mkdir build
       - cd build
       - cmake -G "Unix Makefiles" ..
-      - make -j4
-      - cpack -G DragNDrop
+      - ls .. -R
+      - echo "pog!"
 
     install:
       - git submodule update --init --recursive --depth=1
