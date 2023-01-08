@@ -2395,35 +2395,35 @@ void FlyingSlig::HandlePlayerControls()
 
         field_160_voice_pitch_min = 0;
 
-        if (Input().IsAnyPressed(sInputKey_GameSpeak1))
+        if (Input().IsAnyPressed(InputCommands::Enum::eGameSpeak1))
         {
             field_17D_next_speak = SligSpeak::eHi_0;
         }
-        else if (Input().IsAnyPressed(sInputKey_GameSpeak3))
+        else if (Input().IsAnyPressed(InputCommands::Enum::eGameSpeak3))
         {
             field_17D_next_speak = Input().Is_Demo_Playing_45F220() != 0 ? SligSpeak::eGetHim_2 : SligSpeak::eFreeze_8;
         }
-        else if (Input().IsAnyPressed(sInputKey_GameSpeak4))
+        else if (Input().IsAnyPressed(InputCommands::Enum::eGameSpeak4))
         {
             field_17D_next_speak = Input().Is_Demo_Playing_45F220() != 0 ? SligSpeak::eFreeze_8 : SligSpeak::eGetHim_2;
         }
-        else if (Input().IsAnyPressed(sInputKey_GameSpeak2))
+        else if (Input().IsAnyPressed(InputCommands::Enum::eGameSpeak2))
         {
             field_17D_next_speak = SligSpeak::eHereBoy_1;
         }
-        else if (Input().IsAnyPressed(sInputKey_GameSpeak6))
+        else if (Input().IsAnyPressed(InputCommands::Enum::eGameSpeak6))
         {
             field_17D_next_speak = SligSpeak::eBullshit_5;
         }
-        else if (Input().IsAnyPressed(sInputKey_GameSpeak7))
+        else if (Input().IsAnyPressed(InputCommands::Enum::eGameSpeak7))
         {
             field_17D_next_speak = SligSpeak::eLookOut_6;
         }
-        else if (Input().IsAnyPressed(sInputKey_GameSpeak5))
+        else if (Input().IsAnyPressed(InputCommands::Enum::eGameSpeak5))
         {
             field_17D_next_speak = SligSpeak::eBullshit2_7;
         }
-        else if (Input().IsAnyPressed(sInputKey_GameSpeak8))
+        else if (Input().IsAnyPressed(InputCommands::Enum::eGameSpeak8))
         {
             field_17D_next_speak = SligSpeak::eLaugh_3;
         }

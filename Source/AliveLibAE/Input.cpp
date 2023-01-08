@@ -15,29 +15,6 @@
 
 static SDL_GameController* pSDLController = nullptr;
 
-// -- Variables -- //
-
-const InputCommands::Enum sInputKey_Right = InputCommands::Enum::eRight;
-const InputCommands::Enum sInputKey_Left = InputCommands::Enum::eLeft;
-const InputCommands::Enum sInputKey_Up = InputCommands::Enum::eUp;
-const InputCommands::Enum sInputKey_Down = InputCommands::Enum::eDown;
-const InputCommands::Enum sInputKey_Hop = InputCommands::Enum::eHop;
-const InputCommands::Enum sInputKey_DoAction = InputCommands::Enum::eDoAction;
-const InputCommands::Enum sInputKey_Run = InputCommands::Enum::eRun;
-const InputCommands::Enum sInputKey_Sneak = InputCommands::Enum::eSneak;
-const InputCommands::Enum sInputKey_FartRoll = InputCommands::Enum::eFartOrRoll;
-const InputCommands::Enum sInputKey_ThrowItem = InputCommands::Enum::eThrowItem;
-const InputCommands::Enum sInputKey_GameSpeak2 = InputCommands::Enum::eGameSpeak2;
-const InputCommands::Enum sInputKey_GameSpeak4 = InputCommands::Enum::eGameSpeak4;
-const InputCommands::Enum sInputKey_GameSpeak3 = InputCommands::Enum::eGameSpeak3;
-const InputCommands::Enum sInputKey_GameSpeak1 = InputCommands::Enum::eGameSpeak1;
-const InputCommands::Enum sInputKey_GameSpeak6 = InputCommands::Enum::eGameSpeak6;
-const InputCommands::Enum sInputKey_GameSpeak5 = InputCommands::Enum::eGameSpeak5;
-const InputCommands::Enum sInputKey_GameSpeak8 = InputCommands::Enum::eGameSpeak8;
-const InputCommands::Enum sInputKey_GameSpeak7 = InputCommands::Enum::eGameSpeak7;
-
-const InputCommands::Enum sInputKey_Chant = InputCommands::Enum::eChant;
-
 // Bitmask for all menu-exclusive (navigation, entering, etc.) input commands
 const u32 AllMenuCommandsMask = (InputCommands::Enum::ePause | InputCommands::Enum::eUnPause_OrConfirm | InputCommands::Enum::eBack | InputCommands::Enum::eConfigure);
 

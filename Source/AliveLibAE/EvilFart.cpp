@@ -184,7 +184,7 @@ void EvilFart::InputControlFart()
     const FP kFartSpeed = FP_FromDouble(0.2);
     const u32 held = Input().GetHeld();
 
-    if (sInputKey_Right & held)
+    if (InputCommands::Enum::eRight & held)
     {
         if (mVelX < FP_FromInteger(4))
         {
@@ -192,7 +192,7 @@ void EvilFart::InputControlFart()
         }
     }
 
-    if (sInputKey_Left & held)
+    if (InputCommands::Enum::eLeft & held)
     {
         if (mVelX > FP_FromInteger(-4))
         {
@@ -200,7 +200,7 @@ void EvilFart::InputControlFart()
         }
     }
 
-    if (sInputKey_Down & held)
+    if (InputCommands::Enum::eDown & held)
     {
         if (mVelY < FP_FromInteger(4))
         {
@@ -208,7 +208,7 @@ void EvilFart::InputControlFart()
         }
     }
 
-    if (sInputKey_Up & held)
+    if (InputCommands::Enum::eUp & held)
     {
         if (mVelY > FP_FromInteger(-4))
         {
@@ -216,7 +216,7 @@ void EvilFart::InputControlFart()
         }
     }
 
-    if (!(held & sInputKey_Right) && !(held & sInputKey_Left))
+    if (!(held & InputCommands::Enum::eRight) && !(held & InputCommands::Enum::eLeft))
     {
         if (mVelX > FP_FromInteger(0))
         {
@@ -229,7 +229,7 @@ void EvilFart::InputControlFart()
         }
     }
 
-    if (!(held & sInputKey_Up) && !(held & sInputKey_Down))
+    if (!(held & InputCommands::Enum::eUp) && !(held & InputCommands::Enum::eDown))
     {
         if (mVelY > FP_FromInteger(0))
         {
