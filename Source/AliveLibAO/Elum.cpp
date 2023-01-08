@@ -301,7 +301,7 @@ void Elum::MidWalkToNextMotion()
         }
     }
 
-    if ((mVelX > FP_FromInteger(0) && Input().IsAnyPressed(InputCommands::eLeft)) || (mVelX < FP_FromInteger(0) && Input().IsAnyPressed(InputCommands::eRight)) || !Input().IsAnyPressed(InputCommands::eRight | InputCommands::eLeft))
+    if ((mVelX > FP_FromInteger(0) && Input().IsAnyActuallyHeld(InputCommands::eLeft)) || (mVelX < FP_FromInteger(0) && Input().IsAnyActuallyHeld(InputCommands::eRight)) || !Input().IsAnyActuallyHeld(InputCommands::eRight | InputCommands::eLeft))
     {
         SetCurrentMotion(eElumMotions::Motion_6_MidWalkToIdle);
     }
@@ -334,7 +334,7 @@ void Elum::WalkToNextMotion()
         }
     }
 
-    if ((mVelX > FP_FromInteger(0) && Input().IsAnyPressed(InputCommands::eLeft)) || (mVelX < FP_FromInteger(0) && Input().IsAnyPressed(InputCommands::eRight)) || !Input().IsAnyPressed(InputCommands::eRight | InputCommands::eLeft))
+    if ((mVelX > FP_FromInteger(0) && Input().IsAnyActuallyHeld(InputCommands::eLeft)) || (mVelX < FP_FromInteger(0) && Input().IsAnyActuallyHeld(InputCommands::eRight)) || !Input().IsAnyActuallyHeld(InputCommands::eRight | InputCommands::eLeft))
     {
         SetCurrentMotion(eElumMotions::Motion_5_WalkToIdle);
         field_10E_pressed = 0;
@@ -549,10 +549,10 @@ bool Elum::ToNextMotionAbeControlled()
         }
     }
 
-    if (Input().IsAnyPressed(InputCommands::eLeft | InputCommands::eRight))
+    if (Input().IsAnyActuallyHeld(InputCommands::eLeft | InputCommands::eRight))
     {
         FP gridSize = {};
-        if (Input().IsAnyPressed(InputCommands::eRight))
+        if (Input().IsAnyActuallyHeld(InputCommands::eRight))
         {
             gridSize = ScaleToGridSize(GetSpriteScale());
 
@@ -562,7 +562,7 @@ bool Elum::ToNextMotionAbeControlled()
                 return true;
             }
         }
-        else if (Input().IsAnyPressed(InputCommands::eLeft))
+        else if (Input().IsAnyActuallyHeld(InputCommands::eLeft))
         {
             gridSize = -ScaleToGridSize(GetSpriteScale());
 
@@ -578,7 +578,7 @@ bool Elum::ToNextMotionAbeControlled()
             return false;
         }
 
-        if (Input().IsAnyPressed(InputCommands::eRun))
+        if (Input().IsAnyActuallyHeld(InputCommands::eRun))
         {
             mVelX = gridSize / FP_FromInteger(4);
             SetCurrentMotion(eElumMotions::Motion_39_IdleToRun);
@@ -592,8 +592,8 @@ bool Elum::ToNextMotionAbeControlled()
     }
     else
     {
-        if (Input().IsAnyPressed(InputCommands::eLeftGameSpeak | InputCommands::eRightGameSpeak)
-            || !(Input().IsAnyPressed(InputCommands::eHop)))
+        if (Input().IsAnyActuallyHeld(InputCommands::eLeftGameSpeak | InputCommands::eRightGameSpeak)
+            || !(Input().IsAnyActuallyHeld(InputCommands::eHop)))
         {
             return false;
         }
@@ -1788,7 +1788,7 @@ void Elum::Motion_3_WalkLoop()
                 return;
             }
 
-            if (Input().IsAnyPressed(InputCommands::eRun))
+            if (Input().IsAnyActuallyHeld(InputCommands::eRun))
             {
                 SetCurrentMotion(eElumMotions::Motion_41_MidWalkToRun);
             }
@@ -1858,7 +1858,7 @@ void Elum::Motion_3_WalkLoop()
                 return;
             }
 
-            if (Input().IsAnyPressed(InputCommands::eRun))
+            if (Input().IsAnyActuallyHeld(InputCommands::eRun))
             {
                 SetCurrentMotion(eElumMotions::Motion_40_WalkToRun);
             }
@@ -2101,7 +2101,7 @@ void Elum::Motion_12_RunTurn()
         MapFollowMe(true);
 
         const FP gridSize = (GetAnimation().GetFlipX()) ? ScaleToGridSize(GetSpriteScale()) : -ScaleToGridSize(GetSpriteScale());
-        if (Input().IsAnyPressed(InputCommands::eRun))
+        if (Input().IsAnyActuallyHeld(InputCommands::eRun))
         {
             mVelX = gridSize / FP_FromInteger(4);
             SetCurrentMotion(eElumMotions::Motion_38_RunTurnToRun);
@@ -2779,17 +2779,17 @@ void Elum::Motion_36_RunLoop()
                 SetCurrentMotion(eElumMotions::Motion_33_RunJumpBegin);
                 field_10E_pressed = 0;
             }
-            else if (Input().IsAnyPressed(InputCommands::eRight) && mVelX < FP_FromInteger(0))
+            else if (Input().IsAnyActuallyHeld(InputCommands::eRight) && mVelX < FP_FromInteger(0))
             {
                 SetCurrentMotion(eElumMotions::Motion_12_RunTurn);
                 mVelX = GetSpriteScale() * FP_FromDouble(-13.3);
             }
-            else if (Input().IsAnyPressed(InputCommands::eLeft) && mVelX > FP_FromInteger(0))
+            else if (Input().IsAnyActuallyHeld(InputCommands::eLeft) && mVelX > FP_FromInteger(0))
             {
                 SetCurrentMotion(eElumMotions::Motion_12_RunTurn);
                 mVelX = GetSpriteScale() * FP_FromDouble(13.3);
             }
-            else if (!Input().IsAnyPressed(InputCommands::eRight | InputCommands::eLeft))
+            else if (!Input().IsAnyActuallyHeld(InputCommands::eRight | InputCommands::eLeft))
             {
                 SetCurrentMotion(eElumMotions::Motion_37_RunSlideStop);
 
@@ -2802,7 +2802,7 @@ void Elum::Motion_36_RunLoop()
                     mVelX = (GetSpriteScale() * FP_FromDouble(-13.3));
                 }
             }
-            else if (!Input().IsAnyPressed(InputCommands::eRun))
+            else if (!Input().IsAnyActuallyHeld(InputCommands::eRun))
             {
                 if (GetAnimation().GetCurrentFrame() == 0)
                 {
@@ -2872,7 +2872,7 @@ void Elum::Motion_37_RunSlideStop()
 
     if (sControlledCharacter == this && GetAnimation().GetCurrentFrame() < 7)
     {
-        if ((GetAnimation().GetFlipX() && Input().IsAnyPressed(InputCommands::eRight)) || (!GetAnimation().GetFlipX() && Input().IsAnyPressed(InputCommands::eLeft)))
+        if ((GetAnimation().GetFlipX() && Input().IsAnyActuallyHeld(InputCommands::eRight)) || (!GetAnimation().GetFlipX() && Input().IsAnyActuallyHeld(InputCommands::eLeft)))
         {
             SetPreviousMotion(eElumMotions::Motion_12_RunTurn);
             mBaseAliveGameObjectLastAnimFrame = GetAnimation().GetCurrentFrame();
@@ -3258,13 +3258,13 @@ void Elum::VUpdate()
             4,
             4};
 
-        if (Input().IsAnyPressed(0xF000u))
+        if (Input().IsAnyActuallyHeld(0xF000u))
         {
             const s32 tableIdx = Input().Dir();
             mVelX = FP_FromRaw(sElum_velx_table_4FF968[tableIdx]);
             mVelY = FP_FromRaw(sElum_vely_table_4FF988[tableIdx]);
 
-            if (Input().IsAnyPressed(InputCommands::eRun))
+            if (Input().IsAnyActuallyHeld(InputCommands::eRun))
             {
                 mVelX += FP_FromRaw(sElum_velx_table_4FF968[tableIdx] * 2);
                 mVelY += FP_FromRaw(sElum_vely_table_4FF988[tableIdx]);

@@ -146,8 +146,8 @@ public:
     s32 field_2C = 0;
 
     // These use the active pad
+    bool IsAnyActuallyHeld(u32 command) const;
     bool IsAnyPressed(u32 command) const;
-    bool IsAnyHeld(u32 command) const;
     bool IsAnyReleased(u32 command) const;
     u8 Dir() const;
 
@@ -165,8 +165,8 @@ public:
     bool JoyStickEnabled() const;
 
     // Check a specific pad
+    bool IsAnyActuallyHeld(PadIndex padIx, u32 command) const;
     bool IsAnyPressed(PadIndex padIx, u32 command) const;
-    bool IsAnyHeld(PadIndex padIx, u32 command) const;
     bool IsAnyReleased(PadIndex padIx, u32 command) const;
     bool IsAllPressed(PadIndex padIx, u32 commands) const;
 

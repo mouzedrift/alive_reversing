@@ -370,22 +370,22 @@ bool InputObject::JoyStickEnabled() const
     return Input_JoyStickEnabled();
 }
 
+bool InputObject::IsAnyActuallyHeld(u32 command) const
+{
+    return IsAnyActuallyHeld(PadIndex::Active, command);
+}
+
+bool InputObject::IsAnyActuallyHeld(PadIndex padIx, u32 command) const
+{
+    return (mPads[PadIndexToInt(padIx)].mRawInput & command) != 0;
+}
+
 bool InputObject::IsAnyPressed(u32 command) const
 {
     return IsAnyPressed(PadIndex::Active, command);
 }
 
 bool InputObject::IsAnyPressed(PadIndex padIx, u32 command) const
-{
-    return (mPads[PadIndexToInt(padIx)].mRawInput & command) != 0;
-}
-
-bool InputObject::IsAnyHeld(u32 command) const
-{
-    return IsAnyHeld(PadIndex::Active, command);
-}
-
-bool InputObject::IsAnyHeld(PadIndex padIx, u32 command) const
 {
     return (mPads[PadIndexToInt(padIx)].mPressed & command) != 0;
 }
