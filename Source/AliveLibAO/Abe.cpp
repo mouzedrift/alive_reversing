@@ -4555,7 +4555,7 @@ void Abe::Motion_25_RollLoop()
                     || Is_Celling_Above()
                     || field_12C_timer + 9 >= static_cast<s32>(sGnFrame))
                 {
-                    if (field_10E_released_buttons && InputCommands::eCrouchOrRoll)
+                    if (field_10E_released_buttons & InputCommands::eCrouchOrRoll)
                     {
                         if (!Is_Celling_Above() && field_12C_timer + 9 < static_cast<s32>(sGnFrame))
                         {
