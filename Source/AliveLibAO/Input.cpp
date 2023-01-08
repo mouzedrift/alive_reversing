@@ -370,12 +370,12 @@ bool InputObject::JoyStickEnabled() const
     return Input_JoyStickEnabled();
 }
 
-bool InputObject::IsAnyActuallyHeld(u32 command) const
+bool InputObject::IsAnyHeld(u32 command) const
 {
-    return IsAnyActuallyHeld(PadIndex::Active, command);
+    return IsAnyHeld(PadIndex::Active, command);
 }
 
-bool InputObject::IsAnyActuallyHeld(PadIndex padIx, u32 command) const
+bool InputObject::IsAnyHeld(PadIndex padIx, u32 command) const
 {
     return (mPads[PadIndexToInt(padIx)].mRawInput & command) != 0;
 }

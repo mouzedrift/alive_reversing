@@ -625,7 +625,7 @@ void Menu::FMV_Select_Update()
 
     if (gMovieRefCount == 0)
     {
-        if (Input().IsAnyActuallyHeld(InputObject::PadIndex::First, InputCommands::eUp)) // TODO: Input constants
+        if (Input().IsAnyHeld(InputObject::PadIndex::First, InputCommands::eUp)) // TODO: Input constants
         {
             if (mSelectedButtonIndex.raw > 0 && field_21C == FP_FromInteger(0))
             {
@@ -633,7 +633,7 @@ void Menu::FMV_Select_Update()
                 SFX_Play_Pitch(relive::SoundEffects::MenuNavigation, 45, 400);
             }
         }
-        else if (Input().IsAnyActuallyHeld(InputObject::PadIndex::First, InputCommands::eDown | InputCommands::eCheatMode)) // TODO: Input constants
+        else if (Input().IsAnyHeld(InputObject::PadIndex::First, InputCommands::eDown | InputCommands::eCheatMode)) // TODO: Input constants
         {
             if (mSelectedButtonIndex.raw < (sListCount - 1) && field_21C == FP_FromInteger(0))
             {
@@ -2290,7 +2290,7 @@ void Menu::GameSpeak_Update()
         return;
     }
 
-    if (Input().IsAnyActuallyHeld(InputObject::PadIndex::First, InputCommands::eLeftGameSpeak))
+    if (Input().IsAnyHeld(InputObject::PadIndex::First, InputCommands::eLeftGameSpeak))
     {
         if (mMenuFade2)
         {
@@ -2330,7 +2330,7 @@ void Menu::GameSpeak_Update()
             mSelectedButtonIndex.gamespeak_menu = GameSpeakOptions::eHello_1;
             relive_new MainMenuFade(sGameSpeakButtons[1].xpos, sGameSpeakButtons[1].ypos + 36, buttonType::eCircle_0, 1);
         }
-        else if (Input().IsAnyActuallyHeld(InputObject::PadIndex::First, InputCommands::eGameSpeak3))
+        else if (Input().IsAnyHeld(InputObject::PadIndex::First, InputCommands::eGameSpeak3))
         {
             Mudokon_SFX(MudSounds::eAngry_5, 0, 0, 0);
             field_204_flags |= 1u;
@@ -2342,7 +2342,7 @@ void Menu::GameSpeak_Update()
         return;
     }
 
-    if (Input().IsAnyActuallyHeld(InputObject::PadIndex::First, InputCommands::eRightGameSpeak))
+    if (Input().IsAnyHeld(InputObject::PadIndex::First, InputCommands::eRightGameSpeak))
     {
         if (mMenuFade2)
         {
@@ -2483,7 +2483,7 @@ void Menu::Level_Cheat_To_Loading_Update()
 
 void Menu::Options_Controller_Update()
 {
-    if (Input().IsAnyActuallyHeld(InputObject::PadIndex::First, InputCommands::eUp))
+    if (Input().IsAnyHeld(InputObject::PadIndex::First, InputCommands::eUp))
     {
         if (mSelectedButtonIndex.raw > 0 && field_228 == FP_FromInteger(0))
         {
@@ -2491,7 +2491,7 @@ void Menu::Options_Controller_Update()
             SFX_Play_Pitch(relive::SoundEffects::MenuNavigation, 45, 400);
         }
     }
-    else if (Input().IsAnyActuallyHeld(InputObject::PadIndex::First, InputCommands::eDown | InputCommands::eCheatMode))
+    else if (Input().IsAnyHeld(InputObject::PadIndex::First, InputCommands::eDown | InputCommands::eCheatMode))
     {
         if (mSelectedButtonIndex.raw < sAvailableControllers - 1 && field_228 == FP_FromInteger(0))
         {
@@ -2500,7 +2500,7 @@ void Menu::Options_Controller_Update()
         }
     }
 
-    if (Input().IsAnyActuallyHeld(InputObject::PadIndex::First, InputCommands::eBack | InputCommands::eHop))
+    if (Input().IsAnyHeld(InputObject::PadIndex::First, InputCommands::eBack | InputCommands::eHop))
     {
         field_230_bGoBack = 1;
         mMenuTrans->StartTrans_436560(Layer::eLayer_FadeFlash_40, 1, 0, 16);
@@ -2787,7 +2787,7 @@ void Menu::ButtonRemap_Update()
         return;
     }
 
-    if (Input().IsAnyActuallyHeld(InputObject::PadIndex::First, InputCommands::eLeft))
+    if (Input().IsAnyHeld(InputObject::PadIndex::First, InputCommands::eLeft))
     {
         if (mSelectedButtonIndex.remap_menu >= RemapOptions::eAction_4)
         {
@@ -2796,7 +2796,7 @@ void Menu::ButtonRemap_Update()
         SFX_Play_Pitch(relive::SoundEffects::MenuNavigation, 45, 400); // TODO: Input constants
         bWaitingForRemapInput_9F2DE8 = 1;
     }
-    else if (Input().IsAnyActuallyHeld(InputObject::PadIndex::First, InputCommands::eRight))
+    else if (Input().IsAnyHeld(InputObject::PadIndex::First, InputCommands::eRight))
     {
         if (mSelectedButtonIndex.remap_menu < RemapOptions::eAction_4)
         {
@@ -2805,7 +2805,7 @@ void Menu::ButtonRemap_Update()
         SFX_Play_Pitch(relive::SoundEffects::MenuNavigation, 45, 400); // TODO: Input constants
         bWaitingForRemapInput_9F2DE8 = 1;
     }
-    else if (Input().IsAnyActuallyHeld(InputObject::PadIndex::First, InputCommands::eUp))
+    else if (Input().IsAnyHeld(InputObject::PadIndex::First, InputCommands::eUp))
     {
         mSelectedButtonIndex.raw--;
         SFX_Play_Pitch(relive::SoundEffects::MenuNavigation, 45, 400); // TODO: Input constants
@@ -2825,7 +2825,7 @@ void Menu::ButtonRemap_Update()
         }
 #endif
     }
-    else if (Input().IsAnyActuallyHeld(InputObject::PadIndex::First, InputCommands::eDown | InputCommands::eCheatMode))
+    else if (Input().IsAnyHeld(InputObject::PadIndex::First, InputCommands::eDown | InputCommands::eCheatMode))
     {
         mSelectedButtonIndex.raw++;
         SFX_Play_Pitch(relive::SoundEffects::MenuNavigation, 45, 400); // TODO: Input constants
@@ -3059,7 +3059,7 @@ void Menu::Load_Update()
         mLoadSave = false;
     }
 
-    if (Input().IsAnyActuallyHeld(InputObject::PadIndex::First, InputCommands::eUp))
+    if (Input().IsAnyHeld(InputObject::PadIndex::First, InputCommands::eUp))
     {
         if (mSelectedButtonIndex.raw > 0 && field_228 == FP_FromInteger(0))
         {
@@ -3079,7 +3079,7 @@ void Menu::Load_Update()
     }
     else
     {
-        if (Input().IsAnyActuallyHeld(InputObject::PadIndex::First, InputCommands::eDown | InputCommands::eCheatMode))
+        if (Input().IsAnyHeld(InputObject::PadIndex::First, InputCommands::eDown | InputCommands::eCheatMode))
         {
             if (mSelectedButtonIndex.raw < (sSaveIdx - 1) && field_228 == FP_FromInteger(0))
             {
