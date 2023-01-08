@@ -486,7 +486,7 @@ const char_type* Input_GetButtonString(InputCommands inputCommand, bool forceKey
 
     return ::Input_GetButtonString_492530(
         AEInputCommandToAEInputString(aeBits),
-        Input_JoyStickEnabled() ? controller_type : 0);
+        Input().JoyStickEnabled() ? controller_type : 0);
 }
 
 const char_type* Input_GetButtonString_44F1C0(InputCommands inputCommand)
@@ -575,7 +575,7 @@ s32 Input_SaveSettingsIni()
 
     //dword_508A64 = 1;
     //fprintf(iniFileHandle, "[Control Layout]\n");
-    //if (Input_JoyStickEnabled())
+    //if (Input().JoyStickEnabled())
     //{
     //    fprintf(iniFileHandle, "controller = Game Pad\n");
 
@@ -585,7 +585,7 @@ s32 Input_SaveSettingsIni()
     //    fprintf(iniFileHandle, "controller = Keyboard\n");
     //}
     //
-    //const auto oldJoystickEnabled = Input_JoyStickEnabled();
+    //const auto oldJoystickEnabled = Input().JoyStickEnabled();
 
     //Input_SetJoyStickEnabled(false);
 
