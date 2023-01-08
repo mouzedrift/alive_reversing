@@ -64,8 +64,8 @@ enum Enum : u32
     eUnPause_OrConfirm = 1u << 20, // Or/and back 0x100000
     eBack = 1u << 21,              // 0x200000
     eCheatMode = 1u << 22,         // 0x400000
-    eSpeak1 = 1u << 23,            // 0x800000
-    eSpeak2 = 1u << 24,            // 0x1000000
+    eLeftGameSpeak = 1u << 23,            // 0x800000
+    eRightGameSpeak = 1u << 24,            // 0x1000000
     // 0x2000000    = nothing
     // 0x4000000    = nothing
     // 0x8000000    = nothing

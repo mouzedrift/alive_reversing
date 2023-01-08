@@ -2509,11 +2509,11 @@ const InputCommands::Enum kIdxToInput_561F14[8] = {
     InputCommands::Enum::eRun,
     InputCommands::Enum::eSneak,
     InputCommands::Enum::eHop,
-    InputCommands::Enum::eSpeak1,
+    InputCommands::Enum::eLeftGameSpeak,
     InputCommands::Enum::eDoAction,
     InputCommands::Enum::eThrowItem,
     InputCommands::Enum::eFartOrRoll,
-    InputCommands::Enum::eSpeak2};
+    InputCommands::Enum::eRightGameSpeak};
 
 MainMenuNextCam MainMenuController::RemapInput_Update_4D1820(u32 input)
 {

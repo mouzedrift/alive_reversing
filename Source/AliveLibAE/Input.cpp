@@ -123,9 +123,9 @@ const u32 sDefaultGamepadBindings_55EA2C[10] = {
     InputCommands::Enum::eFartOrRoll | InputCommands::Enum::eUnPause_OrConfirm, // Cross / A
     InputCommands::Enum::eThrowItem,                                            // Circle / B
     InputCommands::Enum::eHop | InputCommands::Enum::eBack,                     // Triangle / Y
-    InputCommands::Enum::eSpeak1,                                               // L1 / LB
+    InputCommands::Enum::eLeftGameSpeak,                                               // L1 / LB
     InputCommands::Enum::eRun,                                                  // R1 / RB
-    InputCommands::Enum::eSpeak2,                                               // L2 / LT
+    InputCommands::Enum::eRightGameSpeak,                                               // L2 / LT
     InputCommands::Enum::eSneak,                                                // R2 / RT
     0,
     InputCommands::Enum::ePause | InputCommands::Enum::eUnPause_OrConfirm // Start / Menu
@@ -370,7 +370,7 @@ void Input_Init_Names_491870()
 
     for (s32 i = 0; i < 10; i++)
     {
-        if (sGamePadBindings_5C98E0[i] & InputCommands::Enum::eSpeak1)
+        if (sGamePadBindings_5C98E0[i] & InputCommands::Enum::eLeftGameSpeak)
         {
             sprintf(sGamepadDisplayKeyNames_5C9798.keys[10].field_0_name, "%s+%s", sJoyButtonNames_5C9908[i], sJoyButtonNames_5C9908[3]);
             sprintf(sGamepadDisplayKeyNames_5C9798.keys[11].field_0_name, "%s+%s", sJoyButtonNames_5C9908[i], sJoyButtonNames_5C9908[0]);
@@ -378,7 +378,7 @@ void Input_Init_Names_491870()
             sprintf(sGamepadDisplayKeyNames_5C9798.keys[13].field_0_name, "%s+%s", sJoyButtonNames_5C9908[i], sJoyButtonNames_5C9908[2]);
             eSpeak1idx = i;
         }
-        else if (sGamePadBindings_5C98E0[i] & InputCommands::Enum::eSpeak2)
+        else if (sGamePadBindings_5C98E0[i] & InputCommands::Enum::eRightGameSpeak)
         {
             sprintf(sGamepadDisplayKeyNames_5C9798.keys[14].field_0_name, "%s+%s", sJoyButtonNames_5C9908[i], sJoyButtonNames_5C9908[1]);
             sprintf(sGamepadDisplayKeyNames_5C9798.keys[15].field_0_name, "%s+%s", sJoyButtonNames_5C9908[i], sJoyButtonNames_5C9908[3]);
@@ -490,7 +490,7 @@ s32 Input_Remap_492680(InputCommands::Enum inputCmd)
             }
 
             // don't allow binding Speak I/II to any of the right-hand side action buttons
-            if (inputCmd & (InputCommands::Enum::eSpeak1 | InputCommands::Enum::eSpeak2) && bindIdx < 4)
+            if (inputCmd & (InputCommands::Enum::eLeftGameSpeak | InputCommands::Enum::eRightGameSpeak) && bindIdx < 4)
             {
                 return 0;
             }
@@ -603,9 +603,9 @@ InputCommands::Enum Input_LoadSettingsIni_GetInputCommand_492B80(const char_type
     }
     if (_strcmpi(pActionName, "speak1"))
     {
-        return _strcmpi(pActionName, "speak2") != 0 ? static_cast<InputCommands::Enum>(0) : InputCommands::Enum::eSpeak2;
+        return _strcmpi(pActionName, "speak2") != 0 ? static_cast<InputCommands::Enum>(0) : InputCommands::Enum::eRightGameSpeak;
     }
-    return InputCommands::Enum::eSpeak1;
+    return InputCommands::Enum::eLeftGameSpeak;
 }
 
 s32 Input_GetKeyboardKeyCode_492CA0(const char_type* keyName)
@@ -782,8 +782,8 @@ void NewParseSettingsIni()
                 Input_ResetBinding_4925A0(InputCommands::Enum::eDoAction, 1);
                 Input_ResetBinding_4925A0(InputCommands::Enum::eThrowItem, 1);
                 Input_ResetBinding_4925A0(InputCommands::Enum::eFartOrRoll, 1);
-                Input_ResetBinding_4925A0(InputCommands::Enum::eSpeak1, 1);
-                Input_ResetBinding_4925A0(InputCommands::Enum::eSpeak2, 1);
+                Input_ResetBinding_4925A0(InputCommands::Enum::eLeftGameSpeak, 1);
+                Input_ResetBinding_4925A0(InputCommands::Enum::eRightGameSpeak, 1);
             }
             else if (category == iniCategories[3])
             {
@@ -1142,7 +1142,7 @@ s32 Input_Convert_KeyboardGamePadInput_To_Internal_Format_492150()
 
                     for (s32 i = 0; i < 10; i++)
                     {
-                        if (sGamePadBindings_5C98E0[i] & InputCommands::Enum::eSpeak1)
+                        if (sGamePadBindings_5C98E0[i] & InputCommands::Enum::eLeftGameSpeak)
                         {
                             if ((1 << i) & pButtons)
                             {
@@ -1152,7 +1152,7 @@ s32 Input_Convert_KeyboardGamePadInput_To_Internal_Format_492150()
                             }
                         }
 
-                        if (sGamePadBindings_5C98E0[i] & InputCommands::Enum::eSpeak2)
+                        if (sGamePadBindings_5C98E0[i] & InputCommands::Enum::eRightGameSpeak)
                         {
                             if ((1 << i) & pButtons)
                             {

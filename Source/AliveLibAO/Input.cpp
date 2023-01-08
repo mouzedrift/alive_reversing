@@ -13,29 +13,6 @@ s32 sJoystickEnabled = 0;
 u8 sInputEnabled = 0;
 u32 sLastPressedKey = 0;
 
-const InputCommands sInputKey_Right = eRight;
-const InputCommands sInputKey_Left = eLeft;
-const InputCommands sInputKey_Up = eUp;
-const InputCommands sInputKey_Down = eDown;
-const InputCommands sInputKey_Hop = eHop;
-const InputCommands sInputKey_DoAction = eDoAction;
-const InputCommands sInputKey_Run = eRun;
-const InputCommands sInputKey_Sneak = eSneak;
-const InputCommands sInputKey_FartRoll = eCrouchOrRoll;
-const InputCommands sInputKey_ThrowItem = eThrowItem;
-
-const InputCommands sInputKey_LeftGameSpeakEnabler = eLeftGamespeak;
-const InputCommands sInputKey_GameSpeak1 = eHop;
-const InputCommands sInputKey_GameSpeak2 = eDoAction;
-const InputCommands sInputKey_GameSpeak3 = eThrowItem;
-const InputCommands sInputKey_GameSpeak4 = eCrouchOrRoll;
-
-const InputCommands sInputKey_RightGameSpeakEnabler = eRightGameSpeak;
-const InputCommands sInputKey_GameSpeak5 = eCrouchOrRoll;
-const InputCommands sInputKey_GameSpeak6 = eHop;
-const InputCommands sInputKey_GameSpeak7 = eThrowItem;
-const InputCommands sInputKey_GameSpeak8 = eDoAction;
-
 void InputObject::InitPad(u32 /*padCount*/)
 {
     for (PSX_Pad& pad : mPads)
@@ -56,22 +33,22 @@ static void ConvertAEGamespeakAEtoAOGamespeak(BitField32<AO::InputCommands>& val
 {
     if (aeInput.Get(::InputCommands::Enum::eGameSpeak1))
     {
-        value.Set(AO::InputCommands::eLeftGamespeak);
+        value.Set(AO::InputCommands::eLeftGameSpeak);
         value.Set(AO::InputCommands::eHop);
     }
     else if (aeInput.Get(::InputCommands::Enum::eGameSpeak2))
     {
-        value.Set(AO::InputCommands::eLeftGamespeak);
+        value.Set(AO::InputCommands::eLeftGameSpeak);
         value.Set(AO::InputCommands::eDoAction);
     }
     else if (aeInput.Get(::InputCommands::Enum::eGameSpeak3))
     {
-        value.Set(AO::InputCommands::eLeftGamespeak);
+        value.Set(AO::InputCommands::eLeftGameSpeak);
         value.Set(AO::InputCommands::eCrouchOrRoll);
     }
     else if (aeInput.Get(::InputCommands::Enum::eGameSpeak4))
     {
-        value.Set(AO::InputCommands::eLeftGamespeak);
+        value.Set(AO::InputCommands::eLeftGameSpeak);
         value.Set(AO::InputCommands::eThrowItem);
     }
     else if (aeInput.Get(::InputCommands::Enum::eGameSpeak5))
@@ -142,12 +119,12 @@ static BitField32<::InputCommands::Enum> AOInputCommandsToAEInputCommands(const 
     r.Set(::InputCommands::Enum::ePause, aoInput.Get(AO::InputCommands::ePause));
 
     // OG issue - LCD screens says hold alt + shift which is wrong
-    r.Set(::InputCommands::Enum::eChant, aoInput.Get(AO::InputCommands::eLeftGamespeak) && aoInput.Get(AO::InputCommands::eRightGameSpeak));
+    r.Set(::InputCommands::Enum::eChant, aoInput.Get(AO::InputCommands::eLeftGameSpeak) && aoInput.Get(AO::InputCommands::eRightGameSpeak));
 
-    r.Set(::InputCommands::Enum::eGameSpeak1, aoInput.Get(AO::InputCommands::eLeftGamespeak) && aoInput.Get(AO::InputCommands::eHop));
-    r.Set(::InputCommands::Enum::eGameSpeak2, aoInput.Get(AO::InputCommands::eLeftGamespeak) && aoInput.Get(AO::InputCommands::eDoAction));
-    r.Set(::InputCommands::Enum::eGameSpeak3, aoInput.Get(AO::InputCommands::eLeftGamespeak) && aoInput.Get(AO::InputCommands::eCrouchOrRoll));
-    r.Set(::InputCommands::Enum::eGameSpeak4, aoInput.Get(AO::InputCommands::eLeftGamespeak) && aoInput.Get(AO::InputCommands::eThrowItem));
+    r.Set(::InputCommands::Enum::eGameSpeak1, aoInput.Get(AO::InputCommands::eLeftGameSpeak) && aoInput.Get(AO::InputCommands::eHop));
+    r.Set(::InputCommands::Enum::eGameSpeak2, aoInput.Get(AO::InputCommands::eLeftGameSpeak) && aoInput.Get(AO::InputCommands::eDoAction));
+    r.Set(::InputCommands::Enum::eGameSpeak3, aoInput.Get(AO::InputCommands::eLeftGameSpeak) && aoInput.Get(AO::InputCommands::eCrouchOrRoll));
+    r.Set(::InputCommands::Enum::eGameSpeak4, aoInput.Get(AO::InputCommands::eLeftGameSpeak) && aoInput.Get(AO::InputCommands::eThrowItem));
     r.Set(::InputCommands::Enum::eGameSpeak5, aoInput.Get(AO::InputCommands::eRightGameSpeak) && aoInput.Get(AO::InputCommands::eDoAction));
     r.Set(::InputCommands::Enum::eGameSpeak6, aoInput.Get(AO::InputCommands::eRightGameSpeak) && aoInput.Get(AO::InputCommands::eHop));
     r.Set(::InputCommands::Enum::eGameSpeak7, aoInput.Get(AO::InputCommands::eRightGameSpeak) && aoInput.Get(AO::InputCommands::eThrowItem));
@@ -155,8 +132,8 @@ static BitField32<::InputCommands::Enum> AOInputCommandsToAEInputCommands(const 
     r.Set(::InputCommands::Enum::eCheatMode, aoInput.Get(AO::InputCommands::eCheatMode));
 
     // needed for remapping Speak I and Speak II on controllers
-    r.Set(::InputCommands::Enum::eSpeak1, aoInput.Get(AO::InputCommands::eLeftGamespeak));
-    r.Set(::InputCommands::Enum::eSpeak2, aoInput.Get(AO::InputCommands::eRightGameSpeak));
+    r.Set(::InputCommands::Enum::eLeftGameSpeak, aoInput.Get(AO::InputCommands::eLeftGameSpeak));
+    r.Set(::InputCommands::Enum::eRightGameSpeak, aoInput.Get(AO::InputCommands::eRightGameSpeak));
 
     return r;
 }
@@ -218,12 +195,12 @@ static const char_type* AEInputCommandToAEInputString(::InputCommands::Enum inpu
         return kChant;
     }
 
-    if (input_command & ::InputCommands::Enum::eSpeak1)
+    if (input_command & ::InputCommands::Enum::eLeftGameSpeak)
     {
         return kSpeak1;
     }
 
-    if (input_command & ::InputCommands::Enum::eSpeak2)
+    if (input_command & ::InputCommands::Enum::eRightGameSpeak)
     {
         return kSpeak2;
     }

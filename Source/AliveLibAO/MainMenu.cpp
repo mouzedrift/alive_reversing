@@ -62,7 +62,7 @@ struct Buttons final
          InputCommands::eRun,
          InputCommands::eSneak,
          InputCommands::eHop,
-         InputCommands::eLeftGamespeak,
+         InputCommands::eLeftGameSpeak,
          InputCommands::eDoAction,
          InputCommands::eThrowItem,
          InputCommands::eCrouchOrRoll,
@@ -75,7 +75,7 @@ struct Buttons final
             InputCommands::eRun,
             InputCommands::eSneak,
             InputCommands::eHop,
-            InputCommands::eLeftGamespeak,
+            InputCommands::eLeftGameSpeak,
             InputCommands::eDoAction,
             InputCommands::eThrowItem,
             InputCommands::eCrouchOrRoll,
@@ -165,15 +165,15 @@ static const MenuButtonInputInfo sAbeMotionsInputs[11] = {
 static const MenuButtonInputInfo sGameSpeakInputs[33] = {
     {115, 216, InputCommands::eUnPause_OrConfirm}, // Back to Abe Motions
     {307, 203, InputCommands::eBack},              // Exit
-    {90, 53, InputCommands::eLeftGamespeak},       // Chant first button
+    {90, 53, InputCommands::eLeftGameSpeak},       // Chant first button
     {125, 53, InputCommands::eRightGameSpeak},     // Chant second button
-    {81, 80, InputCommands::eLeftGamespeak},       // Hello shoulder button
+    {81, 80, InputCommands::eLeftGameSpeak},       // Hello shoulder button
     {125, 80, InputCommands::eHop},                // Hello action button
-    {79, 112, InputCommands::eLeftGamespeak},      // Angry shoulder button
+    {79, 112, InputCommands::eLeftGameSpeak},      // Angry shoulder button
     {122, 112, InputCommands::eThrowItem},         // Angry action button
-    {78, 147, InputCommands::eLeftGamespeak},      // Wait shoulder button
+    {78, 147, InputCommands::eLeftGameSpeak},      // Wait shoulder button
     {119, 147, InputCommands::eCrouchOrRoll},      // Wait action button
-    {82, 180, InputCommands::eLeftGamespeak},      // Follow me shoulder button
+    {82, 180, InputCommands::eLeftGameSpeak},      // Follow me shoulder button
     {120, 180, InputCommands::eDoAction},          // Follow me action button
     {258, 62, InputCommands::eRightGameSpeak},     // Whistle 1 shoulder button
     {295, 62, InputCommands::eHop},                // Whistle 1 action button
@@ -186,9 +186,9 @@ static const MenuButtonInputInfo sGameSpeakInputs[33] = {
     // ----
     // these below seem unused - maybe they are part of a different MenuButtonInputInfo struct?
     {308, 205, InputCommands::eBack}, // end
-    {96, 32, InputCommands::eLeftGamespeak},
+    {96, 32, InputCommands::eLeftGameSpeak},
     {305, 32, InputCommands::eRightGameSpeak},
-    {157, 29, InputCommands::eLeftGamespeak},
+    {157, 29, InputCommands::eLeftGameSpeak},
     {205, 29, InputCommands::eRightGameSpeak},
     {38, 81, InputCommands::eHop},
     {42, 118, InputCommands::eThrowItem},
@@ -2290,7 +2290,7 @@ void Menu::GameSpeak_Update()
         return;
     }
 
-    if (Input().IsAnyPressed(InputObject::PadIndex::First, sInputKey_LeftGameSpeakEnabler))
+    if (Input().IsAnyPressed(InputObject::PadIndex::First, InputCommands::eLeftGameSpeak))
     {
         if (mMenuFade2)
         {
@@ -2306,7 +2306,7 @@ void Menu::GameSpeak_Update()
             mMenuFade2 = relive_new MainMenuFade(sGameSpeakButtons[10].xpos, sGameSpeakButtons[10].ypos + 36, buttonType::eCircle_0, 0);
         }
 
-        if (Input().IsAnyHeld(InputObject::PadIndex::First, sInputKey_GameSpeak2))
+        if (Input().IsAnyHeld(InputObject::PadIndex::First, InputCommands::eGameSpeak2))
         {
             Mudokon_SFX(MudSounds::eFollowMe_4, 0, 0, 0);
             field_204_flags |= 1u;
@@ -2314,7 +2314,7 @@ void Menu::GameSpeak_Update()
             mSelectedButtonIndex.gamespeak_menu = GameSpeakOptions::eFollowMe_2;
             relive_new MainMenuFade(sGameSpeakButtons[2].xpos, sGameSpeakButtons[2].ypos + 36, buttonType::eCircle_0, 1);
         }
-        else if (Input().IsAnyHeld(InputObject::PadIndex::First, sInputKey_GameSpeak4))
+        else if (Input().IsAnyHeld(InputObject::PadIndex::First, InputCommands::eGameSpeak4))
         {
             Mudokon_SFX(MudSounds::eWait_6, 0, 0, 0);
             field_204_flags |= 1u;
@@ -2322,7 +2322,7 @@ void Menu::GameSpeak_Update()
             mSelectedButtonIndex.gamespeak_menu = GameSpeakOptions::eWait_0;
             relive_new MainMenuFade(sGameSpeakButtons[0].xpos, sGameSpeakButtons[0].ypos + 36, buttonType::eCircle_0, 1);
         }
-        else if (Input().IsAnyHeld(InputObject::PadIndex::First, sInputKey_GameSpeak1))
+        else if (Input().IsAnyHeld(InputObject::PadIndex::First, InputCommands::eGameSpeak1))
         {
             Mudokon_SFX(MudSounds::eHello_3, 0, 0, 0);
             field_204_flags |= 1u;
@@ -2330,7 +2330,7 @@ void Menu::GameSpeak_Update()
             mSelectedButtonIndex.gamespeak_menu = GameSpeakOptions::eHello_1;
             relive_new MainMenuFade(sGameSpeakButtons[1].xpos, sGameSpeakButtons[1].ypos + 36, buttonType::eCircle_0, 1);
         }
-        else if (Input().IsAnyPressed(InputObject::PadIndex::First, sInputKey_GameSpeak3))
+        else if (Input().IsAnyPressed(InputObject::PadIndex::First, InputCommands::eGameSpeak3))
         {
             Mudokon_SFX(MudSounds::eAngry_5, 0, 0, 0);
             field_204_flags |= 1u;
@@ -2342,7 +2342,7 @@ void Menu::GameSpeak_Update()
         return;
     }
 
-    if (Input().IsAnyPressed(InputObject::PadIndex::First, sInputKey_RightGameSpeakEnabler))
+    if (Input().IsAnyPressed(InputObject::PadIndex::First, InputCommands::eRightGameSpeak))
     {
         if (mMenuFade2)
         {
@@ -2358,7 +2358,7 @@ void Menu::GameSpeak_Update()
             mMenuFade2 = relive_new MainMenuFade(sGameSpeakButtons[12].xpos, sGameSpeakButtons[12].ypos + 36, buttonType::eCircle_0, 0);
         }
 
-        if (Input().IsAnyHeld(InputObject::PadIndex::First, sInputKey_GameSpeak6))
+        if (Input().IsAnyHeld(InputObject::PadIndex::First, InputCommands::eGameSpeak6))
         {
             Mudokon_SFX(MudSounds::eWhistleHigh_1, 0, 0, 0);
             field_204_flags |= 1u;
@@ -2366,7 +2366,7 @@ void Menu::GameSpeak_Update()
             mSelectedButtonIndex.gamespeak_menu = GameSpeakOptions::eWhistleHigh_4;
             relive_new MainMenuFade(sGameSpeakButtons[4].xpos, sGameSpeakButtons[4].ypos + 36, buttonType::eCircle_0, 1);
         }
-        else if (Input().IsAnyHeld(InputObject::PadIndex::First, sInputKey_GameSpeak5))
+        else if (Input().IsAnyHeld(InputObject::PadIndex::First, InputCommands::eGameSpeak5))
         {
             Mudokon_SFX(MudSounds::eWhistleLow_2, 0, 0, 0);
             field_204_flags |= 1u;
@@ -2374,7 +2374,7 @@ void Menu::GameSpeak_Update()
             mSelectedButtonIndex.gamespeak_menu = GameSpeakOptions::eWhistleLow_5;
             relive_new MainMenuFade(sGameSpeakButtons[5].xpos, sGameSpeakButtons[5].ypos + 36, buttonType::eCircle_0, 1);
         }
-        else if (Input().IsAnyHeld(InputObject::PadIndex::First, sInputKey_GameSpeak8))
+        else if (Input().IsAnyHeld(InputObject::PadIndex::First, InputCommands::eGameSpeak8))
         {
             Mudokon_SFX(MudSounds::eLaugh2_11, 0, 0, 0);
             field_204_flags |= 1u;
@@ -2382,7 +2382,7 @@ void Menu::GameSpeak_Update()
             mSelectedButtonIndex.gamespeak_menu = GameSpeakOptions::eLaugh_6;
             relive_new MainMenuFade(sGameSpeakButtons[6].xpos, sGameSpeakButtons[6].ypos + 36, buttonType::eCircle_0, 1);
         }
-        else if (Input().IsAnyHeld(InputObject::PadIndex::First, sInputKey_GameSpeak7))
+        else if (Input().IsAnyHeld(InputObject::PadIndex::First, InputCommands::eGameSpeak7))
         {
             Mudokon_SFX(MudSounds::eFart_7, 0, 0, 0);
             field_204_flags |= 1u;
