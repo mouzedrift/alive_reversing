@@ -850,7 +850,7 @@ void Abe::VUpdate()
         mCurrentMotion = eAbeMotions::Motion_87_ToFall;
         BaseAliveGameObjectCollisionLine = nullptr;
 
-        if (Input().IsAnyHeld(0xF000u))
+        if (Input().IsAnyHeld(InputCommands::eUp | InputCommands::eDown | InputCommands::eLeft | InputCommands::eRight))
         {
             const s32 dir = Input().Dir();
             mVelX = FP_FromRaw(sAbe_xVel_table_4BB118[dir] * 2);
@@ -3220,10 +3220,10 @@ void Abe::Motion_0_Idle()
     }
     if (Input().IsAnyHeld(InputCommands::eLeftGameSpeak | InputCommands::eRightGameSpeak))
     {
-        const auto held = Input().GetPressed();
-        if (held & 0xF0)
+        const auto pressed = Input().GetPressed();
+        if (pressed & (InputCommands::eHop | InputCommands::eThrowItem | InputCommands::eCrouchOrRoll | InputCommands::eDoAction))
         {
-            field_10C_prev_held = held;
+            field_10C_prev_held = pressed;
             mCurrentMotion = eAbeMotions::Motion_58_ToSpeak;
             return;
         }
@@ -4432,7 +4432,7 @@ void Abe::Motion_20_CrouchToStand()
 
     if (GetAnimation().GetCurrentFrame() == 3)
     {
-        if (Input().IsAnyHeld(0xA000)) // TODO: Flags
+        if (Input().IsAnyHeld(InputCommands::eLeft | InputCommands::eRight))
         {
             ToLeftRightMovement();
         }
@@ -7549,7 +7549,7 @@ void Abe::Motion_88_HandstoneBegin()
         {
             if (mFade->mDone)
             {
-                if (Input().IsAnyPressed(0xF0))
+                if (Input().IsAnyPressed(InputCommands::eHop | InputCommands::eThrowItem | InputCommands::eCrouchOrRoll | InputCommands::eDoAction))
                 {
                     mFade->Init(Layer::eLayer_FadeFlash_40, FadeOptions::eFadeIn, 0, 8);
                     field_110_state.stone = StoneStates::eSetActiveCamToAbeOrWaitForInput_7;
@@ -7758,7 +7758,7 @@ void Abe::Motion_98_LandSoft()
             Environment_SFX(EnvironmentSfx::eHitGroundSoft_6, 0, 0x7FFF, this);
         }
 
-        if (Input().IsAnyHeld(0xA000u))
+        if (Input().IsAnyHeld(InputCommands::eLeft | InputCommands::eRight))
         {
             ToLeftRightMovement();
         }
@@ -7809,7 +7809,8 @@ void Abe::Motion_102_ElumWalkLoop()
 
 void Abe::Motion_103_ElumIdle()
 {
-    if (!Input().IsAnyHeld(InputCommands::eLeftGameSpeak | InputCommands::eRightGameSpeak) || !Input().IsAnyPressed(0xF0))
+    if (!Input().IsAnyHeld(InputCommands::eLeftGameSpeak | InputCommands::eRightGameSpeak) ||
+        !Input().IsAnyPressed(InputCommands::eHop | InputCommands::eThrowItem | InputCommands::eCrouchOrRoll | InputCommands::eDoAction))
     {
         if (Input().GetPressed() == InputCommands::eDown && !gDDCheat_FlyingEnabled)
         {

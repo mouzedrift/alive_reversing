@@ -3258,7 +3258,7 @@ void Elum::VUpdate()
             4,
             4};
 
-        if (Input().IsAnyHeld(0xF000u))
+        if (Input().IsAnyHeld(InputCommands::eUp | InputCommands::eDown | InputCommands::eLeft | InputCommands::eRight))
         {
             const s32 tableIdx = Input().Dir();
             mVelX = FP_FromRaw(sElum_velx_table_4FF968[tableIdx]);

@@ -557,13 +557,13 @@ void Slig::VUpdate()
     if (gDDCheat_FlyingEnabled && sControlledCharacter == this)
     {
         BaseAliveGameObjectCollisionLine = nullptr;
-        if (Input().IsAnyHeld(0xF000))
+        if (Input().IsAnyHeld(InputCommands::eUp | InputCommands::eDown | InputCommands::eLeft | InputCommands::eRight))
         {
             const s32 dir = Input().Dir();
             mVelX = FP_FromRaw(sSligVelXTable_4BCA30[dir]);
             mVelY = FP_FromRaw(sSligVelYTable_4BCA50[dir]);
 
-            if (Input().IsAnyHeld(0x20))
+            if (Input().IsAnyHeld(InputCommands::eThrowItem))
             {
                 const FP velX = FP_FromRaw(sSligVelXTable_4BCA30[dir]);
                 const FP velY = FP_FromRaw(sSligVelYTable_4BCA50[dir]);
@@ -2364,9 +2364,9 @@ void Slig::Motion_0_StandIdle()
                     return;
                 }
             }
-            else if (Input().IsAnyHeld(0x04 | 0x01))
+            else if (Input().IsAnyHeld(InputCommands::eLeftGameSpeak | InputCommands::eRightGameSpeak))
             {
-                if (Input().IsAnyPressed(0xF0))
+                if (Input().IsAnyPressed(InputCommands::eHop | InputCommands::eThrowItem | InputCommands::eCrouchOrRoll | InputCommands::eDoAction))
                 {
                     field_126_input = Input().GetPressed();
                     mCurrentMotion = eSligMotions::Motion_18_GameSpeak;
