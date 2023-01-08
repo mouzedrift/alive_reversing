@@ -37,9 +37,7 @@ struct PSX_Pad final
 };
 ALIVE_ASSERT_SIZEOF(PSX_Pad, 0x18);
 
-namespace InputCommands {
-
-enum Enum : u32
+enum InputCommands : u32
 {
     eUp = 1u << 0,                 // 0x1
     eDown = 1u << 1,               // 0x2
@@ -75,8 +73,6 @@ enum Enum : u32
     eConfigure = 1u << 31, // 0x80000000
 };
 
-} // namespace InputCommands
-
 #define kUp "\x01"
 #define kDown "\x02"
 #define kLeft "\x03"
@@ -106,7 +102,7 @@ enum Enum : u32
 #define kHoistZTurn "\x1b"
 #define kDPad "\x1a"
 
-s32 Input_Remap_492680(InputCommands::Enum inputCmd);
+s32 Input_Remap_492680(InputCommands inputCmd);
 void Input_ResetBinding_4925A0(s32 input_command, s32 bIsGamePad);
 s32 Input_Read_Pad(s32 padNum);
 
@@ -135,7 +131,7 @@ enum PsxButtonBits : u32
 struct InputBinding final
 {
     s32 key;
-    InputCommands::Enum command;
+    InputCommands command;
 };
 
 enum GamepadOptionFlags

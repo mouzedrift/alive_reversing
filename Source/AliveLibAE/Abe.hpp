@@ -144,11 +144,6 @@ class PullRingRope;
 
 extern const TintEntry sAbeTintTable[16];
 
-namespace InputCommands
-{
-    enum Enum : u32;
-}
-
 enum class MudSounds : s16
 {
     eNone = -1,
