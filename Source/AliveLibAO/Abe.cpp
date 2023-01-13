@@ -1159,6 +1159,15 @@ void Abe::vUpdate_41FDB0()
 {
     if (!field_2AA_flags.Get(Flags_2AA::e2AA_Bit1))
     {
+        if (Input().IsAnyReleased(InputCommands::eCheatMode))
+        {
+            if (sActiveHero_507678 == sControlledCharacter_50767C &&
+                sActiveHero_507678->field_100_health != FP_FromInteger(0))
+            {
+                SaveContinuePointInfo(nullptr, true);
+            }
+        }
+
         if (gAbeInvulnerableCheat_5076E4)
         {
             field_100_health = FP_FromInteger(1);
@@ -3198,7 +3207,85 @@ void Abe::vScreenChanged_422640()
     }
 }
 
+void Abe::SaveContinuePointInfo(Path_ContinuePoint* pContinuePointTlv, bool isManualSave)
+{
+    if (!pContinuePointTlv && !isManualSave)
+    {
+        return;
+    }
 
+    if (isManualSave ||
+        (pContinuePointTlv->field_18_zone_number != field_146_zone_number || field_144_saved_level != gMap_507BA8.field_0_current_level) &&
+        !field_10A_flags.Get(Flags_10A::e10A_Bit5_Electrocuted) &&
+        field_FC_current_motion != eAbeMotions::Motion_156_DoorEnter_42D370)
+    {
+        if (isManualSave)
+        { 
+            field_146_zone_number = 1;
+            field_148_clear_from_id = 0;
+            field_14A_clear_to_id = 0;
+
+            field_138_zone_top_left.field_0_x = FP_GetExponent(sActiveHero_507678->field_A8_xpos);
+            field_138_zone_top_left.field_2_y = FP_GetExponent(sActiveHero_507678->field_AC_ypos - FP_FromInteger(70));
+
+            field_13C_zone_bottom_right.field_0_x = FP_GetExponent(sActiveHero_507678->field_A8_xpos);
+            field_13C_zone_bottom_right.field_2_y = FP_GetExponent(sActiveHero_507678->field_AC_ypos - FP_FromInteger(70));
+
+            field_2A8_flags.Set(Flags_2A8::e2A8_eBit16_AbeSpawnDir, field_10_anim.field_4_flags.Get(AnimFlags::eBit5_FlipX) ? true : false);
+        }
+        else
+        {
+            field_146_zone_number = pContinuePointTlv->field_18_zone_number;
+            field_148_clear_from_id = pContinuePointTlv->field_1A_clear_from_id;
+            field_14A_clear_to_id = pContinuePointTlv->field_1C_clear_to_id;
+
+            field_138_zone_top_left = pContinuePointTlv->field_10_top_left;
+            field_13C_zone_bottom_right = pContinuePointTlv->field_14_bottom_right;
+
+            field_2A8_flags.Set(Flags_2A8::e2A8_eBit16_AbeSpawnDir, pContinuePointTlv->field_20_abe_direction == Path_ContinuePoint::spawnDirection::eLeft_1);
+        }
+
+        field_14C_saved_sprite_scale = field_BC_sprite_scale;
+
+        const auto bHaveShry = field_168_ring_pulse_timer - gnFrameCount_507670;
+        field_150_saved_ring_timer = bHaveShry < 0 ? 0 : bHaveShry;
+        field_154_bSavedHaveShrykull = field_16C_bHaveShrykull;
+
+        field_144_saved_level = gMap_507BA8.field_0_current_level;
+        field_142_saved_path = gMap_507BA8.field_2_current_path;
+        field_140_saved_camera = gMap_507BA8.field_4_current_camera;
+
+        if (gRestartRuptureFarmsSavedMuds_5076C8 == 0 && gMap_507BA8.field_0_current_level == LevelIds::eRuptureFarmsReturn_13 && gMap_507BA8.field_2_current_path == 19 && gMap_507BA8.field_4_current_camera == 3)
+        {
+            gRestartRuptureFarmsKilledMuds_5076C4 = sKilledMudokons_5076BC;
+            gRestartRuptureFarmsSavedMuds_5076C8 = sRescuedMudokons_5076C0;
+        }
+        gOldKilledMuds_5076D0 = sKilledMudokons_5076BC;
+        gOldSavedMuds_5076D4 = sRescuedMudokons_5076C0;
+
+        SaveGame::SaveToMemory_459490(&gSaveBuffer_505668);
+
+        const FP camXPos = FP_NoFractional(pScreenManager_4FF7C8->field_10_pCamPos->field_0_x - FP_FromInteger(pScreenManager_4FF7C8->field_14_xpos));
+
+        FP indicator_xpos = {};
+        if (field_A8_xpos - camXPos >= FP_FromInteger(384 / 2)) // mid screen x
+        {
+            indicator_xpos = field_A8_xpos - ScaleToGridSize_41FA30(field_BC_sprite_scale);
+        }
+        else
+        {
+            indicator_xpos = ScaleToGridSize_41FA30(field_BC_sprite_scale) + field_A8_xpos;
+        }
+        const FP indicator_ypos = field_AC_ypos + (field_BC_sprite_scale * FP_FromInteger(-50));
+
+        auto pCheckpointIndicator = ao_new<ThrowableTotalIndicator>();
+        if (pCheckpointIndicator)
+        {
+            pCheckpointIndicator->ctor_41B520(indicator_xpos, indicator_ypos, field_10_anim.field_C_layer,
+                                              field_10_anim.field_14_scale, 11, 1);
+        }
+    }
+}
 
 void Abe::VOn_Tlv_Collision_421130(Path_TLV* pTlv)
 {
@@ -3207,58 +3294,7 @@ void Abe::VOn_Tlv_Collision_421130(Path_TLV* pTlv)
         if (pTlv->field_4_type == TlvTypes::ContinuePoint_0)
         {
             Path_ContinuePoint* pContinuePointTlv = static_cast<Path_ContinuePoint*>(pTlv);
-
-            if ((pContinuePointTlv->field_18_zone_number != field_146_zone_number || field_144_saved_level != gMap_507BA8.field_0_current_level) && !field_10A_flags.Get(Flags_10A::e10A_Bit5_Electrocuted) && field_FC_current_motion != eAbeMotions::Motion_156_DoorEnter_42D370)
-            {
-                field_146_zone_number = pContinuePointTlv->field_18_zone_number;
-                field_148_clear_from_id = pContinuePointTlv->field_1A_clear_from_id;
-                field_14A_clear_to_id = pContinuePointTlv->field_1C_clear_to_id;
-
-                field_138_zone_top_left = pContinuePointTlv->field_10_top_left;
-                field_13C_zone_bottom_right = pContinuePointTlv->field_14_bottom_right;
-
-                field_14C_saved_sprite_scale = field_BC_sprite_scale;
-
-                field_2A8_flags.Set(Flags_2A8::e2A8_eBit16_AbeSpawnDir, pContinuePointTlv->field_20_abe_direction == Path_ContinuePoint::spawnDirection::eLeft_1);
-
-                const auto bHaveShry = field_168_ring_pulse_timer - gnFrameCount_507670;
-                field_150_saved_ring_timer = bHaveShry < 0 ? 0 : bHaveShry;
-                field_154_bSavedHaveShrykull = field_16C_bHaveShrykull;
-
-                field_144_saved_level = gMap_507BA8.field_0_current_level;
-                field_142_saved_path = gMap_507BA8.field_2_current_path;
-                field_140_saved_camera = gMap_507BA8.field_4_current_camera;
-
-                if (gRestartRuptureFarmsSavedMuds_5076C8 == 0 && gMap_507BA8.field_0_current_level == LevelIds::eRuptureFarmsReturn_13 && gMap_507BA8.field_2_current_path == 19 && gMap_507BA8.field_4_current_camera == 3)
-                {
-                    gRestartRuptureFarmsKilledMuds_5076C4 = sKilledMudokons_5076BC;
-                    gRestartRuptureFarmsSavedMuds_5076C8 = sRescuedMudokons_5076C0;
-                }
-                gOldKilledMuds_5076D0 = sKilledMudokons_5076BC;
-                gOldSavedMuds_5076D4 = sRescuedMudokons_5076C0;
-
-                SaveGame::SaveToMemory_459490(&gSaveBuffer_505668);
-
-                const FP camXPos = FP_NoFractional(pScreenManager_4FF7C8->field_10_pCamPos->field_0_x - FP_FromInteger(pScreenManager_4FF7C8->field_14_xpos));
-
-                FP indicator_xpos = {};
-                if (field_A8_xpos - camXPos >= FP_FromInteger(384 / 2)) // mid screen x
-                {
-                    indicator_xpos = field_A8_xpos - ScaleToGridSize_41FA30(field_BC_sprite_scale);
-                }
-                else
-                {
-                    indicator_xpos = ScaleToGridSize_41FA30(field_BC_sprite_scale) + field_A8_xpos;
-                }
-                const FP indicator_ypos = field_AC_ypos + (field_BC_sprite_scale * FP_FromInteger(-50));
-
-                auto pCheckpointIndicator = ao_new<ThrowableTotalIndicator>();
-                if (pCheckpointIndicator)
-                {
-                    pCheckpointIndicator->ctor_41B520(indicator_xpos, indicator_ypos, field_10_anim.field_C_layer,
-                                                      field_10_anim.field_14_scale, 11, 1);
-                }
-            }
+            SaveContinuePointInfo(pContinuePointTlv, false);
         }
         else if (pTlv->field_4_type == TlvTypes::DeathDrop_5)
         {

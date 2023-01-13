@@ -246,8 +246,15 @@ void DDCheat::VUpdate_4098C0()
         {
             if (pAbe)
             {
-                if (Input().IsAnyHeld(InputCommands::eCheatMode))
+                static u32 cheatToggleTimeout = 0;
+                if (cheatToggleTimeout > 0)
                 {
+                    cheatToggleTimeout--;
+                }
+
+                if (Input().IsAllPressed(InputCommands::eRun | InputCommands::eCheatMode) && cheatToggleTimeout == 0)
+                {
+                    cheatToggleTimeout = 30;
                     sDDCheat_FlyingEnabled_50771C = cheat_enabled == 0;
                     if (sDDCheat_FlyingEnabled_50771C)
                     {

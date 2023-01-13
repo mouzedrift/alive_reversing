@@ -65,7 +65,7 @@ inline std::string BuildAndBitnesString()
 
 inline std::string WindowTitleAO()
 {
-    return "R.E.L.I.V.E. Oddworld Abe's Oddysee" + BuildAndBitnesString();
+    return "R.E.L.I.V.E. AO" + BuildAndBitnesString() + " - tab: set checkpoint, shift + tab: enable ddcheat";
 }
 
 inline std::string WindowTitleAE()

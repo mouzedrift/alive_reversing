@@ -434,6 +434,7 @@ ALIVE_ASSERT_SIZEOF(Path_Stone, 0x2C);
 class Abe final : public BaseAliveGameObject
 {
 public:
+    void SaveContinuePointInfo(Path_ContinuePoint* pContinuePointTlv, bool isManualSave);
     Bool32 Is_Celling_Above();
 
     EXPORT Abe* ctor_420770(s32 frameTableOffset, s32 a3, s32 a4, s32 a5);
