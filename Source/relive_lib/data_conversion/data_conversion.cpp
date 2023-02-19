@@ -1592,12 +1592,15 @@ static void ConvertFilesInLvl(const FileSystem::Path& dataDir, FileSystem& fs, R
                     {
                         if (!isAo)
                         {
-                            // Remove the resource header
-                            fileBuffer.erase(fileBuffer.begin(), fileBuffer.begin() + 16);
+                            if (0)
+                            {
+                                // Remove the resource header
+                                fileBuffer.erase(fileBuffer.begin(), fileBuffer.begin() + 16);
 
-                            // TODO: Actually convert at some later point
-                            AESaveConverter saveConverter;
-                            saveConverter.Convert(fileBuffer, (fileName + ".json").c_str());
+                                // TODO: Actually convert at some later point
+                                AESaveConverter saveConverter;
+                                saveConverter.Convert(fileBuffer, (fileName + ".json").c_str());
+                            }
                         }
                     }
                 }
@@ -1608,26 +1611,30 @@ static void ConvertFilesInLvl(const FileSystem::Path& dataDir, FileSystem& fs, R
                 {
                     if (fileName == "LCDFONT.FNT")
                     {
-                        ConvertFont(dataDir, fileName, lvlReader, fileBuffer, false);
+                        if (0)
+                            ConvertFont(dataDir, fileName, lvlReader, fileBuffer, false);
                     }
                 }
                 else if (endsWith(fileName, ".CAM"))
                 {
                     if (fileName == "S1P01C01.CAM" || fileName == "STP01C06.CAM")
                     {
-                        ConvertFont(dataDir, fileName, lvlReader, fileBuffer, true);
+                        if (0)
+                            ConvertFont(dataDir, fileName, lvlReader, fileBuffer, true);
                     }
-
-                     ConvertCamera(dataDir, fileName, fs, fileBuffer, lvlReader, lvlIdxAsLvl, isAo);
+                     if (0)
+                        ConvertCamera(dataDir, fileName, fs, fileBuffer, lvlReader, lvlIdxAsLvl, isAo);
                 }
                 else if (endsWith(fileName, ".JOY"))
                 {
                     // TODO: Actually convert at some later point
-                    SaveFileFromLvlDirect(fileName.c_str(), dataDir, lvlReader, lvlIdxAsLvl, fileBuffer);
+                    if (0)
+                        SaveFileFromLvlDirect(fileName.c_str(), dataDir, lvlReader, lvlIdxAsLvl, fileBuffer);
                 }
                 else if (endsWith(fileName, "PATH.BND"))
                 {
-                    ConvertPathBND<LevelIdType, TlvType>(dataDir, fileName, fs, fileBuffer, lvlReader, lvlIdxAsLvl, reliveLvl, isAo);
+                    if (0)
+                        ConvertPathBND<LevelIdType, TlvType>(dataDir, fileName, fs, fileBuffer, lvlReader, lvlIdxAsLvl, reliveLvl, isAo);
                 }
             }
         }

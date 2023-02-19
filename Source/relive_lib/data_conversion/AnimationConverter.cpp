@@ -132,56 +132,22 @@ AnimationConverter::AnimationConverter(const FileSystem::Path& outputFile, const
         ALIVE_FATAL("Could not fit anim into biggest texture size %d", BIGGEST_TEXTURE_SIZE);
     }
 
-    // Get the size required to decompress a single frame
-    const u32 decompressionBufferSize = CalcDecompressionBufferSize(rec, pFirstFrame);
-    std::vector<u8> decompressionBuffer(decompressionBufferSize);
 
-    // Add each frame
-    std::vector<PerFrameInfo> perFrameInfos(pAnimationHeader->field_2_num_frames);
-
-    std::vector<mapbox::Bin> myBins;
-    myBins.reserve(pAnimationHeader->field_2_num_frames);
     for (s32 i = 0; i < pAnimationHeader->field_2_num_frames; i++)
     {
-        const FrameHeader* pFrameHeader = GetFrame(pAnimationHeader, i);
-        myBins.emplace_back(-1, pFrameHeader->field_4_width, pFrameHeader->field_5_height);
-    }
+        // Get the size required to decompress a single frame
 
-    mapbox::ShelfPack::PackOptions options;
-    options.inPlace = true;
-    mapbox::ShelfPack binPacker(allocTextureSize, allocTextureSize);
-    auto packed = binPacker.pack(myBins, options);
-    if (packed.size() != myBins.size())
-    {
-        // If this fails default to grid packing (yes somehow bin packing is worse than a grid sometimes! NP-Complete hell)
-        LOG_WARNING("Its over for bin pack");
-        for (s32 i = 0; i < pAnimationHeader->field_2_num_frames; i++)
-        {
-            const u32 baseX = ((i % spritesFitX) * biggestFrameSize.mMaxW);
-            const u32 baseY = ((i / spritesFitX) * biggestFrameSize.mMaxH);
-            myBins[i].x = baseX;
-            myBins[i].y = baseY;
-        }
-    }
-    else
-    {
-        // In many cases the next size down would fit so we try that as well
-        AttemptHalfSpaceBinPack(myBins, packed, allocTextureSize);
-    }
-
-    std::vector<u8> spriteSheetBuffer(allocTextureSize * allocTextureSize);
-    for (s32 i = 0; i < pAnimationHeader->field_2_num_frames; i++)
-    {
         const FrameInfoHeader* pFrameInfoHeader = GetFrameInfoHeader(pAnimationHeader, i);
         const FrameHeader* pFrameHeader = GetFrame(pAnimationHeader, i);
+        std::vector<u8> spriteSheetBuffer(pFrameHeader->field_4_width * pFrameHeader->field_5_height);
+
+        const u32 decompressionBufferSize = CalcDecompressionBufferSize(rec, pFrameHeader);
+        std::vector<u8> decompressionBuffer(decompressionBufferSize);
 
         DecompressAnimFrame(decompressionBuffer, pFrameHeader, fileData);
 
         // Add frame to the sprite sheet
         const u32 imageWidth = CalcImageWidth(pFrameHeader);
-
-        const u32 baseX = myBins[i].x;
-        const u32 baseY = myBins[i].y;
 
         for (u32 x = 0; x < pFrameHeader->field_4_width; x++)
         {
@@ -200,10 +166,10 @@ AnimationConverter::AnimationConverter(const FileSystem::Path& outputFile, const
 
                     const u8 value = decompressionBuffer[srcIdx];
 
-                    const u32 targetX = baseX + x;
-                    const u32 targetY = baseY + y;
+                    const u32 targetX = x;
+                    const u32 targetY = y;
 
-                    const u32 dstIdx = (targetY * allocTextureSize) + targetX;
+                    const u32 dstIdx = (targetY * pFrameHeader->field_4_width) + targetX;
 
                     if (dstIdx > spriteSheetBuffer.size())
                     {
@@ -222,123 +188,19 @@ AnimationConverter::AnimationConverter(const FileSystem::Path& outputFile, const
             }
         }
 
-
-        perFrameInfos[i].mWidth = pFrameHeader->field_4_width;
-        perFrameInfos[i].mHeight = pFrameHeader->field_5_height;
-
-        perFrameInfos[i].mSpriteWidth = pFrameHeader->field_4_width;
-        perFrameInfos[i].mSpriteHeight = pFrameHeader->field_5_height;
-
-        if (mIsAoData)
-        {
-            perFrameInfos[i].mXOffset = PsxToPCX(pFrameInfoHeader->field_8_data.offsetAndRect.mOffset.x);
-        }
-        else
-        {
-            perFrameInfos[i].mXOffset = pFrameInfoHeader->field_8_data.offsetAndRect.mOffset.x;
-        }
-
-        perFrameInfos[i].mYOffset = pFrameInfoHeader->field_8_data.offsetAndRect.mOffset.y;
-
-        perFrameInfos[i].mSpriteSheetX = baseX;
-        perFrameInfos[i].mSpriteSheetY = baseY;
-
-        perFrameInfos[i].mBoundMin.x = pFrameInfoHeader->field_8_data.offsetAndRect.mMin.x;
-        perFrameInfos[i].mBoundMin.y = pFrameInfoHeader->field_8_data.offsetAndRect.mMin.y;
-
-        perFrameInfos[i].mBoundMax.x = pFrameInfoHeader->field_8_data.offsetAndRect.mMax.x;
-        perFrameInfos[i].mBoundMax.y = pFrameInfoHeader->field_8_data.offsetAndRect.mMax.y;
-
-
         if (pFrameInfoHeader->field_6_count > 2)
         {
             ALIVE_FATAL("No OG data should have more than 2 points");
         }
 
-        u32 numPoints = pFrameInfoHeader->field_6_count;
-        if (pFrameInfoHeader->field_6_count > 0)
-        {
-            // NOTE: Matches data on disk, size matters
-            struct PointAndIndex final
-            {
-                u32 index;
-                Point point[1]; // NOTE: Var length in 1 case only
-            };
-            auto pPointAndIndex = reinterpret_cast<const PointAndIndex*>(&pFrameInfoHeader->field_8_data.points[3]);
-
-            for (s32 j = 0; j < pFrameInfoHeader->field_6_count; j++)
-            {
-                perFrameInfos[i].mPoints[j].mIndex = pPointAndIndex[j].index;
-                perFrameInfos[i].mPoints[j].mPoint.x = pPointAndIndex[j].point[0].x;
-                perFrameInfos[i].mPoints[j].mPoint.y = pPointAndIndex[j].point[0].y;
-
-                switch (rec.mId)
-                {
-                case AnimId::Swinging_Ball_Fast:
-                    [[fallthrough]];
-                case AnimId::Swinging_Ball_Normal:
-                    [[fallthrough]];
-                case AnimId::Swinging_Ball_Slow:
-                    // The only exception to the rule of a single point in the data is the ZBALLS
-                    // so in this case only read 2 points by shoving them into the next points record
-                    if (pFrameInfoHeader->field_6_count != 1)
-                    {
-                        ALIVE_FATAL("ZBALL has too many point entries");
-                    }
-                    // Yep there really isn't an index for the 2nd entry, its just 2 tightly packed points making a rect
-                    perFrameInfos[i].mPoints[j + 1].mIndex = pPointAndIndex[j].index;
-                    perFrameInfos[i].mPoints[j + 1].mPoint.x = pPointAndIndex[j].point[1].x;
-                    perFrameInfos[i].mPoints[j + 1].mPoint.y = pPointAndIndex[j].point[1].y;
-
-                    // Fix up the point count from 1 to 2
-                    numPoints = 2;
-                    break;
-
-                default:
-                    break;
-                }
-            }
-        }
-        perFrameInfos[i].mPointCount = numPoints;
+        PNGFile pngFile;
+        pngFile.Save((outputFile.GetPath() + "_" + std::to_string(i) + ".png").c_str(), pal, spriteSheetBuffer, pFrameHeader->field_4_width, pFrameHeader->field_5_height);
+        //__debugbreak();
 
         // Clear because the buffer is re-used to reduce memory allocs
         decompressionBuffer.clear();
         decompressionBuffer.resize(decompressionBufferSize);
     }
-
-    PNGFile pngFile;
-    pngFile.Save((outputFile.GetPath() + ".png").c_str(), pal, spriteSheetBuffer, allocTextureSize, allocTextureSize);
-
-    // Write json file
-    AnimAttributes attributes = {};
-    // TODO: Current values are kind of nonsense, map to something sane
-
-    attributes.mFrameRate = pAnimationHeader->field_0_fps;
-
-    if ((!isAoData && rec.mId == AnimId::RockSack_Idle) || rec.mId == AnimId::BoneBag_Idle)
-    {
-        // Replicate OWI hack that was in the object ctor, we do it in the data conversion so
-        // the game object doesn't need the hack.
-        attributes.mFrameRate = 0;
-    }
-
-    attributes.mFlipX = (pAnimationHeader->field_6_flags & AnimationHeader::eFlipXFlag) ? true : false;
-    attributes.mFlipY = (pAnimationHeader->field_6_flags & AnimationHeader::eFlipYFlag) ? true : false;
-    attributes.mLoop = (pAnimationHeader->field_6_flags & AnimationHeader::eLoopFlag) ? true : false;
-    attributes.mLoopStartFrame = pAnimationHeader->field_4_loop_start_frame;
-
-    // Required by background animation
-    attributes.mMaxWidth = biggestFrameSize.mMaxW;
-    attributes.mMaxHeight = biggestFrameSize.mMaxH;
-
-    nlohmann::json animJsonInfo;
-    animJsonInfo["attributes"] = attributes;
-    animJsonInfo["frames"] = perFrameInfos;
-
-    const std::string animJsonInfoString = animJsonInfo.dump(4);
-    AutoFILE jsonFile;
-    jsonFile.Open((outputFile.GetPath() + ".json").c_str(), "wb", false);
-    jsonFile.Write(reinterpret_cast<const u8*>(animJsonInfoString.c_str()), static_cast<u32>(animJsonInfoString.size()));
 }
 
 // Calc the max width and height because the ones in the header are often way too big for some reason
