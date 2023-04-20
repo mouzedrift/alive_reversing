@@ -160,15 +160,23 @@ MotionDetector* MotionDetector::ctor_4683B0(Path_MotionDetector* pTlv, s32 tlvIn
     field_10E_bUnknown = 1;
     field_CC_sprite_scale = pOwner->field_CC_sprite_scale;
 
-    field_114_x1_fp = pOwner->field_B8_xpos - (field_CC_sprite_scale * FP_FromInteger(75));
-    field_11C_y1_fp = (field_CC_sprite_scale * FP_FromInteger(75)) + pOwner->field_B8_xpos;
+    field_174_speed = FP_FromInteger(2);
+
+    FP rangeX = FP_FromInteger(75);
+    if (pOwner->Type() == AETypes::eGreeter_64 && static_cast<Greeter*>(pOwner)->insaneGreeter)
+    {
+        rangeX = FP_FromInteger(250);
+        field_174_speed = FP_FromInteger(80);
+    }
+
+    field_114_x1_fp = pOwner->field_B8_xpos - (field_CC_sprite_scale * rangeX);
+    field_11C_y1_fp = (field_CC_sprite_scale * rangeX) + pOwner->field_B8_xpos;
     field_118_x2_fp = pOwner->field_BC_ypos - (field_CC_sprite_scale * FP_FromInteger(20));
     field_120_y2_fp = pOwner->field_BC_ypos;
 
     field_B8_xpos = pOwner->field_B8_xpos;
     field_BC_ypos = pOwner->field_BC_ypos - (field_CC_sprite_scale * FP_FromInteger(20));
 
-    field_174_speed = FP_FromInteger(2);
     field_100_state = States::eMoveRight_0;
 
     auto pLaserMem = ae_new<MotionDetectorLaser>();
@@ -444,6 +452,7 @@ void MotionDetector::vUpdate_468A90()
             }
         }
 
+        s32 laserPauseTime = 15;
         if (pOwner)
         {
             field_B8_xpos = pOwner->field_B8_xpos;
@@ -451,8 +460,15 @@ void MotionDetector::vUpdate_468A90()
 
             pLaser->field_B8_xpos += pOwner->field_C4_velx;
 
-            field_114_x1_fp = pOwner->field_B8_xpos - (field_CC_sprite_scale * FP_FromInteger(75));
-            field_11C_y1_fp = (field_CC_sprite_scale * FP_FromInteger(75)) + pOwner->field_B8_xpos;
+            FP rangeX = FP_FromInteger(75);
+            if (pOwner->Type() == AETypes::eGreeter_64 && static_cast<Greeter*>(pOwner)->insaneGreeter)
+            {
+                rangeX = FP_FromInteger(250);
+                laserPauseTime = 1;
+            }
+
+            field_114_x1_fp = pOwner->field_B8_xpos - (field_CC_sprite_scale * rangeX);
+            field_11C_y1_fp = (field_CC_sprite_scale * rangeX) + pOwner->field_B8_xpos;
             field_118_x2_fp = pOwner->field_BC_ypos - (field_CC_sprite_scale * FP_FromInteger(20));
             field_120_y2_fp = pOwner->field_BC_ypos;
 
@@ -476,7 +492,8 @@ void MotionDetector::vUpdate_468A90()
                 if (pLaser->field_B8_xpos >= field_11C_y1_fp)
                 {
                     field_100_state = States::eWaitThenMoveLeft_1;
-                    field_104_timer = sGnFrame_5C1B84 + 15;
+                    field_104_timer = sGnFrame_5C1B84 + laserPauseTime;
+
                     const CameraPos soundDirection = gMap_5C3030.GetDirection_4811A0(
                         field_C2_lvl_number,
                         field_C0_path_number,
@@ -501,7 +518,8 @@ void MotionDetector::vUpdate_468A90()
                 if (pLaser->field_B8_xpos <= field_114_x1_fp)
                 {
                     field_100_state = States::eWaitThenMoveRight_3;
-                    field_104_timer = sGnFrame_5C1B84 + 15;
+                    field_104_timer = sGnFrame_5C1B84 + laserPauseTime;
+
                     const CameraPos soundDirection = gMap_5C3030.GetDirection_4811A0(
                         field_C2_lvl_number,
                         field_C0_path_number,

@@ -91,7 +91,8 @@ public:
 private:
     EXPORT s32 vGetSaveState_446400(Greeter_State* pState);
 
-
+    bool bruh();
+    void UpdateSlurgWatchPoints();
     EXPORT Greeter* vdtor_4468B0(s32 flags);
     EXPORT void vScreenChanged_447DD0();
     EXPORT void dtor_4468E0();
@@ -119,13 +120,13 @@ private:
     s16 field_132_padding;
     FP field_134_speed;
     Path_TLV* field_138_pTlv;
-
 public:
     GreeterBrainStates field_13C_brain_state;
     s16 field_13E_targetOnLeft;
     s16 field_140_targetOnRight;
+    bool insaneGreeter = false;
 
 private:
     s16 field_142_padding;
 };
-ALIVE_ASSERT_SIZEOF(Greeter, 0x144);
+//ALIVE_ASSERT_SIZEOF(Greeter, 0x144);
