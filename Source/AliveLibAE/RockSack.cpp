@@ -143,13 +143,30 @@ void RockSack::vUpdate_49F3A0()
             field_20_animation.field_E_frame_change_counter = Math_RandomRange_496AB0(2, 10);
         }
 
-        PSX_RECT bPlayerRect = {};
-        sActiveHero_5C1B68->vGetBoundingRect_424FD0(&bPlayerRect, 1);
+        PSX_RECT otherRect = {};
+
+        for (s16 i = 0; i < gBaseAliveGameObjects_5C1B7C->Size(); i++)
+        {
+            auto pObj = gBaseAliveGameObjects_5C1B7C->ItemAt(i);
+            if (!pObj)
+            {
+                break;
+            }
+
+            if (pObj->Type() == AETypes::eAbe_69 ||
+                pObj->Type() == AETypes::eSlig_125 ||
+                pObj->Type() == AETypes::eScrab_112 ||
+                pObj->Type() == AETypes::eGreeter_64 ||
+                pObj->Type() == AETypes::eFlyingSlig_54)
+            {
+                pObj->vGetBoundingRect_424FD0(&otherRect, 1);
+            }
+        }
 
         PSX_RECT bRect = {};
         vGetBoundingRect_424FD0(&bRect, 1);
 
-        if (bRect.x <= bPlayerRect.w && bRect.w >= bPlayerRect.x && bRect.h >= bPlayerRect.y && bRect.y <= bPlayerRect.h && field_CC_sprite_scale == sActiveHero_5C1B68->field_CC_sprite_scale)
+        if (bRect.x <= otherRect.w && bRect.w >= otherRect.x && bRect.h >= otherRect.y && bRect.y <= otherRect.h && field_CC_sprite_scale == sActiveHero_5C1B68->field_CC_sprite_scale)
         {
             if (gpThrowableArray_5D1E2C)
             {
