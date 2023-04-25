@@ -91,7 +91,6 @@ public:
 private:
     EXPORT s32 vGetSaveState_446400(Greeter_State* pState);
 
-    bool bruh();
     void UpdateSlurgWatchPoints();
     EXPORT Greeter* vdtor_4468B0(s32 flags);
     EXPORT void vScreenChanged_447DD0();

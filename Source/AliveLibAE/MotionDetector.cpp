@@ -345,7 +345,7 @@ s16 MotionDetector::IsInLaser_468980(BaseAliveGameObject* pWho, BaseGameObject* 
         return 0;
     }
 
-    if (pOwner && (pWho->Type() != AETypes::eMudokon_110 && pWho->Type() != AETypes::eAbe_69))
+    if (pOwner && (pWho->Type() != AETypes::eMudokon_110 && pWho->Type() != AETypes::eAbe_69 && pWho->Type() != AETypes::eSlig_125 && pWho->Type() != AETypes::eSlog_126))
     {
         // If there is an owner (such as a greeter) then only muds and abe can set off the beam?
         return 0;
@@ -390,7 +390,7 @@ void MotionDetector::vUpdate_468A90()
                 break;
             }
 
-            if (pObj->Type() != AETypes::eTimedMine_or_MovingBomb_10 && (pObj->Type() == AETypes::eAbe_69 || pObj->Type() == AETypes::eMudokon_110 || !pOwner))
+            if (pObj->Type() != AETypes::eTimedMine_or_MovingBomb_10 && (pObj->Type() == AETypes::eAbe_69 || pObj->Type() == AETypes::eMudokon_110 || pObj->Type() == AETypes::eSlig_125 || pObj->Type() == AETypes::eSlog_126 || !pOwner))
             {
                 PSX_RECT objRect = {};
                 pObj->vGetBoundingRect_424FD0(&objRect, 1);

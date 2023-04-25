@@ -664,7 +664,9 @@ BaseAliveGameObject* Greeter::GetMudToZap_447690()
             break;
         }
 
-        if (pObj->Type() == AETypes::eMudokon_110)
+        if (pObj->Type() == AETypes::eMudokon_110 ||
+            pObj->Type() == AETypes::eSlig_125 ||
+            pObj->Type() == AETypes::eSlog_126)
         {
             PSX_RECT bRect = {};
             pObj->vGetBoundingRect_424FD0(&bRect, 1);
@@ -672,7 +674,10 @@ BaseAliveGameObject* Greeter::GetMudToZap_447690()
             const FP xMid = FP_FromInteger((bRect.x + bRect.w) / 2);
             const FP yMid = FP_FromInteger((bRect.y + bRect.h) / 2);
 
-            if (xMid - field_B8_xpos < (field_CC_sprite_scale * FP_FromInteger(60)) && field_B8_xpos - xMid < (field_CC_sprite_scale * FP_FromInteger(60)) && yMid - (field_BC_ypos - FP_FromInteger(4)) < (field_CC_sprite_scale * FP_FromInteger(60)) && field_BC_ypos - FP_FromInteger(4) - yMid < (field_CC_sprite_scale * FP_FromInteger(60)) && !(sActiveHero_5C1B68->field_114_flags.Get(Flags_114::e114_Bit7_Electrocuted)) && !ZapIsNotBlocked_447240(this, pObj))
+            if (xMid - field_B8_xpos < (field_CC_sprite_scale * FP_FromInteger(60)) &&
+                field_B8_xpos - xMid < (field_CC_sprite_scale * FP_FromInteger(60)) &&
+                yMid - (field_BC_ypos - FP_FromInteger(4)) < (field_CC_sprite_scale * FP_FromInteger(60)) && field_BC_ypos - FP_FromInteger(4) - yMid < (field_CC_sprite_scale * FP_FromInteger(60)) &&
+                !(pObj->field_114_flags.Get(Flags_114::e114_Bit7_Electrocuted)) && !ZapIsNotBlocked_447240(this, pObj))
             {
                 return pObj;
             }
@@ -694,25 +699,6 @@ void Greeter::UpdateSlurgWatchPoints()
             sSlurg_Step_Watch_Points_Count_5BD4DC[sSlurg_Step_Watch_Points_Idx_5C1C08] = count + 1;
         }
     }
-}
-
-bool Greeter::bruh()
-{
-    for (s32 i = 0; i < gBaseAliveGameObjects_5C1B7C->Size(); i++)
-    {
-        auto pObj = gBaseAliveGameObjects_5C1B7C->ItemAt(i);
-        if (!pObj)
-        {
-            break;
-        }
-
-        if (vIsObjNearby_4253B0(FP_FromInteger(25), pObj))
-        {
-            return true;
-        }
-    }
-
-    return false;
 }
 
 void Greeter::vUpdate_4469B0()
