@@ -642,6 +642,7 @@ MainMenuController* MainMenuController::ctor_4CE9A0(Path_TLV* /*pTlv*/, TlvItemI
         field_20_animation.Set_Animation_Data_409C80(abeIdleRec.mFrameTableOffset, field_F4_resources.field_0_resources[MenuResIds::eAbeSpeak2]);
         Load_Anim_Pal_4D06A0(&field_20_animation);
     }
+
     return this;
 }
 
@@ -3033,6 +3034,14 @@ void MainMenuController::HandleMainMenuUpdate()
     }
 
     MainMenuPage* pPage = &sMainMenuPages_561960[field_214_page_index];
+    #ifdef _DEBUG
+    static u32 calls = 0;
+    if (calls < 2)
+    {
+        pPage = &sMainMenuPages_561960[13];
+        calls++;
+    }
+    #endif
 
     const auto currentCamId = pPage->field_0_cam_id;
     if (sInputObject_5BD4E0.field_0_pads[0].field_0_pressed && currentCamId != MainMenuCams::eGameBootCopyrightSplashCam && currentCamId != MainMenuCams::eUnknown20Cam && currentCamId != MainMenuCams::eControllerSelectionCam)

@@ -2713,6 +2713,33 @@ void Abe::vOn_TLV_Collision_44B5D0(Path_TLV* pTlv)
                 }
             }
         }
+        else if (pTlv->field_4_type == TlvTypes::Mudokon_49 && gMap_5C3030.field_0_current_level == LevelIds::eFeeCoDepot_Ender_12 && gMap_5C3030.field_2_current_path == 11 && gMap_5C3030.field_4_current_camera == 2)
+        {
+            for (s32 i = 0; i < gBaseAliveGameObjects_5C1B7C->Size(); i++)
+            {
+                auto pObj = gBaseAliveGameObjects_5C1B7C->ItemAt(i);
+                if (!pObj)
+                {
+                    break;
+                }
+
+                if (pObj->Type() == AETypes::eMudokon_110 || pObj->Type() == AETypes::eMudokon2_81)
+                {
+                    PSX_RECT mudRect = {};
+                    pObj->vGetBoundingRect_424FD0(&mudRect, 1);
+
+                    PSX_RECT abeRect = {};
+                    vGetBoundingRect_424FD0(&abeRect, 1);
+
+                    if (RectsOverlap(mudRect, abeRect))
+                    {
+                        SetType(AETypes::eMineCar_89);
+                        pObj->VTakeDamage_408730(this);
+                        SetType(AETypes::eAbe_69);
+                    }
+                }
+            }
+        }
     }
 }
 

@@ -28,7 +28,7 @@ EXPORT Greeter* Greeter::ctor_4465B0(Path_Greeter* pTlv, s32 tlvInfo)
     u8** ppRes = Add_Resource_4DC130(ResourceManager::Resource_Animation, rec.mResourceId);
     Animation_Init_424E10(rec.mFrameTableOffset, rec.mMaxW, rec.mMaxH, ppRes, 1, 1);
 
-    if (gMap_5C3030.field_0_current_level == LevelIds::eMines_1)
+    if (gMap_5C3030.field_0_current_level == LevelIds::eFeeCoDepot_Ender_12)
     {
         insaneGreeter = true;
     }
