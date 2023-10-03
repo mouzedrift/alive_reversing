@@ -1475,10 +1475,10 @@ EXPORT void CC Factory_Glukkon_4DA550(Path_TLV* pTlv, Path*, TlvItemInfoUnion tl
                 gMap_5C3030.LoadResourcesFromList_4DBE70("ASLIK.BND", kAslik_563548.AsList(), loadMode);
                 break;
 
-            case LevelIds::eBarracks_6:
-            case LevelIds::eBarracks_Ender_13:
-                gMap_5C3030.LoadResourcesFromList_4DBE70("DRIPIK.BND", KDripik_56355C.AsList(), loadMode);
-                break;
+            //case LevelIds::eBarracks_6:
+            //case LevelIds::eBarracks_Ender_13:
+                //gMap_5C3030.LoadResourcesFromList_4DBE70("DRIPIK.BND", KDripik_56355C.AsList(), loadMode);
+                //break;
 
             case LevelIds::eBonewerkz_8:
             case LevelIds::eBonewerkz_Ender_14:

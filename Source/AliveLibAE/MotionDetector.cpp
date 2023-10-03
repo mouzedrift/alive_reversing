@@ -461,10 +461,19 @@ void MotionDetector::vUpdate_468A90()
             pLaser->field_B8_xpos += pOwner->field_C4_velx;
 
             FP rangeX = FP_FromInteger(75);
-            if (pOwner->Type() == AETypes::eGreeter_64 && static_cast<Greeter*>(pOwner)->insaneGreeter)
+            if (pOwner->Type() == AETypes::eGreeter_64)
             {
-                rangeX = FP_FromInteger(250);
-                laserPauseTime = 1;
+                if (static_cast<Greeter*>(pOwner)->insaneGreeter)
+                {
+                    rangeX = FP_FromInteger(250);
+                    field_174_speed = FP_FromInteger(80);
+                    laserPauseTime = 1;
+                }
+                else
+                {
+                    rangeX = FP_FromInteger(75);
+                    field_174_speed = FP_FromInteger(2);
+                }
             }
 
             field_114_x1_fp = pOwner->field_B8_xpos - (field_CC_sprite_scale * rangeX);

@@ -19,6 +19,24 @@
 #include "Bullet.hpp"
 #include "Slurg.hpp"
 
+void Greeter::SetInsane(bool insane)
+{
+    insaneGreeter = insane;
+    if (insane)
+    {
+        SetRGB(200, 127, 127);
+        mPatrolSpeed = FP_FromInteger(9);
+        mChaseSpeed = FP_FromInteger(11);
+    }
+    else
+    {
+        SetRGB(127, 127, 127);
+        mPatrolSpeed = FP_FromInteger(3);
+        mChaseSpeed = FP_FromInteger(5);
+    }
+}
+
+
 EXPORT Greeter* Greeter::ctor_4465B0(Path_Greeter* pTlv, s32 tlvInfo)
 {
     ctor_408240(0);
@@ -28,14 +46,13 @@ EXPORT Greeter* Greeter::ctor_4465B0(Path_Greeter* pTlv, s32 tlvInfo)
     u8** ppRes = Add_Resource_4DC130(ResourceManager::Resource_Animation, rec.mResourceId);
     Animation_Init_424E10(rec.mFrameTableOffset, rec.mMaxW, rec.mMaxH, ppRes, 1, 1);
 
-    if (gMap_5C3030.field_0_current_level == LevelIds::eFeeCoDepot_Ender_12)
+    if (gMap_5C3030.field_0_current_level == LevelIds::eFeeCoDepot_Ender_12 && gMap_5C3030.field_2_current_path == 11 && SwitchStates_Get_466020(22))
     {
-        insaneGreeter = true;
+        SetInsane(true);
     }
-
-    if (insaneGreeter)
+    else
     {
-        SetRGB(200, 127, 127);
+        SetInsane(false);
     }
 
     field_DC_bApplyShadows |= 2u;
@@ -710,6 +727,11 @@ void Greeter::vUpdate_4469B0()
 
     UpdateSlurgWatchPoints();
 
+    if (gMap_5C3030.field_0_current_level == LevelIds::eFeeCoDepot_Ender_12 && gMap_5C3030.field_2_current_path == 11 && SwitchStates_Get_466020(22))
+    {
+        SetInsane(true);
+    }
+
     switch (field_13C_brain_state)
     {
         case GreeterBrainStates::eBrain_0_Patrol:
@@ -727,7 +749,7 @@ void Greeter::vUpdate_4469B0()
 
             if ((field_20_animation.field_4_flags.Get(AnimFlags::eBit5_FlipX)) == 0)
             {
-                const FP speed = insaneGreeter ? FP_FromInteger(9) : FP_FromInteger(3);
+                const FP speed = mPatrolSpeed;
                 field_C4_velx = -(field_CC_sprite_scale * speed);
                 if (field_13E_targetOnLeft)
                 {
@@ -743,7 +765,7 @@ void Greeter::vUpdate_4469B0()
             }
             else
             {
-                const FP speed = insaneGreeter ? FP_FromInteger(9) : FP_FromInteger(3);
+                const FP speed = mPatrolSpeed;
                 field_C4_velx = (field_CC_sprite_scale * speed);
                 if (field_140_targetOnRight)
                 {
@@ -818,7 +840,7 @@ void Greeter::vUpdate_4469B0()
                 SFX_Play_46FC20(SoundEffect::WheelSqueak_31, 10, soundDirection2, field_CC_sprite_scale);
             }
 
-            const FP speed = insaneGreeter ? FP_FromInteger(11) : FP_FromInteger(5);
+            const FP speed = mChaseSpeed;
             field_C4_velx = -(field_CC_sprite_scale * speed);
             if (field_20_animation.field_4_flags.Get(AnimFlags::eBit5_FlipX))
             {

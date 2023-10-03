@@ -1066,7 +1066,7 @@ void PauseMenu::Page_Main_Update_4903E0()
                 word12C_flags &= ~1u;
                 SFX_Play_46FBA0(SoundEffect::PossessEffect_17, 40, 2400);
                 GetSoundAPI().SND_Restart();
-                //Quicksave_4C90D0();
+                Quicksave_4C90D0();
 
                 if (sActiveHero_5C1B68)
                 {
@@ -1252,17 +1252,26 @@ void PauseMenu::Page_Save_Update_491210()
         strcat(savFileName, ".sav");
         if (access_impl(savFileName, 4) || bWriteSaveFile_5C937C) // check file is writable
         {
-            //Quicksave_4C90D0();
+            #ifdef _DEBUG
+            Quicksave_4C90D0();
+            #endif
+
             bWriteSaveFile_5C937C = false;
             FILE* hFile = fopen(savFileName, "wb");
             if (hFile)
             {
+                #ifdef _DEBUG
+                fwrite(&sActiveQuicksaveData_BAF7F8, sizeof(Quicksave), 1u, hFile);
+                fclose(hFile);
+                sSavedGameToLoadIdx_BB43FC = 0;
+                #else
                 if (sActiveHero_5C1B68)
                 {
                     fwrite(&sActiveHero_5C1B68->mCheckpointSave, sizeof(Quicksave), 1u, hFile);
                     fclose(hFile);
                     sSavedGameToLoadIdx_BB43FC = 0;
                 }
+                #endif
             }
             word12C_flags &= ~1u;
             SFX_Play_46FBA0(SoundEffect::PossessEffect_17, 40, 2400);

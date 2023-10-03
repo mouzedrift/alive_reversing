@@ -661,7 +661,9 @@ EXPORT void CC Quicksave_SaveToMemory_4C91A0(Quicksave* pSave)
 
 void CC Quicksave_4C90D0()
 {
-    //Game_ShowLoadingIcon_482D80();
+    #ifdef _DEBUG
+    Game_ShowLoadingIcon_482D80();
+    #endif
     pScreenManager_5BB5F4->InvalidateRect_40EC90(0, 0, 640, 240, 0);
     pScreenManager_5BB5F4->InvalidateRect_40EC90(0, 0, 640, 240, 1);
     pScreenManager_5BB5F4->InvalidateRect_40EC90(0, 0, 640, 240, 2);

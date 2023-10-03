@@ -89,6 +89,7 @@ public:
 
 
 private:
+    void SetInsane(bool insane);
     EXPORT s32 vGetSaveState_446400(Greeter_State* pState);
 
     void UpdateSlurgWatchPoints();
@@ -119,6 +120,9 @@ private:
     s16 field_132_padding;
     FP field_134_speed;
     Path_TLV* field_138_pTlv;
+    FP mPatrolSpeed;
+    FP mChaseSpeed;
+
 public:
     GreeterBrainStates field_13C_brain_state;
     s16 field_13E_targetOnLeft;

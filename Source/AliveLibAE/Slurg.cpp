@@ -12,6 +12,7 @@
 #include "ObjectIds.hpp"
 #include "PlatformBase.hpp"
 #include "Game.hpp"
+#include "Explosion.hpp"
 
 ALIVE_VAR(1, 0x5C1C08, u16, sSlurg_Step_Watch_Points_Idx_5C1C08, 0);
 ALIVE_ARY(1, 0x5BD4DC, s8, 2, sSlurg_Step_Watch_Points_Count_5BD4DC, {});
@@ -83,6 +84,7 @@ Slurg* Slurg::ctor_4C84E0(Path_Slurg* pTlv, u32 tlvInfo)
     field_120_delay_random = pTlv->field_10_slurg_data.field_0_moving_timer;
 
     SetTint_425600(&sSlurgTints_560BCC[0], gMap_5C3030.field_0_current_level);
+    SetRGB(250, 127, 127);
 
     FP hitX = {};
     FP hitY = {};
@@ -213,16 +215,22 @@ void Slurg::Burst_4C8AE0()
     const AnimRecord& animRec = AnimRec(AnimId::Slurg_Burst);
     field_20_animation.Set_Animation_Data_409C80(animRec.mFrameTableOffset, nullptr);
 
-    auto pBlood = ae_new<Blood>();
-    if (pBlood)
+    //auto pBlood = ae_new<Blood>();
+    //if (pBlood)
+    //{
+    //    pBlood->ctor_40F0B0(
+    //        field_B8_xpos,
+    //        field_BC_ypos,
+    //        FP_FromInteger(0),
+    //        FP_FromInteger(5),
+    //        field_130_scale,
+    //        20);
+    //}
+
+    auto pExplosion = ae_new<Explosion>();
+    if (pExplosion)
     {
-        pBlood->ctor_40F0B0(
-            field_B8_xpos,
-            field_BC_ypos,
-            FP_FromInteger(0),
-            FP_FromInteger(5),
-            field_130_scale,
-            20);
+        pExplosion->ctor_4A1200(field_B8_xpos, field_BC_ypos - FP_FromInteger(5), field_CC_sprite_scale, 1);
     }
 
     Event_Broadcast_422BC0(kEventLoudNoise, this);

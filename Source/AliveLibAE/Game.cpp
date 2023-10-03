@@ -459,6 +459,8 @@ EXPORT void CC Game_Free_LoadingIcon_482D40()
 extern bool gBootToLoadScreen;
 #endif
 
+extern bool gFullscreen;
+
 EXPORT void CC Game_Run_466D40()
 {
     // Begin start up
@@ -516,6 +518,20 @@ EXPORT void CC Game_Run_466D40()
     camera.dtor_480E00();
 
     Input_Init_491BC0();
+
+    if (gFullscreen)
+    {
+        const Uint32 flags = SDL_GetWindowFlags(Sys_GetWindowHandle_4EE180());
+        if (flags & SDL_WINDOW_FULLSCREEN_DESKTOP)
+        {
+            SDL_SetWindowFullscreen(Sys_GetWindowHandle_4EE180(), 0);
+        }
+        else
+        {
+            SDL_SetWindowFullscreen(Sys_GetWindowHandle_4EE180(), SDL_WINDOW_FULLSCREEN_DESKTOP);
+        }
+    }
+
     s16 cameraId = 25;
 #if DEVELOPER_MODE
     #if _WIN32

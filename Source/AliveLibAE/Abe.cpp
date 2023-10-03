@@ -2648,6 +2648,15 @@ void Abe::vOn_TLV_Collision_44B5D0(Path_TLV* pTlv)
             auto pContinuePoint = static_cast<Path_ContinuePoint*>(pTlv);
             if (pContinuePoint->field_12_save_file_id != mPrevCheckpointSaveId || mPrevCheckpointSaveId == 0)
             {
+                if (pContinuePoint->field_12_save_file_id == 3 &&
+                    !SwitchStates_Get_466020(15) &&
+                    gMap_5C3030.field_0_current_level == LevelIds::eFeeCoDepot_Ender_12 &&
+                    gMap_5C3030.field_2_current_path == 11 &&
+                    gMap_5C3030.field_4_current_camera == 0)
+                {
+                    continue;
+                }
+
                 if ((pContinuePoint->field_10_scale != Path_ContinuePoint::Scale::eHalf_1 || field_CC_sprite_scale == FP_FromInteger(1)) && (pContinuePoint->field_10_scale != Path_ContinuePoint::Scale::eFull_2 || field_CC_sprite_scale == FP_FromDouble(0.5))
                     && field_10C_health > FP_FromInteger(0) && !(field_114_flags.Get(Flags_114::e114_Bit7_Electrocuted)))
                 {
