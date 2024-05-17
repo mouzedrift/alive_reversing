@@ -717,6 +717,13 @@ void MainMenuTransition::VRender_436610(PrimHeader** ppOt)
     }
 }
 
+void Menu::InstantBoot()
+{
+    gMap_507BA8.SetActiveCam_444660(LevelIds::eRuptureFarms_1, 15, 1, CameraSwapEffects::eInstantChange_0, 0, 1);
+    field_6_flags.Set(BaseGameObject::eDead_Bit3);
+}
+
+
 Menu* Menu::ctor_47A6F0(Path_TLV* /*pTlv*/, s32 tlvInfo)
 {
     ctor_417C10();
@@ -778,17 +785,33 @@ Menu* Menu::ctor_47A6F0(Path_TLV* /*pTlv*/, s32 tlvInfo)
     field_1D4_tlvInfo = tlvInfo;
     field_1D8_timer = gnFrameCount_507670 + 150;
 
-    // copy right boot screen
-    field_1CC_fn_update = &Menu::CopyRight_Update_47B4C0;
-
-
-    // 1 == abe hello screen
-    if (gMap_507BA8.field_4_current_camera == 1)
+    static bool firstStart = true;
+    if (firstStart)
     {
-        field_1CC_fn_update = &Menu::WaitForDoorToOpen_47B550;
-        field_204_flags |= 2;
-        const AnimRecord& rec = AO::AnimRec(AnimId::MenuDoor);
-        field_10_anim.Set_Animation_Data_402A40(rec.mFrameTableOffset, field_E4_res_array[3]);
+        if (!sActiveHero_507678)
+        {
+            sActiveHero_507678 = ao_new<Abe>();
+            sActiveHero_507678->ctor_420770(55888, 85, 57, 55);
+        }
+
+        sActiveHero_507678->field_A8_xpos = FP_FromInteger(1378);
+        sActiveHero_507678->field_AC_ypos = FP_FromInteger(83);
+
+        gInfiniteGrenades_5076EC = FALSE;
+
+        field_1CC_fn_update = &Menu::InstantBoot;
+        firstStart = false;
+    }
+    else
+    {
+        // 1 == abe hello screen
+        if (gMap_507BA8.field_4_current_camera == 1)
+        {
+            field_1CC_fn_update = &Menu::WaitForDoorToOpen_47B550;
+            field_204_flags |= 2;
+            const AnimRecord& rec = AO::AnimRec(AnimId::MenuDoor);
+            field_10_anim.Set_Animation_Data_402A40(rec.mFrameTableOffset, field_E4_res_array[3]);
+        }
     }
 
     field_1D0_fn_render = &Menu::Empty_Render_47AC80;

@@ -162,6 +162,7 @@ union MenuOption
 class Menu final : public BaseAnimatedWithPhysicsGameObject
 {
 public:
+    void InstantBoot();
     EXPORT Menu* ctor_47A6F0(Path_TLV* pTlv, s32 tlvInfo);
 
     EXPORT BaseGameObject* dtor_47AAB0();
