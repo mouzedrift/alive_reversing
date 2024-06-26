@@ -521,7 +521,6 @@ void Abe::LoadAnimations()
 }
 
 Abe::Abe()
- : ::BaseAliveGameObject(0)
 {
     SetType(ReliveTypes::eAbe);
     SetSurviveDeathReset(true);
@@ -551,7 +550,7 @@ Abe::Abe()
     GetAnimation().SetSemiTrans(true);
     GetAnimation().SetBlendMode(relive::TBlendModes::eBlend_0);
 
-    field_110_state.raw = 0;
+    mStatesUnion.raw = 0;
     field_114_gnFrame = sGnFrame;
     SetCanBeesChase(true);
 
@@ -574,11 +573,11 @@ Abe::~Abe()
         mFadeId = Guid{};
     }
     
-    auto pThrowable1 = sObjectIds.Find_Impl(field_15C_pThrowable);
+    auto pThrowable1 = sObjectIds.Find_Impl(mSlapableOrPickupId);
     if (pThrowable1)
     {
         pThrowable1->SetDead(true);
-        field_15C_pThrowable = Guid{};
+        mSlapableOrPickupId = Guid{};
     }
 
     auto pPullRingRope = sObjectIds.Find_Impl(mPullRingRope);
@@ -808,12 +807,12 @@ void Abe::VUpdate()
 
             if (EventGet(Event::kEventMudokonDead))
             {
-                field_130_say = 16;
-                field_134_auto_say_timer = MakeTimer(Math_RandomRange(22, 30));
+                mSay = 16;
+                mAutoSayTimer = MakeTimer(Math_RandomRange(22, 30));
                 relive_new MusicTrigger(relive::Path_MusicTrigger::MusicTriggerMusicType::eDeathDrumShort, relive::Path_MusicTrigger::TriggeredBy::eTouching, 0, 90);
             }
 
-            if (field_130_say >= 0 && static_cast<s32>(sGnFrame) >= field_134_auto_say_timer)
+            if (mSay >= 0 && static_cast<s32>(sGnFrame) >= mAutoSayTimer)
             {
                 if (gMap.Is_Point_In_Current_Camera(
                         mCurrentLevel,
@@ -835,7 +834,7 @@ void Abe::VUpdate()
                         if (mCurrentMotion == eAbeMotions::Motion_0_Idle || mCurrentMotion == eAbeMotions::Motion_15_Null)
                         {
                             mbMotionChanged = true;
-                            if (field_130_say == 5 || field_130_say == 16)
+                            if (mSay == 5 || mSay == 16)
                             {
                                 mCurrentMotion = eAbeMotions::Motion_10_Speak;
                             }
@@ -844,14 +843,14 @@ void Abe::VUpdate()
                                 mCurrentMotion = eAbeMotions::Motion_9_Speak;
                             }
                         }
-                        if (field_130_say == 5)
+                        if (mSay == 5)
                         {
                             EventBroadcast(Event::kEventMudokonComfort, gAbe);
                         }
-                        Mudokon_SFX(static_cast<MudSounds>(field_130_say), 0, 0, this);
+                        Mudokon_SFX(static_cast<MudSounds>(mSay), 0, 0, this);
                     }
                 }
-                field_130_say = -1;
+                mSay = -1;
             }
 
             if (mParamoniaDone && mScrabaniaDone)
@@ -1060,11 +1059,11 @@ void Abe::ChangeChantState(bool bKeepChanting)
 {
     if (bKeepChanting)
     {
-        field_110_state.chant = ChantStates::eChantingForBirdPortal_6;
+        mStatesUnion.chant = ChantStates::eChantingForBirdPortal_6;
     }
     else
     {
-        field_110_state.chant = ChantStates::eIdleChanting_0;
+        mStatesUnion.chant = ChantStates::eIdleChanting_0;
     }
 }
 
@@ -1151,8 +1150,8 @@ void Abe::ToKnockback(s16 bKnockbackSound, s16 bDelayedAnger)
 
         if (bDelayedAnger)
         {
-            field_130_say = 5;
-            field_134_auto_say_timer = MakeTimer(27);
+            mSay = 5;
+            mAutoSayTimer = MakeTimer(27);
         }
 
         auto pThrowable = static_cast<::BaseThrowable*>(sObjectIds.Find_Impl(mThrowable));
@@ -1170,7 +1169,7 @@ void Abe::ToKnockback(s16 bKnockbackSound, s16 bDelayedAnger)
 
 void Abe::ToIdle()
 {
-    field_120_x_vel_slow_by = FP_FromInteger(0);
+    mFallMotionVelX = FP_FromInteger(0);
     mVelX = FP_FromInteger(0);
     mVelY = FP_FromInteger(0);
     field_114_gnFrame = sGnFrame;
@@ -1263,7 +1262,7 @@ void Abe::MoveForward()
         // TODO: OG bug, dead code due to switch default case ?
         if (mCurrentMotion == eAbeMotions::Motion_70_Knockback || mCurrentMotion == eAbeMotions::Motion_128_KnockForward)
         {
-            field_120_x_vel_slow_by = FP_FromDouble(0.67); // TODO: Check
+            mFallMotionVelX = FP_FromDouble(0.67); // TODO: Check
         }
     }
 }
@@ -1293,7 +1292,7 @@ eAbeMotions Abe::DoGameSpeak(u16 input)
     {
         field_114_gnFrame = MakeTimer(90);
         SND_SEQ_PlaySeq(SeqId::eMudokonChant1_11, 0, 1);
-        field_110_state.chant = ChantStates::eIdleChanting_0;
+        mStatesUnion.chant = ChantStates::eIdleChanting_0;
         return eAbeMotions::Motion_150_Chant;
     }
 
@@ -1403,8 +1402,8 @@ eAbeMotions Abe::DoGameSpeak(u16 input)
                     3,
                     RGB16{ 32, 128, 32 });
             }
-            field_130_say = 8;
-            field_134_auto_say_timer = MakeTimer(15);
+            mSay = 8;
+            mAutoSayTimer = MakeTimer(15);
             if (mCurrentMotion == eAbeMotions::Motion_10_Speak)
             {
                 mbMotionChanged = true;
@@ -1593,7 +1592,7 @@ void Abe::PickUpThrowabe_Or_PressBomb(FP fpX, s32 fpY, s16 bStandToCrouch)
                 if (yPos >= pAliveObj->mCollectionRect.y && yPos <= pAliveObj->mCollectionRect.h)
                 {
                     pSlapableOrCollectable = pAliveObj;
-                    field_15C_pThrowable = pSlapableOrCollectable->mBaseGameObjectId;
+                    mSlapableOrPickupId = pSlapableOrCollectable->mBaseGameObjectId;
                     break;
                 }
             }
@@ -1612,7 +1611,7 @@ void Abe::PickUpThrowabe_Or_PressBomb(FP fpX, s32 fpY, s16 bStandToCrouch)
                 mCurrentMotion = eAbeMotions::Motion_127_SlapBomb;
                 if (bStandToCrouch)
                 {
-                    field_15C_pThrowable = Guid{};
+                    mSlapableOrPickupId = Guid{};
                 }
                 tryToSlapOrCollect = true;
                 break;
@@ -1622,7 +1621,7 @@ void Abe::PickUpThrowabe_Or_PressBomb(FP fpX, s32 fpY, s16 bStandToCrouch)
             case ReliveTypes::eRock:
             {
                 mCurrentMotion = eAbeMotions::Motion_149_PickupItem;
-                auto pThrowable = static_cast<::BaseThrowable*>(sObjectIds.Find_Impl(field_15C_pThrowable));
+                auto pThrowable = static_cast<::BaseThrowable*>(sObjectIds.Find_Impl(mSlapableOrPickupId));
                 field_19C_throwable_count += static_cast<s8>(pThrowable->VGetCount());
 
                 if (!gThrowableIndicatorExists)
@@ -1641,7 +1640,7 @@ void Abe::PickUpThrowabe_Or_PressBomb(FP fpX, s32 fpY, s16 bStandToCrouch)
             }
 
             case ReliveTypes::eMine:
-                field_15C_pThrowable = Guid{};
+                mSlapableOrPickupId = Guid{};
                 tryToSlapOrCollect = true;
                 break;
 
@@ -1655,11 +1654,11 @@ void Abe::PickUpThrowabe_Or_PressBomb(FP fpX, s32 fpY, s16 bStandToCrouch)
             {
                 if (bStandToCrouch)
                 {
-                    auto pThrowable = static_cast<::BaseThrowable*>(sObjectIds.Find_Impl(field_15C_pThrowable));
+                    auto pThrowable = static_cast<::BaseThrowable*>(sObjectIds.Find_Impl(mSlapableOrPickupId));
 
                     SfxPlayMono(relive::SoundEffects::PickupItem, 0, GetSpriteScale());
                     pThrowable->VOnAbeInteraction();
-                    field_15C_pThrowable = Guid{};
+                    mSlapableOrPickupId = Guid{};
                     mCurrentMotion = eAbeMotions::Motion_19_CrouchIdle;
                 }
             }
@@ -1740,9 +1739,9 @@ void Abe::CrouchingGameSpeak()
                     3,
                     RGB16{ 32, 128, 32 });
             }
-            field_130_say = 8;
+            mSay = 8;
             mCurrentMotion = eAbeMotions::Motion_22_CrouchSpeak;
-            field_134_auto_say_timer = MakeTimer(15);
+            mAutoSayTimer = MakeTimer(15);
         }
     }
 }
@@ -2199,7 +2198,7 @@ s16 Abe::RunTryEnterDoor()
     }
 
     BaseAliveGameObjectPathTLV = pDoorTlv;
-    field_110_state.raw = 0;
+    mStatesUnion.raw = 0;
     mCurrentMotion = eAbeMotions::Motion_156_DoorEnter;
     mXPos = FP_FromInteger((pDoorTlv->mBottomRightX + pDoorTlv->mTopLeftX) / 2);
     MapFollowMe(true);
@@ -2327,8 +2326,8 @@ void Abe::VOnTlvCollision(relive::Path_TLV* pTlv)
                 mAbeRespawnFlipX = pContinuePointTlv->mAbeSpawnDir == relive::Path_ContinuePoint::spawnDirection::eLeft;
 
                 const s32 bHaveShry = mRingPulseTimer - sGnFrame;
-                field_150_saved_ring_timer = bHaveShry < 0 ? 0 : bHaveShry;
-                field_154_bSavedHaveShrykull = mHaveShrykull;
+                mSavedRingTimer = bHaveShry < 0 ? 0 : bHaveShry;
+                mSavedHaveShrykull = mHaveShrykull;
 
                 mContinuePointLevel = gMap.mCurrentLevel;
                 mContinuePointPath = gMap.mCurrentPath;
@@ -2486,8 +2485,8 @@ bool Abe::VTakeDamage(BaseGameObject* pFrom)
 {
     SND_SEQ_Stop(SeqId::eMudokonChant1_11);
 
-    const auto old_say = field_130_say;
-    field_130_say = -1;
+    const auto old_say = mSay;
+    mSay = -1;
 
     auto pOrbWhirlWind = static_cast<OrbWhirlWind*>(sObjectIds.Find_Impl(mOrbWhirlWindId));
     if (pOrbWhirlWind)
@@ -2638,8 +2637,8 @@ bool Abe::VTakeDamage(BaseGameObject* pFrom)
 
         case ReliveTypes::eSecurityClaw:
         case ReliveTypes::eSecurityOrb:
-            field_130_say = 5;
-            field_134_auto_say_timer = MakeTimer(27);
+            mSay = 5;
+            mAutoSayTimer = MakeTimer(27);
             // The zap makes Abe drop his stuff everywhere
             for (s32 i = 0; i < field_19C_throwable_count; i++)
             {
@@ -2926,7 +2925,7 @@ bool Abe::VTakeDamage(BaseGameObject* pFrom)
             BulletDamage(static_cast<Bullet*>(pFrom));
             if (!mbGotShot)
             {
-                field_130_say = old_say;
+                mSay = old_say;
                 oldHp = FP_FromInteger(0);
             }
             break;
@@ -3021,7 +3020,7 @@ void Abe::Motion_0_Idle()
             mCurrentMotion = eAbeMotions::Motion_150_Chant;
             SND_SEQ_PlaySeq(SeqId::eMudokonChant1_11, 0, 1);
         }
-        field_110_state.raw = 0;
+        mStatesUnion.raw = 0;
         return;
     }
     if (Input().IsAnyHeld(InputCommands::eLeftGameSpeak | InputCommands::eRightGameSpeak))
@@ -3043,10 +3042,10 @@ void Abe::Motion_0_Idle()
         else if (!Input().IsAnyHeld(InputCommands::eLeftGameSpeak | InputCommands::eRightGameSpeak))
         {
             mCurrentMotion = eAbeMotions::Motion_29_HopBegin;
-            field_1A0_portal = VIntoBirdPortal(2);
-            if (field_1A0_portal)
+            mBirdPortalId = VIntoBirdPortal(2);
+            if (mBirdPortalId)
             {
-                field_19E_portal_sub_state = PortalSubStates::eJumpingInsidePortal_0;
+                mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
             }
         }
         return;
@@ -3167,7 +3166,7 @@ void Abe::Motion_0_Idle()
                     if (NearDoorIsOpen() && !GetElectrocuted())
                     {
                         BaseAliveGameObjectPathTLV = pTlv;
-                        field_110_state.raw = 0;
+                        mStatesUnion.raw = 0;
                         mCurrentMotion = eAbeMotions::Motion_156_DoorEnter;
                     }
                     else
@@ -3212,7 +3211,7 @@ void Abe::Motion_0_Idle()
                 {
                     BaseAliveGameObjectPathTLV = pTlv;
                     mCurrentMotion = eAbeMotions::Motion_88_HandstoneBegin;
-                    field_110_state.stone = StoneStates::eHandstoneStart_0;
+                    mStatesUnion.stone = StoneStates::eHandstoneStart_0;
                     return;
                 }
                 case ReliveTypes::eBoomMachine:
@@ -3580,7 +3579,7 @@ void Abe::Motion_3_Fall()
 {
     if (mVelX > FP_FromInteger(0))
     {
-        mVelX -= (GetSpriteScale() * field_120_x_vel_slow_by);
+        mVelX -= (GetSpriteScale() * mFallMotionVelX);
         if (mVelX < FP_FromInteger(0))
         {
             mVelX = FP_FromInteger(0);
@@ -3588,7 +3587,7 @@ void Abe::Motion_3_Fall()
     }
     else if (mVelX < FP_FromInteger(0))
     {
-        mVelX += (GetSpriteScale() * field_120_x_vel_slow_by);
+        mVelX += (GetSpriteScale() * mFallMotionVelX);
         if (mVelX > FP_FromInteger(0))
         {
             mVelX = FP_FromInteger(0);
@@ -3780,10 +3779,10 @@ void Abe::Motion_4_WalkToIdle()
                 mNextMotion = eAbeMotions::Motion_0_Idle;
                 mCurrentMotion = eAbeMotions::Motion_29_HopBegin;
 
-                field_1A0_portal = VIntoBirdPortal(2);
-                if (field_1A0_portal)
+                mBirdPortalId = VIntoBirdPortal(2);
+                if (mBirdPortalId)
                 {
-                    field_19E_portal_sub_state = PortalSubStates::eJumpingInsidePortal_0;
+                    mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
                 }
             }
             else
@@ -3814,10 +3813,10 @@ void Abe::Motion_5_MidWalkToIdle()
             {
                 mNextMotion = eAbeMotions::Motion_0_Idle;
                 mCurrentMotion = eAbeMotions::Motion_29_HopBegin;
-                field_1A0_portal = VIntoBirdPortal(2);
-                if (field_1A0_portal)
+                mBirdPortalId = VIntoBirdPortal(2);
+                if (mBirdPortalId)
                 {
-                    field_19E_portal_sub_state = PortalSubStates::eJumpingInsidePortal_0;
+                    mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
                 }
             }
             else
@@ -4074,10 +4073,10 @@ void Abe::Motion_18_HoistLand()
             else
             {
                 mCurrentMotion = eAbeMotions::Motion_29_HopBegin;
-                field_1A0_portal = VIntoBirdPortal(2);
-                if (field_1A0_portal)
+                mBirdPortalId = VIntoBirdPortal(2);
+                if (mBirdPortalId)
                 {
-                    field_19E_portal_sub_state = PortalSubStates::eJumpingInsidePortal_0;
+                    mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
                 }
             }
         }
@@ -4530,7 +4529,7 @@ void Abe::Motion_29_HopBegin()
         const FP velX = GetSpriteScale() * (GetAnimation().GetFlipX() ? FP_FromInteger(-17) : FP_FromInteger(17));
         mVelX = velX;
 
-        if (!field_1A0_portal)
+        if (!mBirdPortalId)
         {
             if (WallHit(GetSpriteScale() * FP_FromInteger(50), mVelX))
             {
@@ -4560,12 +4559,12 @@ void Abe::Motion_29_HopBegin()
         mCurrentMotion = eAbeMotions::Motion_30_HopMid;
         BaseAliveGameObjectCollisionLine = nullptr;
 
-        if (!field_1A0_portal)
+        if (!mBirdPortalId)
         {
-            field_1A0_portal = VIntoBirdPortal(2);
-            if (field_1A0_portal)
+            mBirdPortalId = VIntoBirdPortal(2);
+            if (mBirdPortalId)
             {
-                field_19E_portal_sub_state = PortalSubStates::eJumpingInsidePortal_0;
+                mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
             }
         }
     }
@@ -4573,19 +4572,19 @@ void Abe::Motion_29_HopBegin()
 
 void Abe::IntoPortalStates()
 {
-    switch (field_19E_portal_sub_state)
+    switch (mBirdPortalSubState)
     {
         case PortalSubStates::eJumpingInsidePortal_0:
         {
             PSX_RECT bRect = VGetBoundingRect();
-            if ((mVelX > FP_FromInteger(0) && FP_FromInteger(bRect.x) > field_1A0_portal->mXPos) || (mVelX < FP_FromInteger(0) && FP_FromInteger(bRect.w) < field_1A0_portal->mXPos))
+            if ((mVelX > FP_FromInteger(0) && FP_FromInteger(bRect.x) > mBirdPortalId->mXPos) || (mVelX < FP_FromInteger(0) && FP_FromInteger(bRect.w) < mBirdPortalId->mXPos))
             {
                 GetAnimation().SetRender(false);
                 mVelY = FP_FromInteger(0);
                 mVelX = FP_FromInteger(0);
-                field_1A0_portal->DestroyPortalClippers();
-                field_1A0_portal->VGiveShrykull(true);
-                field_19E_portal_sub_state = PortalSubStates::eSetNewActiveCamera_1;
+                mBirdPortalId->DestroyPortalClippers();
+                mBirdPortalId->VGiveShrykull(true);
+                mBirdPortalSubState = PortalSubStates::eSetNewActiveCamera_1;
             }
             mVelY += GetSpriteScale() * FP_FromDouble(1.8);
             mXPos += mVelX;
@@ -4594,49 +4593,49 @@ void Abe::IntoPortalStates()
         }
         case PortalSubStates::eSetNewActiveCamera_1:
         {
-            if (field_1A0_portal->IsAbeInsidePortalState())
+            if (mBirdPortalId->IsAbeInsidePortalState())
             {
                 EReliveLevelIds level = {};
                 u16 path = 0;
                 u16 camera = 0;
                 CameraSwapEffects screenChangeEffect = {};
                 u16 movieId = 0;
-                field_1A0_portal->VGetMapChange(&level, &path, &camera, &screenChangeEffect, &movieId);
+                mBirdPortalId->VGetMapChange(&level, &path, &camera, &screenChangeEffect, &movieId);
                 gMap.SetActiveCam(level, path, camera, screenChangeEffect, movieId, false);
-                field_19E_portal_sub_state = PortalSubStates::eSetNewAbePosition_4;
+                mBirdPortalSubState = PortalSubStates::eSetNewAbePosition_4;
             }
             break;
         }
         case PortalSubStates::eHopOutOfPortal_2:
         {
-            if (field_1A0_portal->IsAbExittingPortalState())
+            if (mBirdPortalId->IsAbExittingPortalState())
             {
-                field_1A0_portal->ClipPortal(0);
+                mBirdPortalId->ClipPortal(0);
                 GetAnimation().SetRender(true);
                 mCurrentMotion = eAbeMotions::Motion_29_HopBegin;
-                field_1A0_portal->RemovePortalClipperDelayed();
-                field_1A0_portal = 0;
+                mBirdPortalId->RemovePortalClipperDelayed();
+                mBirdPortalId = 0;
             }
             break;
         }
         case PortalSubStates::eSetNewAbePosition_4:
         {
-            field_1A0_portal->VExitPortal();
-            field_19E_portal_sub_state = PortalSubStates::eHopOutOfPortal_2;
-            GetAnimation().SetFlipX(field_1A0_portal->mEnterSide == relive::Path_BirdPortal::PortalSide::eLeft);
+            mBirdPortalId->VExitPortal();
+            mBirdPortalSubState = PortalSubStates::eHopOutOfPortal_2;
+            GetAnimation().SetFlipX(mBirdPortalId->mEnterSide == relive::Path_BirdPortal::PortalSide::eLeft);
 
             if (GetAnimation().GetFlipX())
             {
-                mXPos = ScaleToGridSize(GetSpriteScale()) + field_1A0_portal->mExitX;
+                mXPos = ScaleToGridSize(GetSpriteScale()) + mBirdPortalId->mExitX;
             }
             else
             {
-                mXPos = field_1A0_portal->mExitX - ScaleToGridSize(GetSpriteScale());
+                mXPos = mBirdPortalId->mExitX - ScaleToGridSize(GetSpriteScale());
             }
 
-            mYPos = field_1A0_portal->mExitY;
+            mYPos = mBirdPortalId->mExitY;
             mVelY = FP_FromInteger(0);
-            field_120_x_vel_slow_by = FP_FromInteger(0);
+            mFallMotionVelX = FP_FromInteger(0);
             break;
         }
         default:
@@ -4646,7 +4645,7 @@ void Abe::IntoPortalStates()
 
 void Abe::Motion_30_HopMid()
 {
-    if (field_1A0_portal)
+    if (mBirdPortalId)
     {
         IntoPortalStates();
     }
@@ -4728,7 +4727,7 @@ void Abe::Motion_30_HopMid()
                     {
                         mXPos -= GetSpriteScale() * FP_FromInteger(5);
                     }
-                    field_120_x_vel_slow_by = FP_FromDouble(0.55);
+                    mFallMotionVelX = FP_FromDouble(0.55);
                     mYPos += GetSpriteScale() * FP_FromInteger(2);
                     mCurrentMotion = eAbeMotions::Motion_96_HopToFall;
                     mNextMotion = eAbeMotions::Motion_0_Idle;
@@ -4808,7 +4807,7 @@ void Abe::Motion_33_RunJumpMid()
     EventBroadcast(Event::kEventNoise, this);
     EventBroadcast(Event::kEventSuspiciousNoise, this);
 
-    if (field_1A0_portal)
+    if (mBirdPortalId)
     {
         IntoPortalStates();
         return;
@@ -4956,7 +4955,7 @@ void Abe::Motion_33_RunJumpMid()
     {
         if (mCurrentMotion == eAbeMotions::Motion_33_RunJumpMid)
         {
-            field_120_x_vel_slow_by = FP_FromDouble(0.75);
+            mFallMotionVelX = FP_FromDouble(0.75);
             mCurrentMotion = eAbeMotions::Motion_97_RunJumpToFall;
             mNextMotion = eAbeMotions::Motion_0_Idle;
         }
@@ -5006,10 +5005,10 @@ void Abe::Motion_34_RunJumpLand()
                 return;
             }
 
-            field_1A0_portal = VIntoBirdPortal(3);
-            if (field_1A0_portal)
+            mBirdPortalId = VIntoBirdPortal(3);
+            if (mBirdPortalId)
             {
-                field_19E_portal_sub_state = PortalSubStates::eJumpingInsidePortal_0;
+                mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
             }
 
             mCurrentMotion = eAbeMotions::Motion_32_RunJumpBegin;
@@ -5021,10 +5020,10 @@ void Abe::Motion_34_RunJumpLand()
         {
             if (InputCommands::eHop & field_10C_prev_held)
             {
-                field_1A0_portal = VIntoBirdPortal(3);
-                if (field_1A0_portal)
+                mBirdPortalId = VIntoBirdPortal(3);
+                if (mBirdPortalId)
                 {
-                    field_19E_portal_sub_state = PortalSubStates::eJumpingInsidePortal_0;
+                    mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
                 }
 
                 mCurrentMotion = eAbeMotions::Motion_32_RunJumpBegin;
@@ -5076,10 +5075,10 @@ void Abe::Motion_34_RunJumpLand()
                 return;
             }
 
-            field_1A0_portal = VIntoBirdPortal(3);
-            if (field_1A0_portal)
+            mBirdPortalId = VIntoBirdPortal(3);
+            if (mBirdPortalId)
             {
-                field_19E_portal_sub_state = PortalSubStates::eJumpingInsidePortal_0;
+                mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
             }
 
             mCurrentMotion = eAbeMotions::Motion_29_HopBegin;
@@ -5092,10 +5091,10 @@ bool Abe::CheckForPortalAndRunJump()
 {
     if (field_10C_prev_held & InputCommands::eHop)
     {
-        field_1A0_portal = VIntoBirdPortal(3);
-        if (field_1A0_portal)
+        mBirdPortalId = VIntoBirdPortal(3);
+        if (mBirdPortalId)
         {
-            field_19E_portal_sub_state = PortalSubStates::eJumpingInsidePortal_0;
+            mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
         }
 
         mCurrentMotion = eAbeMotions::Motion_32_RunJumpBegin;
@@ -5853,7 +5852,7 @@ void Abe::Motion_59_DeathDropFall()
 
     if (field_114_gnFrame == 0)
     {
-        field_120_x_vel_slow_by = FP_FromInteger(0);
+        mFallMotionVelX = FP_FromInteger(0);
         mVelX = FP_FromInteger(0);
         mVelY = FP_FromInteger(0);
         field_118_timer = MakeTimer(90);
@@ -5893,7 +5892,7 @@ void Abe::Motion_60_Dead()
         {
             EventBroadcast(Event::kEventHeroDying, this);
             field_118_timer = MakeTimer(30);
-            field_120_x_vel_slow_by = FP_FromInteger(0);
+            mFallMotionVelX = FP_FromInteger(0);
             mVelX = FP_FromInteger(0);
             mVelY = FP_FromInteger(0);
             field_10C_prev_held = 0;
@@ -6038,7 +6037,7 @@ void Abe::Motion_60_Dead()
                 {
                     mRingPulseTimer = 0;
                 }
-                field_130_say = -1;
+                mSay = -1;
                 GetShadow()->mEnabled = false;
             }
             return;
@@ -6248,7 +6247,7 @@ void Abe::Motion_62_LoadedSaveSpawn()
 
     if (field_114_gnFrame)
     {
-        auto pSaveData = field_2AC_pSaveData;
+        auto pSaveData = mSaveData;
         mYPos = FP_FromInteger(pSaveData->mAbe_YPos);
         mXPos = FP_FromInteger(pSaveData->mAbe_XPos);
 
@@ -6275,7 +6274,7 @@ void Abe::Motion_62_LoadedSaveSpawn()
         }
         gAbe->mLandSoft = false;
         gAbe->BaseAliveGameObjectLastLineYPos = gAbe->mYPos;
-        gAbe->field_110_state.raw = static_cast<s16>(pSaveData->mAbe_StoneState);
+        gAbe->mStatesUnion.raw = static_cast<s16>(pSaveData->mAbe_StoneState);
         gAbe->field_114_gnFrame = pSaveData->mAbe_GnFrame;
         gAbe->mBaseAliveGameObjectLastAnimFrame = pSaveData->mAbe_CurrentFrame;
         gAbe->GetAnimation().SetFlipX(pSaveData->mAbe_FlipX & 1);
@@ -6587,10 +6586,10 @@ void Abe::Motion_70_Knockback()
 {
     ElumFree();
 
-    if (field_1A0_portal)
+    if (mBirdPortalId)
     {
-        field_1A0_portal->DestroyPortalClippers();
-        field_1A0_portal = nullptr;
+        mBirdPortalId->DestroyPortalClippers();
+        mBirdPortalId = nullptr;
     }
 
     if (GetAnimation().GetCurrentFrame() == 12)
@@ -6847,7 +6846,7 @@ void Abe::Motion_78_InsideWellLocal()
 
         auto pWellBase = static_cast<relive::Path_WellBase*>(BaseAliveGameObjectPathTLV);
 
-        field_120_x_vel_slow_by = FP_FromInteger(0);
+        mFallMotionVelX = FP_FromInteger(0);
 
         if (mSnapAbe)
         {
@@ -6985,24 +6984,24 @@ void Abe::Motion_81_InsideWellExpress()
     relive::Path_WellExpress* pExpressWell = static_cast<relive::Path_WellExpress*>(BaseAliveGameObjectPathTLV);
     if (SwitchStates_Get(pExpressWell->mSwitchId))
     {
-        field_190_level = pExpressWell->mOnDestLevel;
-        field_192_path = pExpressWell->mOnDestPath;
-        field_194_camera = pExpressWell->mOnDestCamera;
-        field_196_door_id = pExpressWell->mOnOtherWellId;
+        mDstWellLevel = pExpressWell->mOnDestLevel;
+        mDstWellPath = pExpressWell->mOnDestPath;
+        mDstWellCamera = pExpressWell->mOnDestCamera;
+        mObjectIdInCam = pExpressWell->mOnOtherWellId;
     }
     else
     {
-        field_190_level = pExpressWell->mOffDestLevel;
-        field_192_path = pExpressWell->mOffDestPath;
-        field_194_camera = pExpressWell->mOffDestCamera;
-        field_196_door_id = pExpressWell->mOffOtherWellId;
+        mDstWellLevel = pExpressWell->mOffDestLevel;
+        mDstWellPath = pExpressWell->mOffDestPath;
+        mDstWellCamera = pExpressWell->mOffDestCamera;
+        mObjectIdInCam = pExpressWell->mOffOtherWellId;
     }
 
-    field_120_x_vel_slow_by = FP_FromInteger(0);
+    mFallMotionVelX = FP_FromInteger(0);
 
     if (gMap.mCurrentLevel == EReliveLevelIds::eLines)
     {
-        if (field_190_level == EReliveLevelIds::eForest)
+        if (mDstWellLevel == EReliveLevelIds::eForest)
         {
             if (mParamoniaDone)
             {
@@ -7016,7 +7015,7 @@ void Abe::Motion_81_InsideWellExpress()
             mParamoniaDone = true;
         }
 
-        if (field_190_level == EReliveLevelIds::eDesert)
+        if (mDstWellLevel == EReliveLevelIds::eDesert)
         {
             if (mScrabaniaDone)
             {
@@ -7030,18 +7029,18 @@ void Abe::Motion_81_InsideWellExpress()
             mScrabaniaDone = true;
         }
     }
-    if (field_190_level != gMap.mCurrentLevel
-        || field_192_path != gMap.mCurrentPath
-        || field_194_camera != gMap.mCurrentCamera)
+    if (mDstWellLevel != gMap.mCurrentLevel
+        || mDstWellPath != gMap.mCurrentPath
+        || mDstWellCamera != gMap.mCurrentCamera)
     {
         field_114_gnFrame = 1;
         if (pExpressWell->mMovieId)
         {
-            gMap.SetActiveCam(field_190_level, field_192_path, field_194_camera, CameraSwapEffects::ePlay1FMV_5, pExpressWell->mMovieId, 0);
+            gMap.SetActiveCam(mDstWellLevel, mDstWellPath, mDstWellCamera, CameraSwapEffects::ePlay1FMV_5, pExpressWell->mMovieId, 0);
         }
         else
         {
-            gMap.SetActiveCam(field_190_level, field_192_path, field_194_camera, CameraSwapEffects::eInstantChange_0, 0, 0);
+            gMap.SetActiveCam(mDstWellLevel, mDstWellPath, mDstWellCamera, CameraSwapEffects::eInstantChange_0, 0, 0);
         }
         mCurrentMotion = eAbeMotions::Motion_82_WellExpressShotOut;
     }
@@ -7075,7 +7074,7 @@ void Abe::Motion_82_WellExpressShotOut()
             break;
         }
 
-        if ((pTlvIter->mTlvType == ReliveTypes::eWellLocal || pTlvIter->mTlvType == ReliveTypes::eWellExpress) && static_cast<relive::Path_WellBase*>(pTlvIter)->mOtherWellId == field_196_door_id)
+        if ((pTlvIter->mTlvType == ReliveTypes::eWellLocal || pTlvIter->mTlvType == ReliveTypes::eWellExpress) && static_cast<relive::Path_WellBase*>(pTlvIter)->mOtherWellId == mObjectIdInCam)
         {
             pWell = static_cast<relive::Path_WellBase*>(pTlvIter);
             break;
@@ -7164,7 +7163,7 @@ BellSong* sBellSong = nullptr;
 
 void Abe::Motion_88_HandstoneBegin()
 {
-    switch (field_110_state.stone)
+    switch (mStatesUnion.stone)
     {
         case StoneStates::eHandstoneStart_0:
         {
@@ -7180,7 +7179,7 @@ void Abe::Motion_88_HandstoneBegin()
                 mCircularFadeId = pCircularFade->mBaseGameObjectId;
                 pCircularFade->GetAnimation().SetFlipX(GetAnimation().GetFlipX());
 
-                field_110_state.stone = StoneStates::eGetHandstoneType_1;
+                mStatesUnion.stone = StoneStates::eGetHandstoneType_1;
                 SfxPlayMono(relive::SoundEffects::IngameTransition, 90);
                 BaseAliveGameObjectPathTLV = gMap.VTLV_Get_At_Of_Type(
                     FP_GetExponent(mXPos),
@@ -7265,7 +7264,7 @@ void Abe::Motion_88_HandstoneBegin()
 
                         relive_new Movie(pFmvInfo->field_0_pName);
 
-                        field_110_state.stone = StoneStates::eHandstoneMovieDone_2;
+                        mStatesUnion.stone = StoneStates::eHandstoneMovieDone_2;
                         break;
                     }
                     case ReliveTypes::eBellSongStone:
@@ -7275,7 +7274,7 @@ void Abe::Motion_88_HandstoneBegin()
                             Code_Convert(mBellsongStone->mCode1, mBellsongStone->mCode2));
 
                         SwitchStates_Do_Operation(mBellsongStone->mSwitchId, relive::reliveSwitchOp::eSetTrue);
-                        field_110_state.stone = StoneStates::eBellSongDone_4;
+                        mStatesUnion.stone = StoneStates::eBellSongDone_4;
                         break;
                     }
                     case ReliveTypes::eDemoPlaybackStone:
@@ -7293,7 +7292,7 @@ void Abe::Motion_88_HandstoneBegin()
                     case ReliveTypes::eHandStone:
                     {
                         GetAnimation().SetRender(false);
-                        field_110_state.stone = StoneStates::eWaitForInput_6;
+                        mStatesUnion.stone = StoneStates::eWaitForInput_6;
                         field_16E_cameraIdx = 1;
                         pCircularFade->SetDead(true);
                         mCircularFadeId = Guid{};
@@ -7302,9 +7301,9 @@ void Abe::Motion_88_HandstoneBegin()
                         {
                             mFadeId = pFade->mBaseGameObjectId;
                         }
-                        field_190_level = gMap.mCurrentLevel;
-                        field_192_path = gMap.mCurrentPath;
-                        field_194_camera = gMap.mCurrentCamera;
+                        mDstWellLevel = gMap.mCurrentLevel;
+                        mDstWellPath = gMap.mCurrentPath;
+                        mDstWellCamera = gMap.mCurrentCamera;
                         gMap.SetActiveCam(
                             mHandStone->mLevel1,
                             mHandStone->mPath1,
@@ -7327,7 +7326,7 @@ void Abe::Motion_88_HandstoneBegin()
                 gScreenManager->EnableRendering();
                 auto pCircularFade = static_cast<CircularFade*>(sObjectIds.Find_Impl(mCircularFadeId));
                 pCircularFade->VFadeIn(0, 0);
-                field_110_state.stone = StoneStates::eHandstoneEnd_5;
+                mStatesUnion.stone = StoneStates::eHandstoneEnd_5;
             }
             break;
         }
@@ -7336,7 +7335,7 @@ void Abe::Motion_88_HandstoneBegin()
             gCounter_507728--;
             if (gCounter_507728 == 0)
             {
-                field_110_state.stone = StoneStates::eHandstoneEnd_5;
+                mStatesUnion.stone = StoneStates::eHandstoneEnd_5;
                 auto pCircularFade = relive_new CircularFade(
                     mXPos,
                     mYPos,
@@ -7355,7 +7354,7 @@ void Abe::Motion_88_HandstoneBegin()
                 sBellSong->SetDead(true);
                 auto pCircularFade = static_cast<CircularFade*>(sObjectIds.Find_Impl(mCircularFadeId));
                 pCircularFade->VFadeIn(0, 0);
-                field_110_state.stone = StoneStates::eHandstoneEnd_5;
+                mStatesUnion.stone = StoneStates::eHandstoneEnd_5;
             }
             break;
         }
@@ -7382,7 +7381,7 @@ void Abe::Motion_88_HandstoneBegin()
                 if (Input().IsAnyPressed(InputCommands::eHop | InputCommands::eThrowItem | InputCommands::eCrouchOrRoll | InputCommands::eDoAction))
                 {
                     pFade->Init(Layer::eLayer_FadeFlash_40, FadeOptions::eFadeIn, 0, 8);
-                    field_110_state.stone = StoneStates::eSetActiveCamToAbeOrWaitForInput_7;
+                    mStatesUnion.stone = StoneStates::eSetActiveCamToAbeOrWaitForInput_7;
                     SfxPlayMono(relive::SoundEffects::IngameTransition, 90);
                 }
             }
@@ -7419,12 +7418,12 @@ void Abe::Motion_88_HandstoneBegin()
                 }
                 if (field_16E_cameraIdx > 2 || (camera.level == LevelIds::eForestChase_14 || camera.level == LevelIds::eDesertEscape_15))
                 {
-                    field_110_state.stone = StoneStates::eSetActiveCamToAbe_12;
+                    mStatesUnion.stone = StoneStates::eSetActiveCamToAbe_12;
                 }
                 else
                 {
                     pFade->SetDead(true);
-                    field_110_state.stone = StoneStates::eWaitForInput_6;
+                    mStatesUnion.stone = StoneStates::eWaitForInput_6;
                     field_16E_cameraIdx++;
                     pFade = relive_new Fade(Layer::eLayer_FadeFlash_40, FadeOptions::eFadeOut, 0, 8, relive::TBlendModes::eBlend_2);
                     mFadeId = pFade->mBaseGameObjectId;
@@ -7439,8 +7438,8 @@ void Abe::Motion_88_HandstoneBegin()
             if (pFade && pFade->mDone)
             {
                 GetAnimation().SetRender(true);
-                field_110_state.stone = StoneStates::eCircularFadeExit_13;
-                gMap.SetActiveCam(field_190_level, field_192_path, field_194_camera, CameraSwapEffects::eInstantChange_0, 0, 0);
+                mStatesUnion.stone = StoneStates::eCircularFadeExit_13;
+                gMap.SetActiveCam(mDstWellLevel, mDstWellPath, mDstWellCamera, CameraSwapEffects::eInstantChange_0, 0, 0);
             }
             break;
         }
@@ -7451,7 +7450,7 @@ void Abe::Motion_88_HandstoneBegin()
 
             auto pCircularFade = relive_new CircularFade(mXPos, mYPos, GetSpriteScale(), 0, 0);
             mCircularFadeId = pCircularFade->mBaseGameObjectId;
-            field_110_state.stone = StoneStates::eHandstoneEnd_5;
+            mStatesUnion.stone = StoneStates::eHandstoneEnd_5;
             pCircularFade->GetAnimation().SetFlipX(GetAnimation().GetFlipX());
 
             if (sAbeSound_507730)
@@ -7830,11 +7829,11 @@ void Abe::Motion_127_SlapBomb()
 {
     if (gAbe->GetAnimation().GetCurrentFrame() >= 6)
     {
-        auto pThrowable = static_cast<::BaseThrowable*>(sObjectIds.Find_Impl(field_15C_pThrowable));
+        auto pThrowable = static_cast<::BaseThrowable*>(sObjectIds.Find_Impl(mSlapableOrPickupId));
         if (pThrowable)
         {
             pThrowable->VOnAbeInteraction();
-            field_15C_pThrowable = Guid{};
+            mSlapableOrPickupId = Guid{};
         }
     }
 
@@ -8411,11 +8410,11 @@ void Abe::Motion_149_PickupItem()
 
     if (gAbe->GetAnimation().GetCurrentFrame() >= 5)
     {
-        auto pThrowable = static_cast<::BaseThrowable*>(sObjectIds.Find_Impl(field_15C_pThrowable));
+        auto pThrowable = static_cast<::BaseThrowable*>(sObjectIds.Find_Impl(mSlapableOrPickupId));
         if (pThrowable)
         {
             pThrowable->VOnAbeInteraction();
-            field_15C_pThrowable = Guid{};
+            mSlapableOrPickupId = Guid{};
         }
     }
 }
@@ -8423,14 +8422,14 @@ void Abe::Motion_149_PickupItem()
 void Abe::Motion_150_Chant()
 {
     FollowLift();
-    if (field_110_state.chant != ChantStates::eWaitForUnpossessing_3 && field_110_state.chant != ChantStates::eUnpossessing_4)
+    if (mStatesUnion.chant != ChantStates::eWaitForUnpossessing_3 && mStatesUnion.chant != ChantStates::eUnpossessing_4)
     {
         SND_SEQ_PlaySeq(SeqId::eMudokonChant1_11, 0, 0);
     }
 
     auto pOrbWhirlWind = static_cast<OrbWhirlWind*>(sObjectIds.Find_Impl(mOrbWhirlWindId));
 
-    switch (field_110_state.chant)
+    switch (mStatesUnion.chant)
     {
         case ChantStates::eIdleChanting_0:
         {
@@ -8509,7 +8508,7 @@ void Abe::Motion_150_Chant()
                 {
                     SFX_Play_Pitch(relive::SoundEffects::PossessEffect, 0, -600);
                     field_114_gnFrame = MakeTimer(30);
-                    field_110_state.chant = ChantStates::ePossessVictim_1;
+                    mStatesUnion.chant = ChantStates::ePossessVictim_1;
 
                     const PSX_RECT rect = pObjToPossess->VGetBoundingRect();
                     pOrbWhirlWind->ToSpin(
@@ -8529,7 +8528,7 @@ void Abe::Motion_150_Chant()
 
             if (static_cast<s32>(sGnFrame) > field_114_gnFrame)
             {
-                field_110_state.chant = ChantStates::ePossessedVictim_2;
+                mStatesUnion.chant = ChantStates::ePossessedVictim_2;
                 return;
             }
 
@@ -8595,7 +8594,7 @@ void Abe::Motion_150_Chant()
 
                 SND_SEQ_Stop(SeqId::eMudokonChant1_11);
                 SFX_Play_Pitch(relive::SoundEffects::PossessEffect, 70, 400);
-                field_110_state.chant = ChantStates::eWaitForUnpossessing_3;
+                mStatesUnion.chant = ChantStates::eWaitForUnpossessing_3;
             }
             else if (GetAnimation().GetIsLastFrame())
             {
@@ -8609,7 +8608,7 @@ void Abe::Motion_150_Chant()
             {
                 relive_new PossessionFlicker(sControlledCharacter, 15, 128, 255, 255);
 
-                field_110_state.chant = ChantStates::eUnpossessing_4;
+                mStatesUnion.chant = ChantStates::eUnpossessing_4;
                 field_114_gnFrame = MakeTimer(15);
             }
             break;
@@ -8688,13 +8687,13 @@ void Abe::Motion_155_ElumJumpToFall()
 
 void Abe::Motion_156_DoorEnter()
 {
-    switch (field_110_state.door)
+    switch (mStatesUnion.door)
     {
         case AbeDoorStates::eAbeComesIn_0:
         {
             if (GetAnimation().GetIsLastFrame())
             {
-                field_110_state.door = AbeDoorStates::eWaitABit_2;
+                mStatesUnion.door = AbeDoorStates::eWaitABit_2;
                 GetAnimation().SetRender(false);
                 field_118_timer = MakeTimer(3);
             }
@@ -8705,7 +8704,7 @@ void Abe::Motion_156_DoorEnter()
             auto pFade = static_cast<Fade*>(sObjectIds.Find(mFadeId, ReliveTypes::eFade));
             if (pFade && pFade->mDone)
             {
-                field_110_state.door = AbeDoorStates::eWaitABit_2;
+                mStatesUnion.door = AbeDoorStates::eWaitABit_2;
                 field_118_timer = MakeTimer(5);
             }
             ALIVE_FATAL("never expected AbeDoorStates::eUnused_1 to be called");
@@ -8715,7 +8714,7 @@ void Abe::Motion_156_DoorEnter()
         {
             if (field_118_timer <= static_cast<s32>(sGnFrame))
             {
-                field_110_state.door = AbeDoorStates::eClearTlvIds_3;
+                mStatesUnion.door = AbeDoorStates::eClearTlvIds_3;
                 field_118_timer = MakeTimer(3);
             }
             return;
@@ -8724,7 +8723,7 @@ void Abe::Motion_156_DoorEnter()
         {
             if (field_118_timer <= static_cast<s32>(sGnFrame))
             {
-                field_110_state.door = AbeDoorStates::eSetNewActiveCamera_4;
+                mStatesUnion.door = AbeDoorStates::eSetNewActiveCamera_4;
                 auto pTlv = static_cast<relive::Path_ResetPath*>(gMap.VTLV_Get_At_Of_Type(
                     FP_GetExponent(mXPos),
                     FP_GetExponent(mYPos),
@@ -8775,8 +8774,8 @@ void Abe::Motion_156_DoorEnter()
                 changeEffect,
                 pDoorTlv->mMovieId,
                 flag);
-            field_110_state.door = AbeDoorStates::eSetNewAbePosition_5;
-            field_196_door_id = pDoorTlv->mTargetDoorId;
+            mStatesUnion.door = AbeDoorStates::eSetNewAbePosition_5;
+            mObjectIdInCam = pDoorTlv->mTargetDoorId;
             return;
         }
         case AbeDoorStates::eSetNewAbePosition_5:
@@ -8787,7 +8786,7 @@ void Abe::Motion_156_DoorEnter()
             auto pPathDoor = static_cast<relive::Path_Door*>(gMap.TLV_First_Of_Type_In_Camera(ReliveTypes::eDoor, 0));
             BaseAliveGameObjectPathTLV = pPathDoor;
 
-            while (pPathDoor->mDoorId != field_196_door_id)
+            while (pPathDoor->mDoorId != mObjectIdInCam)
             {
                 pPathDoor = static_cast<relive::Path_Door*>(Path_TLV::TLV_Next_Of_Type_446500(BaseAliveGameObjectPathTLV, ReliveTypes::eDoor));
                 BaseAliveGameObjectPathTLV = pPathDoor;
@@ -8846,7 +8845,7 @@ void Abe::Motion_156_DoorEnter()
                 mYPos = hitY;
             }
 
-            field_110_state.door = AbeDoorStates::eAbeComesOut_6;
+            mStatesUnion.door = AbeDoorStates::eAbeComesOut_6;
             field_118_timer = MakeTimer(30);
             return;
         }
@@ -8855,7 +8854,7 @@ void Abe::Motion_156_DoorEnter()
             if (field_118_timer <= static_cast<s32>(sGnFrame))
             {
                 GetAnimation().SetRender(true);
-                field_110_state.door = AbeDoorStates::eAbeComesIn_0;
+                mStatesUnion.door = AbeDoorStates::eAbeComesIn_0;
                 mCurrentMotion = eAbeMotions::Motion_157_DoorExit;
             }
             return;
@@ -8907,14 +8906,14 @@ void Abe::Motion_161_Idle_Yawn()
 
 void Abe::Motion_162_ToShrykull()
 {
-    if (field_110_state.raw == 0)
+    if (mStatesUnion.raw == 0)
     {
         if (GetAnimation().GetIsLastFrame())
         {
             GetAnimation().SetAnimate(false);
             GetAnimation().SetRender(false);
 
-            field_110_state.raw = 1;
+            mStatesUnion.raw = 1;
 
             relive_new Shrykull();
         }

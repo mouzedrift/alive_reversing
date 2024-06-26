@@ -1026,7 +1026,7 @@ void Map::GoTo_Camera()
         if (field_1E_door)
         {
             relive::Path_Door* pTlvIter = static_cast<relive::Path_Door*>(TLV_First_Of_Type_In_Camera(ReliveTypes::eDoor, 0));
-            while (pTlvIter->mDoorId != gAbe->field_196_door_id)
+            while (pTlvIter->mDoorId != gAbe->mObjectIdInCam)
             {
                 pTlvIter = static_cast<relive::Path_Door*>(Path_TLV::TLV_Next_Of_Type_446500(pTlvIter, ReliveTypes::eDoor));
             }

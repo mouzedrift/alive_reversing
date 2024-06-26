@@ -80,7 +80,7 @@ IMap& GetMap()
     }
 }
 
-BaseAliveGameObject* GetAbe()
+IAbe* GetAbe()
 {
     if (GetGameType() == GameType::eAe)
     {

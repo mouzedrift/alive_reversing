@@ -827,7 +827,7 @@ void Map::GoTo_Camera()
 
             // Door transition
             relive::Path_Door* pDoorTlv = static_cast<relive::Path_Door*>(gPathInfo->TLV_First_Of_Type_In_Camera(ReliveTypes::eDoor, 0));
-            while (pDoorTlv->mDoorId != gAbe->field_1A0_door_id)
+            while (pDoorTlv->mDoorId != gAbe->mObjectIdInCam)
             {
                 pDoorTlv = static_cast<relive::Path_Door*>(Path::TLV_Next_Of_Type(pDoorTlv, ReliveTypes::eDoor));
             }
@@ -846,7 +846,7 @@ void Map::GoTo_Camera()
 
                 // Teleporter transition
                 relive::Path_Teleporter* pTeleporterTlv = static_cast<relive::Path_Teleporter*>(gPathInfo->TLV_First_Of_Type_In_Camera(ReliveTypes::eTeleporter, 0));
-                while (pTeleporterTlv->mTeleporterId != gAbe->field_1A0_door_id)
+                while (pTeleporterTlv->mTeleporterId != gAbe->mObjectIdInCam)
                 {
                     pTeleporterTlv = static_cast<relive::Path_Teleporter*>(Path::TLV_Next_Of_Type(pTeleporterTlv, ReliveTypes::eTeleporter));
                 }

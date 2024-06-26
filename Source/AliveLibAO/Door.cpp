@@ -96,7 +96,7 @@ Door::Door(relive::Path_Door* pTlv, const Guid& tlvId)
     mCurrentState = (mDoorClosed == false) == SwitchStates_Get(mSwitchId) ? relive::Path_Door::DoorStates::eClosed : relive::Path_Door::DoorStates::eOpen;
 
     if ((gAbe->mCurrentMotion == eAbeMotions::Motion_156_DoorEnter || gAbe->mCurrentMotion == eAbeMotions::Motion_157_DoorExit) &&
-        mCurrentState == relive::Path_Door::DoorStates::eClosed && mDoorId == gAbe->field_196_door_id)
+        mCurrentState == relive::Path_Door::DoorStates::eClosed && mDoorId == gAbe->mObjectIdInCam)
     {
         mCurrentState = relive::Path_Door::DoorStates::eOpen;
     }
@@ -354,7 +354,7 @@ void Door::VUpdate()
 
     if (gAbe->mCurrentMotion == eAbeMotions::Motion_156_DoorEnter || gAbe->mCurrentMotion == eAbeMotions::Motion_157_DoorExit)
     {
-        if (mCurrentState == relive::Path_Door::DoorStates::eClosed && mDoorId == gAbe->field_196_door_id)
+        if (mCurrentState == relive::Path_Door::DoorStates::eClosed && mDoorId == gAbe->mObjectIdInCam)
         {
             GetAnimation().SetRender(false);
             mCurrentState = relive::Path_Door::DoorStates::eOpen;

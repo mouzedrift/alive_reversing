@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../relive_lib/GameObjects/BaseAliveGameObject.hpp"
+#include "../relive_lib/GameObjects/IAbe.hpp"
 #include "MudokonEnums.hpp"
 #include "../relive_lib/SaveStateBase.hpp"
 #include "../relive_lib/FatalError.hpp"
@@ -283,7 +283,7 @@ struct AbeSaveState final : public SaveStateBase
     Guid mPossessedObjectId;
     Guid mThrowableId;
     Guid mPullRingRopeId;
-    Guid mSlappableOrPickupId;
+    Guid mSlapableOrPickupId;
     Guid mWorkWheelId;
     u32 mInvisibilityTimer;
     u16 mInvisibilityDuration;
@@ -316,7 +316,7 @@ struct AbeSaveState final : public SaveStateBase
 
 class Bullet;
 
-class Abe final : public BaseAliveGameObject
+class Abe final : public IAbe
 {
 public:
     static constexpr AnimId sAbeAnimIdTable[130] = {
@@ -499,7 +499,7 @@ public:
     bool mMudancheeDone = false;
     s32 field_0_abe_timer = 0;
     s32 mRegenHealthTimer = 0;
-    FP field_8_x_vel_slow_by = {};
+    FP mFallMotionVelX = {};
     //u16 field_10_resource_index;
     Mud_Emotion mMood = Mud_Emotion::eNormal_0;
     s32 mRollingMotionTimer = 0;
@@ -508,7 +508,7 @@ public:
     Guid mBirdPortalId;
     s8 mBaseThrowableCount = 0;
     Guid mThrowableId;
-    s16 field_1A0_door_id = 0;
+    s16 mObjectIdInCam = 0; // ID to identify the correct object in a cam for example when we have more than 1 door in the same cam
     s8 mThrowDirection = 0;
     s32 mRingPulseTimer = 0;
     s16 mHaveShrykull = 0;
@@ -670,9 +670,9 @@ private:
 
     void ToDie_4588D0();
     void ToIdle_44E6B0();
-    void PickUpThrowabe_Or_PressBomb_454090(FP fpX, s32 fpY, s32 bStandToCrouch);
+    void PickUpThrowabe_Or_PressBomb(FP fpX, s32 fpY, s32 bStandToCrouch);
     s16 ToLeftRightMovement_44E340();
-    void TryHoist_44ED30();
+    void TryHoist();
     static void Create_Fart_421D20();
     s16 TryEnterMineCar_4569E0();
     s32 NearDoorIsOpen_44EE10();
@@ -701,14 +701,14 @@ private:
 
     s32 mPrevInput = 0;
     s32 mReleasedButtons = 0;
-    AllInternalStates field_120_state = {};
+    AllInternalStates mStatesUnion = {};
     eAbeMotions mKnockdownMotion = eAbeMotions::None_m1;
     Guid mFadeId;
     Guid mCircularFadeId;
     Guid mOrbWhirlWindId;
     Guid mPossessedObjectId;
     Guid mPullRingRopeId;
-    Guid mSlappableOrPickupId;
+    Guid mSlapableOrPickupId;
     Guid mWorkWheelId;
     s32 mInvisibilityTimer = 0;
     Guid mInvisibleEffectId;

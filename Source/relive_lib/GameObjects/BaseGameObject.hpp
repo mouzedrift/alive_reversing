@@ -115,6 +115,6 @@ private:
 };
 
 class IMap& GetMap();
-class BaseAliveGameObject* GetAbe();
+class IAbe* GetAbe();
 
 extern DynamicArrayT<BaseGameObject>* gBaseGameObjects;

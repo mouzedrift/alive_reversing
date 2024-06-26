@@ -8,6 +8,7 @@
 #include "../relive_lib/GameObjects/DeathGas.hpp"
 #include "../relive_lib/GameObjects/ScreenManager.hpp"
 #include "../relive_lib/GameType.hpp"
+#include "IAbe.hpp"
 
 s32 gDeathGasTimer = 0;
 bool gDeathGasOn = false;

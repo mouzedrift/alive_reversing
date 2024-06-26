@@ -226,7 +226,7 @@ void Teleporter::VUpdate()
                 bForceChange);
 
             sControlledCharacter->SetUpdateDelay(3);
-            gAbe->field_1A0_door_id = mTlvData.mOtherTeleporterId;
+            gAbe->mObjectIdInCam = mTlvData.mOtherTeleporterId;
             mState = TeleporterState::eTeleporting_2;
         }
         break;

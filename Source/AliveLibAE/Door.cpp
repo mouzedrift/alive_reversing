@@ -234,7 +234,7 @@ Door::Door(relive::Path_Door* pTlv, const Guid& tlvId)
         }
     }
 
-    if ((gAbe->mCurrentMotion == eAbeMotions::Motion_114_DoorEnter || gAbe->mCurrentMotion == eAbeMotions::Motion_115_DoorExit) && mCurrentState == relive::Path_Door::DoorStates::eClosed && mDoorId == gAbe->field_1A0_door_id)
+    if ((gAbe->mCurrentMotion == eAbeMotions::Motion_114_DoorEnter || gAbe->mCurrentMotion == eAbeMotions::Motion_115_DoorExit) && mCurrentState == relive::Path_Door::DoorStates::eClosed && mDoorId == gAbe->mObjectIdInCam)
     {
         // Force open is abe is in the door
         mCurrentState = relive::Path_Door::DoorStates::eOpen;
@@ -423,7 +423,7 @@ void Door::VUpdate()
 
     if (gAbe->mCurrentMotion == eAbeMotions::Motion_114_DoorEnter || gAbe->mCurrentMotion == eAbeMotions::Motion_115_DoorExit)
     {
-        if (mCurrentState == relive::Path_Door::DoorStates::eClosed && mDoorId == gAbe->field_1A0_door_id)
+        if (mCurrentState == relive::Path_Door::DoorStates::eClosed && mDoorId == gAbe->mObjectIdInCam)
         {
             GetAnimation().SetRender(false);
             mCurrentState = relive::Path_Door::DoorStates::eOpen;

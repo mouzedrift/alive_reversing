@@ -422,8 +422,7 @@ void Abe::LoadAnimations()
     }
 }
 
-Abe::Abe() :
-    BaseAliveGameObject(kResourceArraySize)
+Abe::Abe()
 {
     SetType(ReliveTypes::eAbe);
 
@@ -458,7 +457,7 @@ Abe::Abe() :
     GetAnimation().SetSemiTrans(true);
     GetAnimation().SetBlendMode(relive::TBlendModes::eBlend_0);
 
-    field_120_state.raw = 0;
+    mStatesUnion.raw = 0;
     field_124_timer = sGnFrame;
 
     // Set Abe to be the current player controlled object
@@ -475,7 +474,7 @@ Abe::~Abe()
     BaseGameObject* pPossessedObject = sObjectIds.Find_Impl(mPossessedObjectId);
     BaseGameObject* pThrowable = sObjectIds.Find_Impl(mThrowableId);
     BaseGameObject* pPullRope = sObjectIds.Find_Impl(mPullRingRopeId);
-    BaseGameObject* pItem = sObjectIds.Find_Impl(mSlappableOrPickupId);
+    BaseGameObject* pItem = sObjectIds.Find_Impl(mSlapableOrPickupId);
     BaseGameObject* pInvisibleEffect = sObjectIds.Find_Impl(mInvisibleEffectId);
 
     SND_SEQ_Stop(SeqId::MudokonChant1_10);
@@ -488,7 +487,7 @@ Abe::~Abe()
 
     if (pItem)
     {
-        mSlappableOrPickupId = Guid{};
+        mSlapableOrPickupId = Guid{};
     }
 
     if (pPullRope)
@@ -562,7 +561,7 @@ void Abe::CreateFromSaveState(const AbeSaveState& pData)
     gAbe->mYPos = pData.mYPos;
     gAbe->mVelX = pData.mVelX;
     gAbe->mVelY = pData.mVelY;
-    gAbe->field_8_x_vel_slow_by = pData.field_48_x_vel_slow_by;
+    gAbe->mFallMotionVelX = pData.field_48_x_vel_slow_by;
     gAbe->mCurrentPath = pData.mCurrentPath;
     gAbe->mCurrentLevel = pData.mCurrentLevel;
     gAbe->SetSpriteScale(pData.mSpriteScale);
@@ -613,7 +612,7 @@ void Abe::CreateFromSaveState(const AbeSaveState& pData)
     gAbe->mNextMotion = pData.mNextMotion;
     gAbe->BaseAliveGameObjectLastLineYPos = FP_FromInteger(pData.mLastLineYPos);
     gAbe->BaseAliveGameObject_PlatformId = pData.mPlatformId;
-    gAbe->field_120_state.raw = static_cast<u16>(pData.field_50_state);
+    gAbe->mStatesUnion.raw = static_cast<u16>(pData.field_50_state);
     gAbe->field_124_timer = pData.field_54_timer;
     gAbe->field_0_abe_timer = pData.field_58_abe_timer;
     gAbe->mRegenHealthTimer = pData.mRegenHealthTimer;
@@ -652,7 +651,7 @@ void Abe::CreateFromSaveState(const AbeSaveState& pData)
     gAbe->mPossessedObjectId = pData.mPossessedObjectId;
     gAbe->mThrowableId = pData.mThrowableId;
     gAbe->mPullRingRopeId = pData.mPullRingRopeId;
-    gAbe->mSlappableOrPickupId = pData.mSlappableOrPickupId;
+    gAbe->mSlapableOrPickupId = pData.mSlapableOrPickupId;
     gAbe->mWorkWheelId = pData.mWorkWheelId;
     gAbe->mInvisibleEffectId = Guid{};
 
@@ -670,7 +669,7 @@ void Abe::CreateFromSaveState(const AbeSaveState& pData)
     gAbe->mDstWellLevel = pData.mDstWellLevel;
     gAbe->mDstWellPath = pData.mDstWellPath;
     gAbe->mDstWellCamera = pData.mDstWellCamera;
-    gAbe->field_1A0_door_id = pData.door_id;
+    gAbe->mObjectIdInCam = pData.door_id;
     gAbe->mThrowDirection = pData.mThrowDirection;
     gAbe->mBirdPortalSubState = static_cast<PortalSubStates>(pData.mBirdPortalSubState);
     gAbe->mBirdPortalId = pData.mBirdPortalId;
@@ -814,7 +813,7 @@ void Abe::VUpdate()
         mPossessedObjectId = BaseGameObject::RefreshId(mPossessedObjectId);
         mThrowableId = BaseGameObject::RefreshId(mThrowableId);
         mPullRingRopeId = BaseGameObject::RefreshId(mPullRingRopeId);
-        mSlappableOrPickupId = BaseGameObject::RefreshId(mSlappableOrPickupId);
+        mSlapableOrPickupId = BaseGameObject::RefreshId(mSlapableOrPickupId);
         mWorkWheelId = BaseGameObject::RefreshId(mWorkWheelId);
 
         if (GetInvisible())
@@ -1318,7 +1317,7 @@ void Abe::GetSaveState(AbeSaveState& pSaveState)
     pSaveState.mYPos = mYPos;
     pSaveState.mVelX = mVelX;
     pSaveState.mVelY = mVelY;
-    pSaveState.field_48_x_vel_slow_by = field_8_x_vel_slow_by;
+    pSaveState.field_48_x_vel_slow_by = mFallMotionVelX;
     pSaveState.mCurrentPath = mCurrentPath;
     pSaveState.mCurrentLevel = mCurrentLevel;
     pSaveState.mSpriteScale = GetSpriteScale();
@@ -1394,7 +1393,7 @@ void Abe::GetSaveState(AbeSaveState& pSaveState)
     }
 
     pSaveState.mIsAbeControlled = (this == sControlledCharacter);
-    pSaveState.field_50_state = field_120_state.raw;
+    pSaveState.field_50_state = mStatesUnion.raw;
     pSaveState.field_54_timer = field_124_timer;
     pSaveState.field_58_abe_timer = field_0_abe_timer;
     pSaveState.mRegenHealthTimer = mRegenHealthTimer;
@@ -1476,14 +1475,14 @@ void Abe::GetSaveState(AbeSaveState& pSaveState)
         }
     }
 
-    pSaveState.mSlappableOrPickupId = mSlappableOrPickupId;
+    pSaveState.mSlapableOrPickupId = mSlapableOrPickupId;
 
-    if (mSlappableOrPickupId != Guid{})
+    if (mSlapableOrPickupId != Guid{})
     {
-        auto pObj = sObjectIds.Find_Impl(mSlappableOrPickupId);
+        auto pObj = sObjectIds.Find_Impl(mSlapableOrPickupId);
         if (pObj)
         {
-            pSaveState.mSlappableOrPickupId = pObj->mBaseGameObjectTlvInfo;
+            pSaveState.mSlapableOrPickupId = pObj->mBaseGameObjectTlvInfo;
         }
     }
 
@@ -1521,7 +1520,7 @@ void Abe::GetSaveState(AbeSaveState& pSaveState)
     pSaveState.mDstWellLevel = mDstWellLevel;
     pSaveState.mDstWellPath = mDstWellPath;
     pSaveState.mDstWellCamera = mDstWellCamera;
-    pSaveState.door_id = field_1A0_door_id;
+    pSaveState.door_id = mObjectIdInCam;
     pSaveState.mThrowDirection = mThrowDirection;
     pSaveState.mBirdPortalSubState = static_cast<u16>(mBirdPortalSubState);
 
@@ -2189,7 +2188,7 @@ void Abe::Motion_0_Idle_44EEB0()
             mCurrentMotion = eAbeMotions::Motion_112_Chant;
             SND_SEQ_PlaySeq(SeqId::MudokonChant1_10, 0, 1);
         }
-        field_120_state.raw = 0;
+        mStatesUnion.raw = 0;
         return;
     }
 
@@ -2207,7 +2206,7 @@ void Abe::Motion_0_Idle_44EEB0()
         // Some strange alternative way of hoisting, hangover from PSX AO Demo?
         if (Input().IsAnyHeld(InputCommands::eUp))
         {
-            TryHoist_44ED30();
+            TryHoist();
         }
         else
         {
@@ -2371,7 +2370,7 @@ void Abe::Motion_0_Idle_44EEB0()
                     if (NearDoorIsOpen_44EE10() && !GetElectrocuted())
                     {
                         BaseAliveGameObjectPathTLV = pTlv;
-                        field_120_state.door = AbeDoorStates::eAbeComesIn_0;
+                        mStatesUnion.door = AbeDoorStates::eAbeComesIn_0;
                         mCurrentMotion = eAbeMotions::Motion_114_DoorEnter;
                     }
                     else
@@ -2427,7 +2426,7 @@ void Abe::Motion_0_Idle_44EEB0()
                 case ReliveTypes::eHandStone:
                     BaseAliveGameObjectPathTLV = pTlv;
                     mCurrentMotion = eAbeMotions::Motion_86_HandstoneBegin;
-                    field_120_state.stone = StoneStates::eHandstoneBegin_0;
+                    mStatesUnion.stone = StoneStates::eHandstoneBegin_0;
                     return;
 
                 case ReliveTypes::eBoomMachine:
@@ -2499,7 +2498,7 @@ void Abe::Motion_0_Idle_44EEB0()
 
                 case ReliveTypes::eBrewMachine:
                     mCurrentMotion = eAbeMotions::Motion_89_BrewMachineBegin;
-                    field_120_state.raw = 0;
+                    mStatesUnion.raw = 0;
                     break;
 
                 default:
@@ -2519,7 +2518,7 @@ void Abe::Motion_0_Idle_44EEB0()
         {
             if (mCurrentMotion == eAbeMotions::Motion_0_Idle_44EEB0)
             {
-                TryHoist_44ED30();
+                TryHoist();
             }
             handleDoActionOrThrow = true;
         }
@@ -2741,7 +2740,7 @@ void Abe::Motion_3_Fall_459B60()
 {
     if (mVelX > FP_FromInteger(0))
     {
-        mVelX -= (GetSpriteScale() * field_8_x_vel_slow_by);
+        mVelX -= (GetSpriteScale() * mFallMotionVelX);
         if (mVelX < FP_FromInteger(0))
         {
             mVelX = FP_FromInteger(0);
@@ -2749,7 +2748,7 @@ void Abe::Motion_3_Fall_459B60()
     }
     else if (mVelX < FP_FromInteger(0))
     {
-        mVelX += (GetSpriteScale() * field_8_x_vel_slow_by);
+        mVelX += (GetSpriteScale() * mFallMotionVelX);
         if (mVelX > FP_FromInteger(0))
         {
             mVelX = FP_FromInteger(0);
@@ -3347,7 +3346,7 @@ void Abe::Motion_17_CrouchIdle_456BC0()
             {
                 gridSize = ScaleToGridSize(GetSpriteScale());
             }
-            PickUpThrowabe_Or_PressBomb_454090(gridSize + mXPos, FP_GetExponent(mYPos - FP_FromInteger(5)), 0);
+            PickUpThrowabe_Or_PressBomb(gridSize + mXPos, FP_GetExponent(mYPos - FP_FromInteger(5)), 0);
         }
     }
 
@@ -3476,7 +3475,7 @@ void Abe::Motion_19_StandToCrouch_453DC0()
 {
     if (GetAnimation().GetIsLastFrame())
     {
-        PickUpThrowabe_Or_PressBomb_454090(mXPos, FP_GetExponent(mYPos - FP_FromInteger(5)), 1);
+        PickUpThrowabe_Or_PressBomb(mXPos, FP_GetExponent(mYPos - FP_FromInteger(5)), 1);
         mCurrentMotion = eAbeMotions::Motion_17_CrouchIdle_456BC0;
     }
 }
@@ -3888,7 +3887,7 @@ void Abe::Motion_28_HopMid_451C50()
 
     mYPos += GetSpriteScale() * FP_FromInteger(2);
 
-    field_8_x_vel_slow_by = FP_FromDouble(0.55);
+    mFallMotionVelX = FP_FromDouble(0.55);
     mCurrentMotion = eAbeMotions::Motion_96_HopToFall;
     mNextMotion = eAbeMotions::Motion_0_Idle_44EEB0;
 }
@@ -4102,7 +4101,7 @@ void Abe::Motion_31_RunJumpMid_452C10()
         return;
     }
 
-    field_8_x_vel_slow_by = FP_FromDouble(0.75);
+    mFallMotionVelX = FP_FromDouble(0.75);
     mCurrentMotion = eAbeMotions::Motion_97_RunJumpToFall;
     mNextMotion = eAbeMotions::Motion_0_Idle_44EEB0;
 }
@@ -4784,7 +4783,7 @@ void Abe::Motion_56_DeathDropFall_4591F0()
     GetAnimation().SetAnimate(false);
     if (field_124_timer == 0)
     {
-        field_8_x_vel_slow_by = FP_FromInteger(0);
+        mFallMotionVelX = FP_FromInteger(0);
         mVelX = FP_FromInteger(0);
         mVelY = FP_FromInteger(0);
         field_0_abe_timer = MakeTimer(90);
@@ -4833,7 +4832,7 @@ void Abe::Motion_57_Dead_4589A0()
         case 0:
             EventBroadcast(Event::kEventAbeDead, this);
             EventBroadcast(Event::kEventHeroDying, this);
-            field_8_x_vel_slow_by = FP_FromInteger(0);
+            mFallMotionVelX = FP_FromInteger(0);
             mVelX = FP_FromInteger(0);
             mVelY = FP_FromInteger(0);
             mPrevInput = 0;
@@ -4979,7 +4978,7 @@ void Abe::Motion_57_Dead_4589A0()
 
 void Abe::Motion_58_DeadPre_4593E0()
 {
-    if (field_120_state.raw == 1)
+    if (mStatesUnion.raw == 1)
     {
         mCurrentMotion = eAbeMotions::Motion_57_Dead_4589A0;
         field_124_timer = 2;
@@ -5586,7 +5585,7 @@ void Abe::Motion_79_InsideWellLocal_45CA60()
                 ReliveTypes::eWellExpress);
         }
 
-        field_8_x_vel_slow_by = FP_FromInteger(0);
+        mFallMotionVelX = FP_FromInteger(0);
 
         relive::Path_WellBase* pBaseWell = static_cast<relive::Path_WellBase*>(BaseAliveGameObjectPathTLV);
         if (pBaseWell->mTlvType == ReliveTypes::eWellLocal)
@@ -5728,17 +5727,17 @@ void Abe::Motion_82_InsideWellExpress_45CC80()
         mDstWellLevel = pExpressWell->mOnDestLevel;
         mDstWellPath = pExpressWell->mOnDestPath;
         mDstWellCamera = pExpressWell->mOnDestCamera;
-        field_1A0_door_id = pExpressWell->mOnOtherWellId;
+        mObjectIdInCam = pExpressWell->mOnOtherWellId;
     }
     else
     {
         mDstWellLevel = pExpressWell->mOffDestLevel;
         mDstWellPath = pExpressWell->mOffDestPath;
         mDstWellCamera = pExpressWell->mOffDestCamera;
-        field_1A0_door_id = pExpressWell->mOffOtherWellId;
+        mObjectIdInCam = pExpressWell->mOffOtherWellId;
     }
 
-    field_8_x_vel_slow_by = FP_FromInteger(0);
+    mFallMotionVelX = FP_FromInteger(0);
     BaseAliveGameObjectLastLineYPos = mYPos;
 
     if (mDstWellLevel != gMap.mCurrentLevel || mDstWellPath != gMap.mCurrentPath || mDstWellCamera != gMap.mCurrentCamera)
@@ -5811,7 +5810,7 @@ void Abe::Motion_83_WellExpressShotOut_45CF70()
         {
             // Is it the target of the previous well?
             relive::Path_WellBase* pWellBase = static_cast<relive::Path_WellBase*>(pTlvIter);
-            if (pWellBase->mOtherWellId == field_1A0_door_id)
+            if (pWellBase->mOtherWellId == mObjectIdInCam)
             {
                 pWell = pWellBase;
                 break;
@@ -5884,7 +5883,7 @@ void Abe::Motion_86_HandstoneBegin()
     CircularFade* pCircularFade = static_cast<CircularFade*>(sObjectIds.Find_Impl(mCircularFadeId));
     Fade* pFade = static_cast<Fade*>(sObjectIds.Find_Impl(mFadeId));
 
-    switch (field_120_state.stone)
+    switch (mStatesUnion.stone)
     {
         case StoneStates::eHandstoneBegin_0:
             if (GetAnimation().GetForwardLoopCompleted())
@@ -5907,7 +5906,7 @@ void Abe::Motion_86_HandstoneBegin()
                 }
 
                 mCircularFadeId = pCircularFade2->mBaseGameObjectId;
-                field_120_state.stone = StoneStates::eGetHandstoneType_1;
+                mStatesUnion.stone = StoneStates::eGetHandstoneType_1;
 
                 SfxPlayMono(relive::SoundEffects::IngameTransition, 90);
 
@@ -5979,13 +5978,13 @@ void Abe::Motion_86_HandstoneBegin()
                     FmvInfo* pFmvRec = Path_Get_FMV_Record(gMap.mCurrentLevel, mFmvId);
 
                     relive_new Movie(pFmvRec->field_0_pName);
-                    field_120_state.stone = StoneStates::eHandstoneMovieDone_2;
+                    mStatesUnion.stone = StoneStates::eHandstoneMovieDone_2;
                 }
                 else if (mHandStoneType == ReliveTypes::eHandStone)
                 {
                     GetAnimation().SetRender(false);
                     mHandStoneCamIdx = 1;
-                    field_120_state.stone = StoneStates::eWaitForInput_4;
+                    mStatesUnion.stone = StoneStates::eWaitForInput_4;
                     pCircularFade->SetDead(true);
                     mCircularFadeId = Guid{};
                     Fade* pFade33 = relive_new Fade(Layer::eLayer_FadeFlash_40, FadeOptions::eFadeOut, 0, 8, relive::TBlendModes::eBlend_2);
@@ -6007,7 +6006,7 @@ void Abe::Motion_86_HandstoneBegin()
                 gScreenManager->DecompressCameraToVRam(gMap.field_2C_camera_array[0]->mCamRes);
                 gScreenManager->EnableRendering();
                 pCircularFade->VFadeIn(0, 0);
-                field_120_state.stone = StoneStates::eHandstoneEnd_3;
+                mStatesUnion.stone = StoneStates::eHandstoneEnd_3;
             }
             break;
 
@@ -6034,7 +6033,7 @@ void Abe::Motion_86_HandstoneBegin()
                 if (Input().IsAnyPressed(InputCommands::eBack | InputCommands::eUnPause_OrConfirm))
                 {
                     pFade->Init(Layer::eLayer_FadeFlash_40, FadeOptions::eFadeIn, 0, 8);
-                    field_120_state.stone = StoneStates::eCamChangeTransition_5;
+                    mStatesUnion.stone = StoneStates::eCamChangeTransition_5;
                     SfxPlayMono(relive::SoundEffects::IngameTransition, 90);
                 }
             }
@@ -6045,7 +6044,7 @@ void Abe::Motion_86_HandstoneBegin()
             {
                 if (mHandStoneCamIdx < 3 && mHandStoneCams[mHandStoneCamIdx] != 0)
                 {
-                    field_120_state.stone = StoneStates::eWaitForInput_4;
+                    mStatesUnion.stone = StoneStates::eWaitForInput_4;
 
                     pFade->SetDead(true);
                     pFade = relive_new Fade(Layer::eLayer_FadeFlash_40, FadeOptions::eFadeOut, 0, 8, relive::TBlendModes::eBlend_2);
@@ -6064,7 +6063,7 @@ void Abe::Motion_86_HandstoneBegin()
                 }
                 else
                 {
-                    field_120_state.stone = StoneStates::eSetActiveCamToAbe_6;
+                    mStatesUnion.stone = StoneStates::eSetActiveCamToAbe_6;
                 }
             }
             break;
@@ -6073,7 +6072,7 @@ void Abe::Motion_86_HandstoneBegin()
             if (pFade->mDone)
             {
                 GetAnimation().SetRender(true);
-                field_120_state.stone = StoneStates::eCircularFadeExit_7;
+                mStatesUnion.stone = StoneStates::eCircularFadeExit_7;
                 gMap.SetActiveCam(
                     mCurrentLevel,
                     mCurrentPath,
@@ -6100,7 +6099,7 @@ void Abe::Motion_86_HandstoneBegin()
             }
 
             mCircularFadeId = pCircularFade2->mBaseGameObjectId;
-            field_120_state.stone = StoneStates::eHandstoneEnd_3;
+            mStatesUnion.stone = StoneStates::eHandstoneEnd_3;
 
             if (sHandstoneSoundChannels_5C2C68)
             {
@@ -6133,15 +6132,15 @@ void Abe::Motion_88_GrenadeMachineUse()
 
 void Abe::Motion_89_BrewMachineBegin()
 {
-    if (field_120_state.raw > 0)
+    if (mStatesUnion.raw > 0)
     {
-        if (field_120_state.raw <= 36u)
+        if (mStatesUnion.raw <= 36u)
         {
-            if (field_120_state.raw > 11u && !((field_120_state.raw - 12) % 6))
+            if (mStatesUnion.raw > 11u && !((mStatesUnion.raw - 12) % 6))
             {
-                SFX_Play_Pitch(relive::SoundEffects::BrewMachineUseEnd, 0, 32 * field_120_state.raw);
+                SFX_Play_Pitch(relive::SoundEffects::BrewMachineUseEnd, 0, 32 * mStatesUnion.raw);
             }
-            field_120_state.raw++;
+            mStatesUnion.raw++;
         }
         else
         {
@@ -6164,7 +6163,7 @@ void Abe::Motion_89_BrewMachineBegin()
         if (GetEvilFart_4585F0(true))
         {
             SfxPlayMono(relive::SoundEffects::BrewMachineUseMid, 0);
-            field_120_state.raw = 1;
+            mStatesUnion.raw = 1;
         }
         else
         {
@@ -6295,13 +6294,13 @@ void Abe::Motion_99_LeverUse()
 
 void Abe::Motion_100_SlapBomb()
 {
-    BaseAliveGameObject* pItem = static_cast<BaseAliveGameObject*>(sObjectIds.Find_Impl(mSlappableOrPickupId));
+    BaseAliveGameObject* pItem = static_cast<BaseAliveGameObject*>(sObjectIds.Find_Impl(mSlapableOrPickupId));
     if (gAbe->GetAnimation().GetCurrentFrame() >= 6)
     {
         if (pItem)
         {
             pItem->VOnAbeInteraction();
-            mSlappableOrPickupId = Guid{};
+            mSlapableOrPickupId = Guid{};
         }
     }
 
@@ -6550,7 +6549,7 @@ void Abe::Motion_110_ZShot()
 
 void Abe::Motion_111_PickupItem()
 {
-    auto pRock = static_cast<BaseAliveGameObject*>(sObjectIds.Find_Impl(mSlappableOrPickupId));
+    auto pRock = static_cast<BaseAliveGameObject*>(sObjectIds.Find_Impl(mSlapableOrPickupId));
 
     if (GetAnimation().GetCurrentFrame() == 7)
     {
@@ -6567,7 +6566,7 @@ void Abe::Motion_111_PickupItem()
         if (pRock)
         {
             pRock->VOnAbeInteraction();
-            mSlappableOrPickupId = Guid{};
+            mSlapableOrPickupId = Guid{};
         }
     }
 }
@@ -6577,7 +6576,7 @@ void Abe::Motion_112_Chant()
     BaseAliveGameObject* pPossessTarget = static_cast<BaseAliveGameObject*>(sObjectIds.Find_Impl(mPossessedObjectId));
     OrbWhirlWind* pOrbWhirlWind = static_cast<OrbWhirlWind*>(sObjectIds.Find_Impl(mOrbWhirlWindId));
 
-    if (field_120_state.chant != ChantStates::eWaitForUnpossessing_3 && field_120_state.chant != ChantStates::eUnpossessing_4)
+    if (mStatesUnion.chant != ChantStates::eWaitForUnpossessing_3 && mStatesUnion.chant != ChantStates::eUnpossessing_4)
     {
         SND_SEQ_PlaySeq(SeqId::MudokonChant1_10, 0, 0);
     }
@@ -6587,7 +6586,7 @@ void Abe::Motion_112_Chant()
         mOrbWhirlWindId = Guid{};
     }
 
-    switch (field_120_state.chant)
+    switch (mStatesUnion.chant)
     {
         case ChantStates::eIdleChanting_0:
         {
@@ -6739,7 +6738,7 @@ void Abe::Motion_112_Chant()
 
             mPossessedObjectId = pObj->mBaseGameObjectId;
             SFX_Play_Pitch(relive::SoundEffects::PossessEffect, 0, -600);
-            field_120_state.chant = ChantStates::ePossessVictim_1;
+            mStatesUnion.chant = ChantStates::ePossessVictim_1;
             field_124_timer = MakeTimer(30);
 
             const PSX_RECT bRect = pObj->VGetBoundingRect();
@@ -6773,7 +6772,7 @@ void Abe::Motion_112_Chant()
             }
             else
             {
-                field_120_state.chant = ChantStates::ePossessedVictim_2;
+                mStatesUnion.chant = ChantStates::ePossessedVictim_2;
             }
         }
             return;
@@ -6822,7 +6821,7 @@ void Abe::Motion_112_Chant()
 
             SND_SEQ_Stop(SeqId::MudokonChant1_10);
             SFX_Play_Pitch(relive::SoundEffects::PossessEffect, 70, 400);
-            field_120_state.chant = ChantStates::eWaitForUnpossessing_3;
+            mStatesUnion.chant = ChantStates::eWaitForUnpossessing_3;
         }
             return;
 
@@ -6835,7 +6834,7 @@ void Abe::Motion_112_Chant()
 
             relive_new PossessionFlicker(sControlledCharacter, 15, 128, 255, 255);
 
-            field_120_state.chant = ChantStates::eUnpossessing_4;
+            mStatesUnion.chant = ChantStates::eUnpossessing_4;
             field_124_timer = MakeTimer(15);
         }
             return;
@@ -6896,12 +6895,12 @@ void Abe::Motion_113_ChantEnd()
 
 void Abe::Motion_114_DoorEnter()
 {
-    switch (field_120_state.door)
+    switch (mStatesUnion.door)
     {
         case AbeDoorStates::eAbeComesIn_0:
             if (GetAnimation().GetIsLastFrame())
             {
-                field_120_state.door = AbeDoorStates::eWaitABit_2;
+                mStatesUnion.door = AbeDoorStates::eWaitABit_2;
                 GetAnimation().SetRender(false);
                 field_0_abe_timer = MakeTimer(3);
             }
@@ -6910,7 +6909,7 @@ void Abe::Motion_114_DoorEnter()
         case AbeDoorStates::eWaitABit_2:
             if (field_0_abe_timer <= static_cast<s32>(sGnFrame))
             {
-                field_120_state.door = AbeDoorStates::eToState4_3;
+                mStatesUnion.door = AbeDoorStates::eToState4_3;
                 field_0_abe_timer = MakeTimer(3);
             }
             return;
@@ -6918,7 +6917,7 @@ void Abe::Motion_114_DoorEnter()
         case AbeDoorStates::eToState4_3:
             if (field_0_abe_timer <= static_cast<s32>(sGnFrame))
             {
-                field_120_state.door = AbeDoorStates::eSetNewActiveCamera_4;
+                mStatesUnion.door = AbeDoorStates::eSetNewActiveCamera_4;
             }
             return;
 
@@ -6993,8 +6992,8 @@ void Abe::Motion_114_DoorEnter()
                 pDoorTlv->mMovieId,
                 bForceChange);
 
-            field_120_state.door = AbeDoorStates::eSetNewAbePosition_5;
-            field_1A0_door_id = pDoorTlv->mTargetDoorId;
+            mStatesUnion.door = AbeDoorStates::eSetNewAbePosition_5;
+            mObjectIdInCam = pDoorTlv->mTargetDoorId;
         }
             return;
 
@@ -7007,7 +7006,7 @@ void Abe::Motion_114_DoorEnter()
             relive::Path_Door* pDoorTlv2 = static_cast<relive::Path_Door*>(gPathInfo->TLV_First_Of_Type_In_Camera(ReliveTypes::eDoor, 0));
             BaseAliveGameObjectPathTLV = pDoorTlv2;
             relive::Path_Door* pTargetDoorTlv = pDoorTlv2;
-            if (pTargetDoorTlv->mDoorId != field_1A0_door_id)
+            if (pTargetDoorTlv->mDoorId != mObjectIdInCam)
             {
                 do
                 {
@@ -7020,7 +7019,7 @@ void Abe::Motion_114_DoorEnter()
                         ALIVE_FATAL("Couldn't find target door. If this is a custom level, check if the level, path and camera is correct.");
                     }
                 }
-                while (pTargetDoorTlv->mDoorId != field_1A0_door_id);
+                while (pTargetDoorTlv->mDoorId != mObjectIdInCam);
             }
 
             if (pTargetDoorTlv->mScale == relive::reliveScale::eHalf)
@@ -7089,7 +7088,7 @@ void Abe::Motion_114_DoorEnter()
             }
 
             mHealth = FP_FromInteger(1);
-            field_120_state.door = AbeDoorStates::eAbeComesOut_6;
+            mStatesUnion.door = AbeDoorStates::eAbeComesOut_6;
             field_0_abe_timer = MakeTimer(30);
         }
             return;
@@ -7100,7 +7099,7 @@ void Abe::Motion_114_DoorEnter()
                 return;
             }
 
-            field_120_state.door = AbeDoorStates::eAbeComesIn_0;
+            mStatesUnion.door = AbeDoorStates::eAbeComesIn_0;
             if (BaseAliveGameObjectCollisionLine)
             {
                 GetAnimation().SetRender(true);
@@ -7150,7 +7149,7 @@ void Abe::Motion_115_DoorExit()
                 if (pObj->Type() == ReliveTypes::eDoor)
                 {
                     Door* pDoor = static_cast<Door*>(pObj);
-                    if (pDoor->mDoorId == field_1A0_door_id)
+                    if (pDoor->mDoorId == mObjectIdInCam)
                     {
                         // And close it
                         pDoor->vClose();
@@ -7174,13 +7173,13 @@ void Abe::Motion_115_DoorExit()
 
 void Abe::Motion_116_MineCarEnter()
 {
-    if (field_120_state.raw == 0)
+    if (mStatesUnion.raw == 0)
     {
         if (GetAnimation().GetIsLastFrame())
         {
             GetAnimation().SetRender(false);
             GetAnimation().SetAnimate(false);
-            field_120_state.raw = 1;
+            mStatesUnion.raw = 1;
             mCurrentMotion = eAbeMotions::Motion_117_InMineCar;
         }
     }
@@ -7227,14 +7226,14 @@ void Abe::Motion_118_MineCarExit()
 
 void Abe::Motion_119_ToShrykull()
 {
-    if (field_120_state.raw == 0)
+    if (mStatesUnion.raw == 0)
     {
         if (GetAnimation().GetIsLastFrame())
         {
             GetAnimation().SetRender(false);
             GetAnimation().SetAnimate(false);
 
-            field_120_state.raw = 1;
+            mStatesUnion.raw = 1;
 
             relive_new Shrykull();
         }
@@ -7340,18 +7339,18 @@ void Abe::Motion_126_TurnWheelBegin()
             pWheel->VStartTurning();
         }
         mCurrentMotion = eAbeMotions::Motion_127_TurnWheelLoop;
-        field_120_state.wheel = WorkWheelStates::eTurningWheel_0;
+        mStatesUnion.wheel = WorkWheelStates::eTurningWheel_0;
     }
 }
 
 void Abe::Motion_127_TurnWheelLoop()
 {
-    if (field_120_state.wheel == WorkWheelStates::eTurningWheel_0 || field_120_state.wheel == WorkWheelStates::eCheckForNoLongerTurningWheel_1) // The state we enter the main state at.
+    if (mStatesUnion.wheel == WorkWheelStates::eTurningWheel_0 || mStatesUnion.wheel == WorkWheelStates::eCheckForNoLongerTurningWheel_1) // The state we enter the main state at.
     {
         relive::Path_LevelLoader* pLevelLoader = static_cast<relive::Path_LevelLoader*>(gPathInfo->TLV_First_Of_Type_In_Camera(ReliveTypes::eLevelLoader, 0));
         if (pLevelLoader && SwitchStates_Get(pLevelLoader->mSwitchId))
         {
-            field_120_state.wheel = WorkWheelStates::eMapChanging_2;
+            mStatesUnion.wheel = WorkWheelStates::eMapChanging_2;
             SND_SEQ_Play(SeqId::SaveTriggerMusic_31, 1, 127, 127);
             relive_new MusicTrigger(relive::Path_MusicTrigger::MusicTriggerMusicType::eChime, relive::Path_MusicTrigger::TriggeredBy::eTimer, 0);
             return;
@@ -7359,11 +7358,11 @@ void Abe::Motion_127_TurnWheelLoop()
         else
         {
             // Must ALSO do logic below in this instance.
-            field_120_state.wheel = WorkWheelStates::eCheckForNoLongerTurningWheel_1;
+            mStatesUnion.wheel = WorkWheelStates::eCheckForNoLongerTurningWheel_1;
         }
     }
 
-    if (field_120_state.wheel == WorkWheelStates::eCheckForNoLongerTurningWheel_1)
+    if (mStatesUnion.wheel == WorkWheelStates::eCheckForNoLongerTurningWheel_1)
     {
         if (!(Input().IsAnyHeld(InputCommands::eUp)))
         {
@@ -7377,7 +7376,7 @@ void Abe::Motion_127_TurnWheelLoop()
             mCurrentMotion = eAbeMotions::Motion_128_TurnWheelEnd;
         }
     }
-    else if (field_120_state.wheel == WorkWheelStates::eMapChanging_2)
+    else if (mStatesUnion.wheel == WorkWheelStates::eMapChanging_2)
     {
         // This happens for the Mines Tunnel 1 ender.
         if (!gMap.Is_Point_In_Current_Camera(
@@ -7473,7 +7472,7 @@ void Abe::FleechDeath_459350()
     }
     mShrivel = true;
     mCurrentMotion = eAbeMotions::Motion_58_DeadPre_4593E0;
-    field_120_state.raw = 0;
+    mStatesUnion.raw = 0;
     mHealth = FP_FromInteger(0);
     MusicController::static_PlayMusic(MusicController::MusicTypes::eDeathLong_11, this, 1, 0);
     BaseAliveGameObjectCollisionLine = nullptr;
@@ -7490,7 +7489,7 @@ void Abe::ToDie_4588D0()
 
 void Abe::ToIdle_44E6B0()
 {
-    field_8_x_vel_slow_by = FP_FromInteger(0);
+    mFallMotionVelX = FP_FromInteger(0);
     mVelX = FP_FromInteger(0);
     mVelY = FP_FromInteger(0);
     field_124_timer = sGnFrame;
@@ -7500,9 +7499,9 @@ void Abe::ToIdle_44E6B0()
     MapFollowMe(true);
 }
 
-void Abe::PickUpThrowabe_Or_PressBomb_454090(FP fpX, s32 fpY, s32 bStandToCrouch)
+void Abe::PickUpThrowabe_Or_PressBomb(FP fpX, s32 fpY, s32 bStandToCrouch)
 {
-    BaseAliveGameObject* pSlappableOrCollectable = nullptr;
+    BaseAliveGameObject* pSlapableOrCollectable = nullptr;
     for (s32 i = 0; i < gBaseGameObjects->Size(); i++)
     {
         BaseGameObject* pObj = gBaseGameObjects->ItemAt(i);
@@ -7519,24 +7518,24 @@ void Abe::PickUpThrowabe_Or_PressBomb_454090(FP fpX, s32 fpY, s32 bStandToCrouch
                 const FP yPos = FP_FromInteger(fpY);
                 if (yPos >= pAliveObj->mCollectionRect.y && yPos <= pAliveObj->mCollectionRect.h)
                 {
-                    pSlappableOrCollectable = pAliveObj;
-                    mSlappableOrPickupId = pAliveObj->mBaseGameObjectId;
+                    pSlapableOrCollectable = pAliveObj;
+                    mSlapableOrPickupId = pAliveObj->mBaseGameObjectId;
                 }
             }
         }
     }
 
-    if (pSlappableOrCollectable)
+    if (pSlapableOrCollectable)
     {
         bool trySlapOrCollect = false;
-        switch (pSlappableOrCollectable->Type())
+        switch (pSlapableOrCollectable->Type())
         {
             case ReliveTypes::eTimedMine_or_MovingBomb:
             case ReliveTypes::eUXB:
                 mCurrentMotion = eAbeMotions::Motion_100_SlapBomb;
                 if (bStandToCrouch)
                 {
-                    mSlappableOrPickupId = Guid{};
+                    mSlapableOrPickupId = Guid{};
                 }
                 trySlapOrCollect = true;
                 break;
@@ -7546,7 +7545,7 @@ void Abe::PickUpThrowabe_Or_PressBomb_454090(FP fpX, s32 fpY, s32 bStandToCrouch
             case ReliveTypes::eMeat:
             case ReliveTypes::eRock:
                 mCurrentMotion = eAbeMotions::Motion_111_PickupItem;
-                mBaseThrowableCount += static_cast<s8>(static_cast<BaseThrowable*>(pSlappableOrCollectable)->VGetCount()); // TODO: Check types are correct.
+                mBaseThrowableCount += static_cast<s8>(static_cast<BaseThrowable*>(pSlapableOrCollectable)->VGetCount()); // TODO: Check types are correct.
                 if (!gThrowableIndicatorExists)
                 {
                     const FP yoff = (GetSpriteScale() * FP_FromInteger(-30)) + mYPos;
@@ -7563,7 +7562,7 @@ void Abe::PickUpThrowabe_Or_PressBomb_454090(FP fpX, s32 fpY, s32 bStandToCrouch
                 break;
 
             case ReliveTypes::eMine:
-                mSlappableOrPickupId = Guid{};
+                mSlapableOrPickupId = Guid{};
                 trySlapOrCollect = true;
                 break;
             default:
@@ -7577,8 +7576,8 @@ void Abe::PickUpThrowabe_Or_PressBomb_454090(FP fpX, s32 fpY, s32 bStandToCrouch
                 if (bStandToCrouch)
                 {
                     SfxPlayMono(relive::SoundEffects::PickupItem, 0, GetSpriteScale());
-                    pSlappableOrCollectable->VOnAbeInteraction();
-                    mSlappableOrPickupId = Guid{};
+                    pSlapableOrCollectable->VOnAbeInteraction();
+                    mSlapableOrPickupId = Guid{};
                     mCurrentMotion = eAbeMotions::Motion_17_CrouchIdle_456BC0;
                 }
             }
@@ -7646,7 +7645,7 @@ s16 Abe::ToLeftRightMovement_44E340()
     return 0;
 }
 
-void Abe::TryHoist_44ED30()
+void Abe::TryHoist()
 {
     mCurrentMotion = eAbeMotions::Motion_13_HoistBegin_452B20;
 
@@ -7705,7 +7704,7 @@ s16 Abe::TryEnterMineCar_4569E0()
                     {
                         if (pObj->mXPos - mXPos < distanceCheck)
                         {
-                            field_120_state.raw = 0;
+                            mStatesUnion.raw = 0;
                             mCurrentMotion = eAbeMotions::Motion_116_MineCarEnter;
                             mXPos = FP_FromInteger((mineCarRect.x + mineCarRect.w) / 2);
                             MapFollowMe(true);
@@ -7903,14 +7902,14 @@ void Abe::MoveForward_44E9A0()
                 break;
         }
 
-        field_8_x_vel_slow_by = FP_FromDouble(0.3); // TODO: Check.
+        mFallMotionVelX = FP_FromDouble(0.3); // TODO: Check.
         mXPos = oldXPos + mVelX;
         BaseAliveGameObjectLastLineYPos = mYPos;
 
         // TODO: OG bug, dead code due to switch default case?
         if (mCurrentMotion == eAbeMotions::Motion_71_Knockback_455090 || mCurrentMotion == eAbeMotions::Motion_101_KnockForward)
         {
-            field_8_x_vel_slow_by = FP_FromDouble(0.67); // TODO: Check.
+            mFallMotionVelX = FP_FromDouble(0.67); // TODO: Check.
         }
     }
 }
@@ -8078,7 +8077,7 @@ s16 Abe::RunTryEnterDoor_451220()
     }
 
     BaseAliveGameObjectPathTLV = pDoorTlv;
-    field_120_state.raw = 0;
+    mStatesUnion.raw = 0;
     mCurrentMotion = eAbeMotions::Motion_114_DoorEnter;
     mXPos = FP_FromInteger((pDoorTlv->mTopLeftX + pDoorTlv->mBottomRightX) / 2);
     MapFollowMe(true);
@@ -8164,7 +8163,7 @@ eAbeMotions Abe::DoGameSpeak_45AB70(s32 input)
         {
             field_124_timer = MakeTimer(90);
             SND_SEQ_PlaySeq(SeqId::MudokonChant1_10, 0, 1);
-            field_120_state.chant = ChantStates::eIdleChanting_0;
+            mStatesUnion.chant = ChantStates::eIdleChanting_0;
             nextMotion = eAbeMotions::Motion_112_Chant;
         }
     }
@@ -8681,7 +8680,7 @@ void Abe::IntoPortalStates_451990()
                 mYPos = pBirdPortal->mExitY;
                 BaseAliveGameObjectLastLineYPos = pBirdPortal->mExitY;
                 mVelY = FP_FromInteger(0);
-                field_8_x_vel_slow_by = FP_FromInteger(0);
+                mFallMotionVelX = FP_FromInteger(0);
                 break;
 
             default:
@@ -8888,21 +8887,21 @@ void Abe::ChangeChantState(bool bLaughAtChantEnd)
     if (bLaughAtChantEnd)
     {
         mLaughAtChantEnd = true;
-        field_120_state.chant = ChantStates::eChantingForBirdPortal_6; // Holds chant, then laughs.
+        mStatesUnion.chant = ChantStates::eChantingForBirdPortal_6; // Holds chant, then laughs.
     }
     else if (sControlledCharacter == this)
     {
-        field_120_state.chant = ChantStates::eIdleChanting_0; // Chants briefly, then stops.
+        mStatesUnion.chant = ChantStates::eIdleChanting_0; // Chants briefly, then stops.
     }
     else
     {
-        field_120_state.chant = ChantStates::eWaitForUnpossessing_3; // Chants briefly with a possession flicker, then stops.
+        mStatesUnion.chant = ChantStates::eWaitForUnpossessing_3; // Chants briefly with a possession flicker, then stops.
     }
 }
 
 void Abe::SetAsDead()
 {
-    field_120_state.raw = 1;
+    mStatesUnion.raw = 1;
 }
 
 void Abe::ExitShrykull(bool bResetRingTimer)

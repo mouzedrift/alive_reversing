@@ -2580,7 +2580,7 @@ struct AbeSaveState final
     u32 mPossessedObjectId;
     u32 mThrowableId;
     u32 mPullRingRopeId;
-    u32 mSlappableOrPickupId;
+    u32 mSlapableOrPickupId;
     u32 mWorkWheelId;
     u32 mInvisibilityTimer;
     u16 field_A0_unused;
@@ -2690,7 +2690,7 @@ struct AbeSaveState final
         d.mPossessedObjectId = Guid::NewGuidFromTlvInfo(data.mPossessedObjectId + pathOffset);
         d.mThrowableId = Guid::NewGuidFromTlvInfo(data.mThrowableId + pathOffset);
         d.mPullRingRopeId = Guid::NewGuidFromTlvInfo(data.mPullRingRopeId + pathOffset);
-        d.mSlappableOrPickupId = Guid::NewGuidFromTlvInfo(data.mSlappableOrPickupId + pathOffset);
+        d.mSlapableOrPickupId = Guid::NewGuidFromTlvInfo(data.mSlapableOrPickupId + pathOffset);
         d.mWorkWheelId = Guid::NewGuidFromTlvInfo(data.mWorkWheelId + pathOffset);
         d.mInvisibilityTimer = data.mInvisibilityTimer;
         d.mInvisibilityDuration = data.mInvisibilityDuration;

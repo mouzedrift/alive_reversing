@@ -74,8 +74,8 @@ void SaveGame::LoadFromMemory(SaveData* pData, s32 bKillObjects)
     gAbe->mContinuePointPath = pData->mAbe_ContinuePointPath;
     gAbe->mContinuePointCamera = pData->mAbe_ContinuePoint_Camera;
     gAbe->mContinuePointSpriteScale = pData->mAbe_ContinuePointSpriteScale;
-    gAbe->field_150_saved_ring_timer = pData->mAbe_SavedRingTimer;
-    gAbe->field_154_bSavedHaveShrykull = pData->mAbe_SavedHaveShrykull;
+    gAbe->mSavedRingTimer = pData->mAbe_SavedRingTimer;
+    gAbe->mSavedHaveShrykull = pData->mAbe_SavedHaveShrykull;
     gAbe->mRingPulseTimer = pData->mAbe_RingPulseTimer;
     gAbe->mHaveShrykull = pData->mAbe_HaveShrykull;
 
@@ -131,7 +131,7 @@ void SaveGame::LoadFromMemory(SaveData* pData, s32 bKillObjects)
         gDeathGasTimer = 0;
     }
 
-    gAbe->field_2AC_pSaveData = pData;
+    gAbe->mSaveData = pData;
     gAbe->mCurrentMotion = eAbeMotions::Motion_62_LoadedSaveSpawn;
     gAbe->field_114_gnFrame = 0;
 
@@ -207,12 +207,12 @@ void SaveGame::SaveToMemory(SaveData* pSaveData)
     pSaveData->mAbe_ContinuePointLevel = gAbe->mContinuePointLevel;
     pSaveData->mAbe_ContinuePointClearToId = gAbe->mContinuePointClearToId;
     pSaveData->mAbe_ContinuePoint_Camera = gAbe->mContinuePointCamera;
-    pSaveData->mAbe_SavedRingTimer = gAbe->field_150_saved_ring_timer;
+    pSaveData->mAbe_SavedRingTimer = gAbe->mSavedRingTimer;
     pSaveData->mAbe_ContinuePointPath = gAbe->mContinuePointPath;
     pSaveData->mAbe_RingPulseTimer = gAbe->mRingPulseTimer;
     pSaveData->mAbe_ContinuePointSpriteScale = gAbe->mContinuePointSpriteScale;
     pSaveData->mRescuedMudokons = gRescuedMudokons;
-    pSaveData->mAbe_SavedHaveShrykull = gAbe->field_154_bSavedHaveShrykull;
+    pSaveData->mAbe_SavedHaveShrykull = gAbe->mSavedHaveShrykull;
     pSaveData->field_2A4_restartRuptureFarmsSavedMudokons = gRestartRuptureFarmsSavedMuds;
     pSaveData->mAbe_HaveShrykull = gAbe->mHaveShrykull;
     pSaveData->mCurrentPath = gMap.mCurrentPath;
@@ -236,7 +236,7 @@ void SaveGame::SaveToMemory(SaveData* pSaveData)
     pSaveData->mAbe_Health = gAbe->mHealth;
     pSaveData->mAbe_FlipX = gAbe->GetAnimation().GetFlipX();
     pSaveData->mAbe_SpriteScale = gAbe->GetSpriteScale();
-    pSaveData->mAbe_StoneState = static_cast<s32>(gAbe->field_110_state.raw);
+    pSaveData->mAbe_StoneState = static_cast<s32>(gAbe->mStatesUnion.raw);
     pSaveData->mAbe_GnFrame = gAbe->field_114_gnFrame;
     pSaveData->mAbe_Timer = gAbe->field_118_timer;
     pSaveData->mAbe_ThrowableCount = gAbe->field_19C_throwable_count;

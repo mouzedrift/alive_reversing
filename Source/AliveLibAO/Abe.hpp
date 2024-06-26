@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../relive_lib/GameObjects/BaseAliveGameObject.hpp"
+#include "../relive_lib/GameObjects/IAbe.hpp"
 #include "../relive_lib/FatalError.hpp"
 
 namespace relive
@@ -307,7 +307,7 @@ enum class EnvironmentSfx : u8
 struct SaveData;
 
 
-class Abe final : public ::BaseAliveGameObject
+class Abe final : public IAbe
 {
 public:
     static constexpr AnimId sAbeMotionAnimIds[166] = {
@@ -710,15 +710,15 @@ public:
 
     s16 field_10C_prev_held = 0;
     s16 field_10E_released_buttons = 0;
-    AllInternalStates field_110_state = {};
+    AllInternalStates mStatesUnion = {};
     eAbeMotions field_112_prev_motion = eAbeMotions::None_m1;
     s32 field_114_gnFrame = 0;
     s32 field_118_timer = 0;
     s32 field_11C_regen_health_timer = 0;
-    FP field_120_x_vel_slow_by = {};
+    FP mFallMotionVelX = {};
     s32 field_12C_timer = 0;
-    s16 field_130_say = -1;
-    s32 field_134_auto_say_timer = 0;
+    s16 mSay = -1; // TODO: MudSounds enum
+    s32 mAutoSayTimer = 0;
     PSX_Point mContinuePointTopLeft = {};
     PSX_Point mContinuePointBottomRight = {};
     s16 mContinuePointCamera = -1;
@@ -728,10 +728,10 @@ public:
     s16 mContinuePointClearFromId = 0;
     s16 mContinuePointClearToId = 0;
     FP mContinuePointSpriteScale = {};
-    s32 field_150_saved_ring_timer = 0; // todo: check
-    s16 field_154_bSavedHaveShrykull = 0;
+    s32 mSavedRingTimer = 0; // TODO: unused? never used for any game logic?
+    s16 mSavedHaveShrykull = 0; // TODO: unused? never used for any game logic?
     Guid mFadeId = {};
-    Guid field_15C_pThrowable = {};
+    Guid mSlapableOrPickupId = {};
     Guid mPullRingRope = {};
     Guid mCircularFadeId = {};
     s32 mRingPulseTimer = 0;
@@ -743,15 +743,15 @@ public:
     relive::Path_BellsongStone* mBellsongStone = nullptr;
     Guid mOrbWhirlWindId = {};
     Guid field_18C_pObjToPossess = {};
-    EReliveLevelIds field_190_level = EReliveLevelIds::eNone;
-    s16 field_192_path = 0;
-    s16 field_194_camera = 0;
-    s16 field_196_door_id = 0;
+    EReliveLevelIds mDstWellLevel = EReliveLevelIds::eNone;
+    s16 mDstWellPath = 0;
+    s16 mDstWellCamera = 0;
+    s16 mObjectIdInCam = 0; // ID to identify the correct object in a cam for example when we have more than 1 door in the same cam
     Guid mThrowable = {};
     s8 field_19C_throwable_count = 0;
     s8 mThrowDirection = 0;
-    PortalSubStates field_19E_portal_sub_state = PortalSubStates::eJumpingInsidePortal_0;
-    IBirdPortal* field_1A0_portal = nullptr;
+    PortalSubStates mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
+    IBirdPortal* mBirdPortalId = nullptr;
     bool mReturnToPreviousMotion = false;
     bool mWalkToRun = false;
     bool mSnapAbe = false;
@@ -768,7 +768,7 @@ public:
     bool mElumMountBegin = false;
     bool mElumMountEnd = false;
     bool mElumUnmountBegin = false;
-    SaveData* field_2AC_pSaveData = nullptr;
+    SaveData* mSaveData = nullptr;
     bool mRidingElum = false;
     eAbeMotions mPreviousMotion = eAbeMotions::Motion_0_Idle;
     eAbeMotions mCurrentMotion = eAbeMotions::Motion_0_Idle;

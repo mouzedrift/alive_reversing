@@ -1,13 +1,10 @@
-#include "stdafx_ao.h"
+#include "stdafx.h"
 #include "RollingBallShaker.hpp"
-#include "../relive_lib/Function.hpp"
-#include "../AliveLibAE/stdlib.hpp"
-#include "../relive_lib/PsxDisplay.hpp"
-#include "../relive_lib/Primitives.hpp"
-#include "../relive_lib/Primitives.hpp"
-#include "../relive_lib/GameObjects/BaseAnimatedWithPhysicsGameObject.hpp"
-
-namespace AO {
+#include "../Function.hpp"
+#include "../PsxDisplay.hpp"
+#include "../Primitives.hpp"
+#include "../Primitives.hpp"
+#include "BaseAnimatedWithPhysicsGameObject.hpp"
 
 const static PSX_Pos16 sRollingBallShakerScreenOffsets[18] = {
     {1, 0},
@@ -68,9 +65,8 @@ void RollingBallShaker::VRender(OrderingTable& ot)
     }
     else
     {
-        mPrimScreenOffset.SetOffset(sRollingBallShakerScreenOffsets[mShakeTableIdx].x, sRollingBallShakerScreenOffsets[mShakeTableIdx].y);
+        const PSX_Pos16 offset = sRollingBallShakerScreenOffsets[mShakeTableIdx];
+        mPrimScreenOffset.SetOffset(offset.x, offset.y);
         ot.Add(Layer::eLayer_0, &mPrimScreenOffset);
     }
 }
-
-} // namespace AO
