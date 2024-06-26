@@ -196,15 +196,6 @@ enum class AbeDoorStates : u16
     eAbeComesOut_6 = 6
 };
 
-enum class PortalSubStates : s16
-{
-    eJumpingInsidePortal_0 = 0,
-    eSetNewActiveCamera_1 = 1,
-    eHopOutOfPortal_2 = 2,
-    ePadding_3 = 3,
-    eSetNewAbePosition_4 = 4
-};
-
 enum class WorkWheelStates : u16
 {
     eTurningWheel_0 = 0,
@@ -489,36 +480,18 @@ public:
     static void CreateFromSaveState(SerializedObjectData& pData);
     static void CreateFromSaveState(const AbeSaveState& pData);
 
-    bool mShrivel = false;
-    bool mReturnToPreviousMotion = false;
-    bool mPreventChanting = true;
-    bool mLandSoftly = true;
-    bool mLaughAtChantEnd = false;
     bool mPlayLedgeGrabSounds = false;
-    bool mHaveHealing = false;
-    bool mMudancheeDone = false;
+
     s32 field_0_abe_timer = 0;
-    s32 mRegenHealthTimer = 0;
-    FP mFallMotionVelX = {};
     //u16 field_10_resource_index;
     Mud_Emotion mMood = Mud_Emotion::eNormal_0;
     s32 mRollingMotionTimer = 0;
     MudSounds mSay = MudSounds::eNone;
     s32 field_124_timer = 0;
     Guid mBirdPortalId;
-    s8 mBaseThrowableCount = 0;
-    Guid mThrowableId;
-    s16 mObjectIdInCam = 0; // ID to identify the correct object in a cam for example when we have more than 1 door in the same cam
-    s8 mThrowDirection = 0;
-    s32 mRingPulseTimer = 0;
-    s16 mHaveShrykull = 0;
-    s32 mAutoSayTimer = 0;
-    s16 mHaveInvisibility = 0;
-    s16 mInvisibilityDuration = 0;
     eAbeMotions mPreviousMotion = eAbeMotions::Motion_0_Idle_44EEB0;
     eAbeMotions mCurrentMotion = eAbeMotions::Motion_0_Idle_44EEB0;
     eAbeMotions mNextMotion = eAbeMotions::Motion_0_Idle_44EEB0;
-    bool mbMotionChanged = false;
 
 private:
     void LoadAnimations();
@@ -698,31 +671,12 @@ private:
     bool TryGetEvilFart(bool bReceiveEvilFart);
     void HandleDDCheat();
 
-    s32 mPrevInput = 0;
-    s32 mReleasedButtons = 0;
     AllInternalStates mStatesUnion = {};
     eAbeMotions mKnockdownMotion = eAbeMotions::None_m1;
-    Guid mFadeId;
-    Guid mCircularFadeId;
-    Guid mOrbWhirlWindId;
     Guid mPossessedObjectId;
-    Guid mPullRingRopeId;
-    Guid mSlapableOrPickupId;
-    Guid mWorkWheelId;
-    s32 mInvisibilityTimer = 0;
-    Guid mInvisibleEffectId;
-    s8 mHandStoneCamIdx = 0;
-    ReliveTypes mHandStoneType = {};
+
     s16 mFmvId = 0;
     s16 mHandStoneCams[3] = {};
-    bool mHasEvilFart = false;
-    EReliveLevelIds mDstWellLevel = EReliveLevelIds::eNone;
-    s16 mDstWellPath = 0;
-    s16 mDstWellCamera = 0;
-    PortalSubStates mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
-    bool mDoQuicksave = false;
-    bool mMudomoDone = false;
-    s16 mSaveFileId = 0;
 
     using TAbeMotionFunction = decltype(&Abe::Motion_0_Idle_44EEB0);
 

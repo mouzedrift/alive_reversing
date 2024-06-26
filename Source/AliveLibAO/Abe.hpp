@@ -237,15 +237,6 @@ enum class AbeDoorStates : s16
     eAbeComesOut_6 = 6
 };
 
-enum class PortalSubStates : s16
-{
-    eJumpingInsidePortal_0 = 0,
-    eSetNewActiveCamera_1 = 1,
-    eHopOutOfPortal_2 = 2,
-    ePadding_3 = 3,
-    eSetNewAbePosition_4 = 4
-};
-
 union AllInternalStates
 {
     ChantStates chant;
@@ -522,7 +513,7 @@ public:
     void MoveForward();
     eAbeMotions MoveLiftUpOrDown(FP yVelocity);
     void ElumFree();
-    eAbeMotions DoGameSpeak(u16 input);
+    eAbeMotions DoGameSpeak(s32 input);
     void SyncToElum(s16 elumMotion); // TODO: use elum motion enum instead
     void PickUpThrowabe_Or_PressBomb(FP fpX, s32 fpY, s16 bStandToCrouch);
     void CrouchingGameSpeak();
@@ -708,17 +699,12 @@ public:
     void Motion_163_ShrykullEnd();
     void Motion_164_PoisonGasDeath();
 
-    s16 mPrevInput = 0;
-    s16 mReleasedButtons = 0;
     AllInternalStates mStatesUnion = {};
     eAbeMotions mKnockdownMotion = eAbeMotions::None_m1;
     s32 field_114_gnFrame = 0;
     s32 field_118_timer = 0;
-    s32 mRegenHealthTimer = 0;
-    FP mFallMotionVelX = {};
     s32 field_12C_timer = 0;
     s16 mSay = -1; // TODO: MudSounds enum
-    s32 mAutoSayTimer = 0;
     PSX_Point mContinuePointTopLeft = {};
     PSX_Point mContinuePointBottomRight = {};
     s16 mContinuePointCamera = -1;
@@ -730,50 +716,23 @@ public:
     FP mContinuePointSpriteScale = {};
     s32 mSavedRingTimer = 0; // TODO: unused? never used for any game logic?
     s16 mSavedHaveShrykull = 0; // TODO: unused? never used for any game logic?
-    Guid mFadeId = {};
-    Guid mSlapableOrPickupId = {};
-    Guid mPullRingRope = {};
-    Guid mCircularFadeId = {};
-    s32 mRingPulseTimer = 0;
-    s16 mHaveShrykull = 0;
-    s16 mHandStoneCamIdx = 0;
-    ReliveTypes mHandStoneType = {};
     relive::Path_HandStone* mHandStone = nullptr;
     relive::Path_MovieStone* mMovieStone = nullptr;
     relive::Path_BellsongStone* mBellsongStone = nullptr;
-    Guid mOrbWhirlWindId = {};
     Guid field_18C_pObjToPossess = {};
-    EReliveLevelIds mDstWellLevel = EReliveLevelIds::eNone;
-    s16 mDstWellPath = 0;
-    s16 mDstWellCamera = 0;
-    s16 mObjectIdInCam = 0; // ID to identify the correct object in a cam for example when we have more than 1 door in the same cam
-    Guid mThrowableId = {};
-    s8 mBaseThrowableCount = 0;
-    s8 mThrowDirection = 0;
-    PortalSubStates mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
     IBirdPortal* mBirdPortalId = nullptr; // TODO: make it a guid like AE
-    bool mReturnToPreviousMotion = false;
     bool mWalkToRun = false;
     bool mSnapAbe = false;
-    bool mShrivel = false;
-    bool mPreventChanting = false;
-    bool mLandSoft = true;
-    bool mLaughAtChantEnd = false;
-    bool mParamoniaDone = false;
-    bool mScrabaniaDone = false;
     bool mGotShrykullFromBigFace = false;
     bool mGiveShrykullFromBigFace = false;
     bool mAbeRespawnFlipX = false;
     bool mSfxPlaying = false;
-    bool mElumMountBegin = false;
-    bool mElumMountEnd = false;
-    bool mElumUnmountBegin = false;
+
     SaveData* mSaveData = nullptr;
     bool mRidingElum = false;
     eAbeMotions mPreviousMotion = eAbeMotions::Motion_0_Idle;
     eAbeMotions mCurrentMotion = eAbeMotions::Motion_0_Idle;
     eAbeMotions mNextMotion = eAbeMotions::Motion_0_Idle;
-    bool mbMotionChanged = false;
 };
 
 extern Abe* gAbe;

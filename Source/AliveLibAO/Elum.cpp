@@ -2128,7 +2128,7 @@ void Elum::Motion_19_Dead()
 {
     if (gAbe->mHealth > FP_FromInteger(0))
     {
-        if (!gAbe->mShrivel && gAbe->mLandSoft /* && field_104_pending_resource_count == 0*/)
+        if (!gAbe->mShrivel && gAbe->mLandSoftly /* && field_104_pending_resource_count == 0*/)
         {
             mXPos = FP_FromInteger(mContinuePointRect.x);
             mYPos = FP_FromInteger(mContinuePointRect.y);

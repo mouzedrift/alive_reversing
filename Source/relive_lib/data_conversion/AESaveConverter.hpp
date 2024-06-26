@@ -2706,7 +2706,7 @@ struct AbeSaveState final
         d.mDstWellCamera = data.mDstWellCamera;
         d.door_id = data.door_id;
         d.mThrowDirection = data.mThrowDirection;
-        d.mBirdPortalSubState = data.mBirdPortalSubState;
+        d.mBirdPortalSubState = data.mBirdPortalSubState; // TODO: enum conversion
         d.mBirdPortalId = Guid::NewGuidFromTlvInfo(data.mBirdPortalId + pathOffset);
 
         if (data.field_D4_flags.Get(Flags_D4::eD4_Bit9_unused))

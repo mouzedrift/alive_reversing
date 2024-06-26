@@ -1510,7 +1510,7 @@ void Abe::GetSaveState(AbeSaveState& pSaveState)
 
     pSaveState.mInvisibilityTimer = mInvisibilityTimer;
     pSaveState.mInvisibilityDuration = mInvisibilityDuration;
-    pSaveState.mHandStoneCamIdx = mHandStoneCamIdx;
+    pSaveState.mHandStoneCamIdx = static_cast<s8>(mHandStoneCamIdx);
     pSaveState.mHandStoneType = mHandStoneType;
     pSaveState.mFmvId = mFmvId;
     pSaveState.mHandStoneCam1 = mHandStoneCams[0];
@@ -2215,7 +2215,7 @@ void Abe::Motion_0_Idle_44EEB0()
             BaseGameObject* pObj = VIntoBirdPortal(2);
             if (pObj)
             {
-                mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
+                mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal;
                 mBirdPortalId = pObj->mBaseGameObjectId;
             }
             else
@@ -2971,7 +2971,7 @@ void Abe::Motion_4_WalkToIdle_44FFC0()
                 BaseGameObject* pObj = VIntoBirdPortal(2);
                 if (pObj)
                 {
-                    mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
+                    mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal;
                     mBirdPortalId = pObj->mBaseGameObjectId;
                 }
             }
@@ -3759,7 +3759,7 @@ void Abe::Motion_27_HopBegin_4521C0()
             BaseGameObject* pObj = VIntoBirdPortal(2);
             if (pObj)
             {
-                mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
+                mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal;
                 mBirdPortalId = pObj->mBaseGameObjectId;
             }
         }
@@ -4125,7 +4125,7 @@ void Abe::Motion_32_RunJumpLand_453460()
                 BaseGameObject* pPortal = VIntoBirdPortal(3);
                 if (pPortal)
                 {
-                    mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
+                    mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal;
                     mBirdPortalId = pPortal->mBaseGameObjectId;
                     mCurrentMotion = eAbeMotions::Motion_30_RunJumpBegin_4532E0;
                     mPrevInput = 0;
@@ -4171,7 +4171,7 @@ void Abe::Motion_32_RunJumpLand_453460()
                 BaseGameObject* pPortal = VIntoBirdPortal(3);
                 if (pPortal)
                 {
-                    mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
+                    mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal;
                     mBirdPortalId = pPortal->mBaseGameObjectId;
                 }
                 mCurrentMotion = eAbeMotions::Motion_30_RunJumpBegin_4532E0;
@@ -4209,7 +4209,7 @@ void Abe::Motion_32_RunJumpLand_453460()
             BaseGameObject* pPortal = VIntoBirdPortal(2);
             if (pPortal)
             {
-                mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
+                mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal;
                 mBirdPortalId = pPortal->mBaseGameObjectId;
             }
             mCurrentMotion = eAbeMotions::Motion_27_HopBegin_4521C0;
@@ -4236,7 +4236,7 @@ void Abe::DoRunJump()
     BaseGameObject* pObj = VIntoBirdPortal(3);
     if (pObj)
     {
-        mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
+        mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal;
         mBirdPortalId = pObj->mBaseGameObjectId;
     }
 
@@ -8626,7 +8626,7 @@ void Abe::IntoPortalStates()
         PSX_RECT bRect = {};
         switch (mBirdPortalSubState)
         {
-            case PortalSubStates::eJumpingInsidePortal_0:
+            case PortalSubStates::eJumpingInsidePortal:
                 bRect = VGetBoundingRect();
                 if ((mVelX > FP_FromInteger(0) && FP_FromInteger(bRect.x) > pBirdPortal->mXPos) || (mVelX < FP_FromInteger(0) && FP_FromInteger(bRect.w) < pBirdPortal->mXPos))
                 {
@@ -8635,7 +8635,7 @@ void Abe::IntoPortalStates()
                     mVelX = FP_FromInteger(0);
                     pBirdPortal->DestroyPortalClippers();
                     pBirdPortal->VGiveShrykull(true);
-                    mBirdPortalSubState = PortalSubStates::eSetNewActiveCamera_1;
+                    mBirdPortalSubState = PortalSubStates::eSetNewActiveCamera;
                 }
 
                 mVelY += GetSpriteScale() * FP_FromDouble(1.8);
@@ -8643,7 +8643,7 @@ void Abe::IntoPortalStates()
                 mYPos += mVelY;
                 return;
 
-            case PortalSubStates::eSetNewActiveCamera_1:
+            case PortalSubStates::eSetNewActiveCamera:
                 if (pBirdPortal->IsAbeInsidePortalState())
                 {
                     EReliveLevelIds level = {};
@@ -8654,11 +8654,11 @@ void Abe::IntoPortalStates()
 
                     pBirdPortal->VGetMapChange(&level, &path, &camera, &screenChangeEffect, &movieId);
                     gMap.SetActiveCam(level, path, camera, screenChangeEffect, movieId, false);
-                    mBirdPortalSubState = PortalSubStates::eSetNewAbePosition_4;
+                    mBirdPortalSubState = PortalSubStates::eSetNewAbePosition;
                 }
                 break;
 
-            case PortalSubStates::eHopOutOfPortal_2:
+            case PortalSubStates::eHopOutOfPortal:
                 if (pBirdPortal->IsAbExittingPortalState())
                 {
                     pBirdPortal->ClipPortal(0);
@@ -8669,9 +8669,9 @@ void Abe::IntoPortalStates()
                 }
                 break;
 
-            case PortalSubStates::eSetNewAbePosition_4:
+            case PortalSubStates::eSetNewAbePosition:
                 pBirdPortal->VExitPortal();
-                mBirdPortalSubState = PortalSubStates::eHopOutOfPortal_2;
+                mBirdPortalSubState = PortalSubStates::eHopOutOfPortal;
 
                 GetAnimation().SetFlipX(pBirdPortal->mEnterSide == relive::Path_BirdPortal::PortalSide::eLeft);
 

@@ -580,11 +580,11 @@ Abe::~Abe()
         mSlapableOrPickupId = Guid{};
     }
 
-    auto pPullRingRope = sObjectIds.Find_Impl(mPullRingRope);
+    auto pPullRingRope = sObjectIds.Find_Impl(mPullRingRopeId);
     if (pPullRingRope)
     {
         pPullRingRope->SetDead(true);
-        mPullRingRope = Guid{};
+        mPullRingRopeId = Guid{};
     }
 
     auto pCircularFade = sObjectIds.Find_Impl(mCircularFadeId);
@@ -1287,7 +1287,7 @@ void Abe::ElumFree()
     }
 }
 
-eAbeMotions Abe::DoGameSpeak(u16 input)
+eAbeMotions Abe::DoGameSpeak(s32 input)
 {
     if (Input_IsChanting())
     {
@@ -3049,7 +3049,7 @@ void Abe::Motion_0_Idle()
             mBirdPortalId = VIntoBirdPortal(2);
             if (mBirdPortalId)
             {
-                mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
+                mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal;
             }
         }
         return;
@@ -3656,7 +3656,7 @@ void Abe::Motion_3_Fall()
                     FP_GetExponent(mYPos),
                     ReliveTypes::eSoftLanding));
 
-                if (mLandSoft
+                if (mLandSoftly
                     || (pSoftLanding && mHealth > FP_FromInteger(0))
                     || ((mYPos - BaseAliveGameObjectLastLineYPos) < (GetSpriteScale() * FP_FromInteger(180))
                         && (mHealth > FP_FromInteger(0) || gAbeInvulnerableCheat)))
@@ -3786,7 +3786,7 @@ void Abe::Motion_4_WalkToIdle()
                 mBirdPortalId = VIntoBirdPortal(2);
                 if (mBirdPortalId)
                 {
-                    mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
+                    mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal;
                 }
             }
             else
@@ -3820,7 +3820,7 @@ void Abe::Motion_5_MidWalkToIdle()
                 mBirdPortalId = VIntoBirdPortal(2);
                 if (mBirdPortalId)
                 {
-                    mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
+                    mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal;
                 }
             }
             else
@@ -3963,14 +3963,14 @@ void Abe::Motion_17_HoistIdle()
     auto pPullRing = GetPullRope();
     if (pPullRing)
     {
-        mPullRingRope = pPullRing->mBaseGameObjectId;
+        mPullRingRopeId = pPullRing->mBaseGameObjectId;
         if (pPullRing->Pull(this))
         {
             mCurrentMotion = eAbeMotions::Motion_69_RingRopePullHang;
             mNextMotion = eAbeMotions::Motion_0_Idle;
             return;
         }
-        mPullRingRope = Guid{};
+        mPullRingRopeId = Guid{};
     }
 
     if (mVelY >= FP_FromInteger(0))
@@ -4080,7 +4080,7 @@ void Abe::Motion_18_HoistLand()
                 mBirdPortalId = VIntoBirdPortal(2);
                 if (mBirdPortalId)
                 {
-                    mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
+                    mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal;
                 }
             }
         }
@@ -4568,7 +4568,7 @@ void Abe::Motion_29_HopBegin()
             mBirdPortalId = VIntoBirdPortal(2);
             if (mBirdPortalId)
             {
-                mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
+                mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal;
             }
         }
     }
@@ -4578,7 +4578,7 @@ void Abe::IntoPortalStates()
 {
     switch (mBirdPortalSubState)
     {
-        case PortalSubStates::eJumpingInsidePortal_0:
+        case PortalSubStates::eJumpingInsidePortal:
         {
             PSX_RECT bRect = VGetBoundingRect();
             if ((mVelX > FP_FromInteger(0) && FP_FromInteger(bRect.x) > mBirdPortalId->mXPos) || (mVelX < FP_FromInteger(0) && FP_FromInteger(bRect.w) < mBirdPortalId->mXPos))
@@ -4588,14 +4588,14 @@ void Abe::IntoPortalStates()
                 mVelX = FP_FromInteger(0);
                 mBirdPortalId->DestroyPortalClippers();
                 mBirdPortalId->VGiveShrykull(true);
-                mBirdPortalSubState = PortalSubStates::eSetNewActiveCamera_1;
+                mBirdPortalSubState = PortalSubStates::eSetNewActiveCamera;
             }
             mVelY += GetSpriteScale() * FP_FromDouble(1.8);
             mXPos += mVelX;
             mYPos += mVelY;
             return;
         }
-        case PortalSubStates::eSetNewActiveCamera_1:
+        case PortalSubStates::eSetNewActiveCamera:
         {
             if (mBirdPortalId->IsAbeInsidePortalState())
             {
@@ -4606,11 +4606,11 @@ void Abe::IntoPortalStates()
                 u16 movieId = 0;
                 mBirdPortalId->VGetMapChange(&level, &path, &camera, &screenChangeEffect, &movieId);
                 gMap.SetActiveCam(level, path, camera, screenChangeEffect, movieId, false);
-                mBirdPortalSubState = PortalSubStates::eSetNewAbePosition_4;
+                mBirdPortalSubState = PortalSubStates::eSetNewAbePosition;
             }
             break;
         }
-        case PortalSubStates::eHopOutOfPortal_2:
+        case PortalSubStates::eHopOutOfPortal:
         {
             if (mBirdPortalId->IsAbExittingPortalState())
             {
@@ -4622,10 +4622,10 @@ void Abe::IntoPortalStates()
             }
             break;
         }
-        case PortalSubStates::eSetNewAbePosition_4:
+        case PortalSubStates::eSetNewAbePosition:
         {
             mBirdPortalId->VExitPortal();
-            mBirdPortalSubState = PortalSubStates::eHopOutOfPortal_2;
+            mBirdPortalSubState = PortalSubStates::eHopOutOfPortal;
             GetAnimation().SetFlipX(mBirdPortalId->mEnterSide == relive::Path_BirdPortal::PortalSide::eLeft);
 
             if (GetAnimation().GetFlipX())
@@ -5012,7 +5012,7 @@ void Abe::Motion_34_RunJumpLand()
             mBirdPortalId = VIntoBirdPortal(3);
             if (mBirdPortalId)
             {
-                mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
+                mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal;
             }
 
             mCurrentMotion = eAbeMotions::Motion_32_RunJumpBegin;
@@ -5027,7 +5027,7 @@ void Abe::Motion_34_RunJumpLand()
                 mBirdPortalId = VIntoBirdPortal(3);
                 if (mBirdPortalId)
                 {
-                    mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
+                    mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal;
                 }
 
                 mCurrentMotion = eAbeMotions::Motion_32_RunJumpBegin;
@@ -5082,7 +5082,7 @@ void Abe::Motion_34_RunJumpLand()
             mBirdPortalId = VIntoBirdPortal(3);
             if (mBirdPortalId)
             {
-                mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
+                mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal;
             }
 
             mCurrentMotion = eAbeMotions::Motion_29_HopBegin;
@@ -5098,7 +5098,7 @@ bool Abe::CheckForPortalAndRunJump()
         mBirdPortalId = VIntoBirdPortal(3);
         if (mBirdPortalId)
         {
-            mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
+            mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal;
         }
 
         mCurrentMotion = eAbeMotions::Motion_32_RunJumpBegin;
@@ -6228,7 +6228,7 @@ void Abe::Motion_61_Respawn()
                 GetShadow()->mEnabled = true;
                 GetShadow()->mShadowAtBottom = false;
                 MusicController::static_PlayMusic(MusicController::MusicTypes::eType0, this, 0, 0);
-                mLandSoft = true;
+                mLandSoftly = true;
                 GetAnimation().SetRender(true);
                 SetDrawable(true);
                 mCurrentMotion = eAbeMotions::Motion_3_Fall;
@@ -6276,7 +6276,7 @@ void Abe::Motion_62_LoadedSaveSpawn()
         {
             gAbe->mCurrentMotion = eAbeMotions::Motion_3_Fall;
         }
-        gAbe->mLandSoft = false;
+        gAbe->mLandSoftly = false;
         gAbe->BaseAliveGameObjectLastLineYPos = gAbe->mYPos;
         gAbe->mStatesUnion.raw = static_cast<s16>(pSaveData->mAbe_StoneState);
         gAbe->field_114_gnFrame = pSaveData->mAbe_GnFrame;
@@ -6577,11 +6577,11 @@ void Abe::Motion_68_LedgeHangWobble()
 
 void Abe::Motion_69_RingRopePullHang()
 {
-    auto pPullRingRope = static_cast<PullRingRope*>(sObjectIds.Find_Impl(mPullRingRope));
+    auto pPullRingRope = static_cast<PullRingRope*>(sObjectIds.Find_Impl(mPullRingRopeId));
     if (pPullRingRope->vIsNotBeingPulled())
     {
         mCurrentMotion = eAbeMotions::Motion_91_FallingFromGrab;
-        mPullRingRope = Guid{};
+        mPullRingRopeId = Guid{};
         mVelY = FP_FromInteger(0);
     }
 }
@@ -7580,13 +7580,13 @@ void Abe::Motion_98_LandSoft()
 
     if (GetAnimation().GetCurrentFrame() == 2)
     {
-        if (!mLandSoft)
+        if (!mLandSoftly)
         {
             EventBroadcast(Event::kEventNoise, this);
             EventBroadcast(Event::kEventSuspiciousNoise, this);
         }
 
-        mLandSoft = false;
+        mLandSoftly = false;
 
         if (mPreviousMotion == eAbeMotions::Motion_3_Fall)
         {

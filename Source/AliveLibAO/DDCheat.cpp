@@ -137,7 +137,7 @@ void DDCheat::VUpdate()
         gAbe->mXPos = FP_FromInteger(point.x + 448);
         gAbe->mYPos = FP_FromInteger(point.y + 180);
         gAbe->mCurrentMotion = eAbeMotions::Motion_3_Fall;
-        gAbe->mLandSoft = true;
+        gAbe->mLandSoftly = true;
         gAbe->mCurrentLevel = MapWrapper::FromAO(static_cast<LevelIds>(sTeleport_Level));
         gAbe->mCurrentPath = static_cast<s16>(sTeleport_Path);
         gDDCheat_FlyingEnabled = true;
@@ -151,7 +151,7 @@ void DDCheat::VUpdate()
             gDDCheat_FlyingEnabled = !cheat_enabled;
             if (gDDCheat_FlyingEnabled)
             {
-                gAbe->mLandSoft = true;
+                gAbe->mLandSoftly = true;
                 gDDCheat_ShowAI_Info = 0;
                 sControlledCharacter->BaseAliveGameObjectCollisionLine = nullptr;
                 sControlledCharacter->BaseAliveGameObjectLastLineYPos = sControlledCharacter->mYPos;
@@ -182,7 +182,7 @@ void DDCheat::VUpdate()
 
     if (cheat_enabled)
     {
-        gAbe->mLandSoft = true;
+        gAbe->mLandSoftly = true;
 
         if (sControlledCharacter)
         {
