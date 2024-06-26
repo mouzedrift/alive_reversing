@@ -668,8 +668,8 @@ private:
     // End motions
 
 
-    void ToDie_4588D0();
-    void ToIdle_44E6B0();
+    void ToDeathDropFall();
+    void ToIdle();
     void PickUpThrowabe_Or_PressBomb(FP fpX, s32 fpY, s32 bStandToCrouch);
     s16 ToLeftRightMovement_44E340();
     void TryHoist();
@@ -683,17 +683,17 @@ private:
     bool Is_Celling_Above_44E8D0();
     void MoveWithVelocity_450FA0(FP velocityX);
     s16 RunTryEnterDoor_451220();
-    s16 RunTryEnterWell_451060();
-    void ToDieFinal_458910();
+    bool RunTryEnterWell();
+    void ToDieFinal();
     eAbeMotions DoGameSpeak_45AB70(s32 input);
-    void FallOnBombs_44EC10();
+    void CollideWithUxbOrMine();
     s16 ForceDownIfHoisting_44BA30();
     void BulletDamage_44C980(Bullet* pObj);
     void GiveControlBackToMe_44BA10();
     PullRingRope* GetPullRope();
-    void IntoPortalStates_451990();
+    void IntoPortalStates();
     void Calc_Well_Velocity_45C530(s16 xPosSource, s16 yPosSource, s16 XPosDest, s16 yPosDest);
-    void FollowLift_45A500();
+    void FollowLift();
 
     eAbeMotions MoveLiftUpOrDown_45A7E0(FP yVelocity);
     s16 GetEvilFart_4585F0(s16 bDontLoad);

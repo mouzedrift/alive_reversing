@@ -1896,7 +1896,7 @@ bool Abe::VTakeDamage(BaseGameObject* pFrom)
 
         case ReliveTypes::eElectrocute:
             GetAnimation().SetRender(false);
-            ToDieFinal_458910();
+            ToDieFinal();
             break;
 
         default:
@@ -1958,7 +1958,7 @@ void Abe::VOnTlvCollision(relive::Path_TLV* pTlv)
                 EventBroadcast(Event::kEventSuspiciousNoise, this);
                 EventBroadcast(Event::kEventLoudNoise, this);
                 EventBroadcast(Event::kEventSpeaking, this);
-                ToDie_4588D0();
+                ToDeathDropFall();
             }
         }
         else if (pTlv->mTlvType == ReliveTypes::eResetPath)
@@ -2730,7 +2730,7 @@ void Abe::Motion_2_StandingTurn_451830()
             }
             else
             {
-                ToIdle_44E6B0();
+                ToIdle();
             }
         }
     }
@@ -2977,7 +2977,7 @@ void Abe::Motion_4_WalkToIdle_44FFC0()
             }
             else
             {
-                ToIdle_44E6B0();
+                ToIdle();
             }
         }
     }
@@ -3008,7 +3008,7 @@ void Abe::Motion_6_WalkBegin_44FEE0()
 
     if (WallHit(GetSpriteScale() * FP_FromInteger(50), mVelX) || WallHit(GetSpriteScale() * FP_FromInteger(20), mVelX))
     {
-        ToIdle_44E6B0();
+        ToIdle();
     }
     else
     {
@@ -3048,7 +3048,7 @@ void Abe::Motion_11_ToSpeak_45B0A0()
         mCurrentMotion = DoGameSpeak_45AB70(mPrevInput);
         if (mCurrentMotion == eAbeMotions::None_m1)
         {
-            ToIdle_44E6B0();
+            ToIdle();
         }
         else
         {
@@ -3268,7 +3268,7 @@ void Abe::Motion_15_HoistLand_452BA0()
     if (GetAnimation().GetIsLastFrame())
     {
         // Landing and standing
-        ToIdle_44E6B0();
+        ToIdle();
     }
 }
 
@@ -3309,7 +3309,7 @@ void Abe::Motion_16_LandSoft_45A360()
 
     if (GetAnimation().GetIsLastFrame())
     {
-        ToIdle_44E6B0();
+        ToIdle();
     }
 }
 
@@ -3466,7 +3466,7 @@ void Abe::Motion_18_CrouchToStand_454600()
 
     if (GetAnimation().GetIsLastFrame())
     {
-        ToIdle_44E6B0();
+        ToIdle();
         mPrevInput = 0;
     }
 }
@@ -3631,7 +3631,7 @@ void Abe::Motion_25_RunSlideStop_451330()
     {
         MoveWithVelocity_450FA0(FP_FromDouble(0.375));
 
-        if (mCurrentMotion == eAbeMotions::Motion_25_RunSlideStop_451330 && !RunTryEnterWell_451060() && !RunTryEnterDoor_451220())
+        if (mCurrentMotion == eAbeMotions::Motion_25_RunSlideStop_451330 && !RunTryEnterWell() && !RunTryEnterDoor_451220())
         {
             if (GetAnimation().GetCurrentFrame() != 15)
             {
@@ -3648,7 +3648,7 @@ void Abe::Motion_25_RunSlideStop_451330()
 
                     if (!ToLeftRightMovement_44E340())
                     {
-                        ToIdle_44E6B0();
+                        ToIdle();
                     }
                 }
             }
@@ -3675,7 +3675,7 @@ void Abe::Motion_26_RunTurn_451500()
     {
         MoveWithVelocity_450FA0(FP_FromDouble(0.375));
         if (mCurrentMotion == eAbeMotions::Motion_26_RunTurn_451500
-            && !RunTryEnterWell_451060()
+            && !RunTryEnterWell()
             && !RunTryEnterDoor_451220())
         {
             if (GetAnimation().GetIsLastFrame() || (MapFollowMe(false) && GetAnimation().GetIsLastFrame()))
@@ -3770,7 +3770,7 @@ void Abe::Motion_28_HopMid_451C50()
 {
     if (mBirdPortalId != Guid{})
     {
-        IntoPortalStates_451990();
+        IntoPortalStates();
         return;
     }
 
@@ -3903,7 +3903,7 @@ void Abe::Motion_29_HopLand_4523D0()
     }
     else if (GetAnimation().GetIsLastFrame())
     {
-        ToIdle_44E6B0();
+        ToIdle();
     }
 }
 
@@ -3952,7 +3952,7 @@ void Abe::Motion_31_RunJumpMid_452C10()
     EventBroadcast(Event::kEventSuspiciousNoise, this);
     if (mBirdPortalId != Guid{})
     {
-        IntoPortalStates_451990();
+        IntoPortalStates();
         return;
     }
 
@@ -4372,7 +4372,7 @@ void Abe::Motion_35_DunnoEnd_44ED10()
 {
     if (GetAnimation().GetIsLastFrame())
     {
-        ToIdle_44E6B0();
+        ToIdle();
     }
 }
 
@@ -4424,7 +4424,7 @@ void Abe::Motion_39_StandingToRun_450D40()
 
     if (WallHit(GetSpriteScale() * FP_FromInteger(50), mVelX) || WallHit(GetSpriteScale() * FP_FromInteger(20), mVelX))
     {
-        ToIdle_44E6B0();
+        ToIdle();
     }
     else
     {
@@ -4436,7 +4436,7 @@ void Abe::Motion_40_SneakLoop_450550()
 {
     if (WallHit(GetSpriteScale() * FP_FromInteger(50), mVelX))
     {
-        ToIdle_44E6B0();
+        ToIdle();
         MapFollowMe(true);
     }
     else
@@ -4520,7 +4520,7 @@ void Abe::Motion_41_WalkToSneak_450250()
 
     if (WallHit(GetSpriteScale() * FP_FromInteger(50), mVelX) || WallHit(GetSpriteScale() * FP_FromInteger(20), mVelX))
     {
-        ToIdle_44E6B0();
+        ToIdle();
         MapFollowMe(true);
     }
     else
@@ -4549,7 +4549,7 @@ void Abe::Motion_42_SneakToWalk_4503D0()
 
     if (WallHit(GetSpriteScale() * FP_FromInteger(50), mVelX) || WallHit(GetSpriteScale() * FP_FromInteger(20), mVelX))
     {
-        ToIdle_44E6B0();
+        ToIdle();
         MapFollowMe(true);
     }
     else
@@ -4595,7 +4595,7 @@ void Abe::Motion_45_SneakBegin_4507A0()
 
     if (WallHit(GetSpriteScale() * FP_FromInteger(50), mVelX) || WallHit(GetSpriteScale() * FP_FromInteger(20), mVelX))
     {
-        ToIdle_44E6B0();
+        ToIdle();
         MapFollowMe(true);
     }
     else
@@ -4616,7 +4616,7 @@ void Abe::Motion_46_SneakToIdle_450870()
     if (GetAnimation().GetIsLastFrame())
     {
         MapFollowMe(true);
-        ToIdle_44E6B0();
+        ToIdle();
     }
 }
 
@@ -4650,7 +4650,7 @@ void Abe::Motion_48_WalkToRun_4500A0()
 
     if (WallHit(GetSpriteScale() * FP_FromInteger(50), mVelX) || WallHit(GetSpriteScale() * FP_FromInteger(20), mVelX))
     {
-        ToIdle_44E6B0();
+        ToIdle();
         MapFollowMe(true);
     }
     else
@@ -4695,7 +4695,7 @@ void Abe::Motion_50_RunToWalk_450E20()
 
     if (WallHit(GetSpriteScale() * FP_FromInteger(50), mVelX) || WallHit(GetSpriteScale() * FP_FromInteger(20), mVelX))
     {
-        ToIdle_44E6B0();
+        ToIdle();
     }
     else
     {
@@ -4725,7 +4725,7 @@ void Abe::Motion_52_RunTurnToRun_451710()
 
     if (WallHit(GetSpriteScale() * FP_FromInteger(50), mVelX) || WallHit(GetSpriteScale() * FP_FromInteger(20), mVelX))
     {
-        ToIdle_44E6B0();
+        ToIdle();
     }
     else
     {
@@ -4756,7 +4756,7 @@ void Abe::Motion_54_RunJumpLandRun_4538F0()
 
     if (WallHit(GetSpriteScale() * FP_FromInteger(50), mVelX))
     {
-        ToIdle_44E6B0();
+        ToIdle();
     }
     else
     {
@@ -4802,7 +4802,7 @@ void Abe::Motion_56_DeathDropFall_4591F0()
         }
         else if (static_cast<s32>(sGnFrame) >= field_0_abe_timer)
         {
-            ToDieFinal_458910();
+            ToDieFinal();
         }
     }
 }
@@ -5081,7 +5081,7 @@ void Abe::Motion_62_Punch_454750()
 
     if (GetAnimation().GetIsLastFrame())
     {
-        ToIdle_44E6B0();
+        ToIdle();
     }
 }
 
@@ -5121,7 +5121,7 @@ void Abe::Motion_64_AfterSorry_454730()
 {
     if (GetAnimation().GetIsLastFrame())
     {
-        ToIdle_44E6B0();
+        ToIdle();
     }
 }
 
@@ -5142,7 +5142,7 @@ void Abe::Motion_65_LedgeAscend_4548E0()
         // Now the ascend is done go back to stand idle
         GetShadow()->mShadowAtBottom = false;
         MapFollowMe(true);
-        ToIdle_44E6B0();
+        ToIdle();
     }
 }
 
@@ -5347,7 +5347,7 @@ void Abe::Motion_71_Knockback_455090()
 {
     if (GetAnimation().GetCurrentFrame() == 12)
     {
-        FallOnBombs_44EC10();
+        CollideWithUxbOrMine();
     }
 
     if (GetAnimation().GetRender())
@@ -5406,7 +5406,7 @@ void Abe::Motion_71_Knockback_455090()
             }
             else
             {
-                ToDieFinal_458910();
+                ToDieFinal();
             }
         }
     }
@@ -5419,7 +5419,7 @@ void Abe::Motion_72_KnockbackGetUp_455340()
 
     if (GetAnimation().GetIsLastFrame())
     {
-        ToIdle_44E6B0();
+        ToIdle();
     }
 }
 
@@ -5436,7 +5436,7 @@ void Abe::Motion_73_PushWall_4553A0()
     }
     if (GetAnimation().GetIsLastFrame())
     {
-        ToIdle_44E6B0();
+        ToIdle();
     }
 }
 
@@ -5444,7 +5444,7 @@ void Abe::Motion_74_RollingKnockback_455290()
 {
     if (GetAnimation().GetCurrentFrame() == 12)
     {
-        FallOnBombs_44EC10();
+        CollideWithUxbOrMine();
     }
 
     EventBroadcast(Event::kEventNoise, this);
@@ -5460,7 +5460,7 @@ void Abe::Motion_74_RollingKnockback_455290()
             }
             else
             {
-                ToDieFinal_458910();
+                ToDieFinal();
             }
         }
     }
@@ -5866,7 +5866,7 @@ void Abe::Motion_84_FallLandDie_45A420()
     {
         if (static_cast<s32>(sGnFrame) >= field_124_timer)
         {
-            ToDieFinal_458910();
+            ToDieFinal();
         }
     }
 }
@@ -6118,7 +6118,7 @@ void Abe::Motion_87_HandstoneEnd()
 {
     if (GetAnimation().GetForwardLoopCompleted())
     {
-        ToIdle_44E6B0();
+        ToIdle();
     }
 }
 
@@ -6126,7 +6126,7 @@ void Abe::Motion_88_GrenadeMachineUse()
 {
     if (GetAnimation().GetForwardLoopCompleted())
     {
-        ToIdle_44E6B0();
+        ToIdle();
     }
 }
 
@@ -6287,7 +6287,7 @@ void Abe::Motion_99_LeverUse()
         }
         else
         {
-            ToIdle_44E6B0();
+            ToIdle();
         }
     }
 }
@@ -6314,7 +6314,7 @@ void Abe::Motion_101_KnockForward()
 {
     if (GetAnimation().GetCurrentFrame() == 12)
     {
-        FallOnBombs_44EC10();
+        CollideWithUxbOrMine();
     }
 
     EventBroadcast(Event::kEventNoise, this);
@@ -6350,7 +6350,7 @@ void Abe::Motion_101_KnockForward()
             }
             else
             {
-                ToDieFinal_458910();
+                ToDieFinal();
             }
         }
     }
@@ -6433,7 +6433,7 @@ void Abe::Motion_105_RockThrowStandingThrow()
 
     if (GetAnimation().GetIsLastFrame())
     {
-        ToIdle_44E6B0();
+        ToIdle();
     }
 }
 
@@ -6441,7 +6441,7 @@ void Abe::Motion_106_RockThrowStandingEnd()
 {
     if (GetAnimation().GetIsLastFrame())
     {
-        ToIdle_44E6B0();
+        ToIdle();
     }
 }
 
@@ -6511,7 +6511,7 @@ void Abe::Motion_109_ZShotRolling()
             {
                 mYPos += FP_FromInteger(240);
                 Mudokon_SFX(MudSounds::eDeathDropScream_15, 0, 0, this);
-                ToDie_4588D0();
+                ToDeathDropFall();
             }
         }
     }
@@ -6543,7 +6543,7 @@ void Abe::Motion_110_ZShot()
     {
         mYPos += FP_FromInteger(240);
         Mudokon_SFX(MudSounds::eDeathDropScream_15, 0, 0, this);
-        ToDie_4588D0();
+        ToDeathDropFall();
     }
 }
 
@@ -6888,7 +6888,7 @@ void Abe::Motion_113_ChantEnd()
         }
         else
         {
-            ToIdle_44E6B0();
+            ToIdle();
         }
     }
 }
@@ -7167,7 +7167,7 @@ void Abe::Motion_115_DoorExit()
             mYPos);
 
         VOnTlvCollision(BaseAliveGameObjectPathTLV);
-        ToIdle_44E6B0();
+        ToIdle();
     }
 }
 
@@ -7280,7 +7280,7 @@ void Abe::Motion_122_LiftGrabEnd()
     mVelY = FP_FromInteger(0);
     if (GetAnimation().GetIsLastFrame())
     {
-        ToIdle_44E6B0();
+        ToIdle();
     }
 }
 
@@ -7288,7 +7288,7 @@ void Abe::Motion_123_LiftGrabIdle()
 {
     LiftPoint* pLiftPoint = static_cast<LiftPoint*>(sObjectIds.Find_Impl(BaseAliveGameObject_PlatformId));
 
-    FollowLift_45A500();
+    FollowLift();
 
     if (pLiftPoint)
     {
@@ -7412,7 +7412,7 @@ void Abe::Motion_128_TurnWheelEnd()
 {
     if (GetAnimation().GetIsLastFrame())
     {
-        ToIdle_44E6B0();
+        ToIdle();
     }
 }
 
@@ -7449,7 +7449,7 @@ void Abe::Motion_129_PoisonGasDeath()
         field_124_timer = previousValue - 1;
         if (previousValue == 0)
         {
-            ToDieFinal_458910();
+            ToDieFinal();
         }
     }
 }
@@ -7478,7 +7478,7 @@ void Abe::FleechDeath_459350()
     BaseAliveGameObjectCollisionLine = nullptr;
 }
 
-void Abe::ToDie_4588D0()
+void Abe::ToDeathDropFall()
 {
     mShrivel = true;
     mCurrentMotion = eAbeMotions::Motion_56_DeathDropFall_4591F0;
@@ -7487,7 +7487,7 @@ void Abe::ToDie_4588D0()
     MusicController::static_PlayMusic(MusicController::MusicTypes::eNone_0, this, 1, 0);
 }
 
-void Abe::ToIdle_44E6B0()
+void Abe::ToIdle()
 {
     mFallMotionVelX = FP_FromInteger(0);
     mVelX = FP_FromInteger(0);
@@ -8084,11 +8084,11 @@ s16 Abe::RunTryEnterDoor_451220()
     return 1;
 }
 
-s16 Abe::RunTryEnterWell_451060()
+bool Abe::RunTryEnterWell()
 {
     if (!Input().IsAnyHeld(InputCommands::eUp) || GetElectrocuted() || GetAnimation().GetCurrentFrame() < 4)
     {
-        return 0;
+        return false;
     }
 
     auto pWellLocal = static_cast<relive::Path_WellLocal*>(gPathInfo->VTLV_Get_At_Of_Type(
@@ -8105,7 +8105,7 @@ s16 Abe::RunTryEnterWell_451060()
             {
                 BaseAliveGameObjectPathTLV = pWellLocal;
                 mCurrentMotion = eAbeMotions::Motion_78_WellBegin_45C810;
-                return 1;
+                return true;
             }
         }
     }
@@ -8124,15 +8124,15 @@ s16 Abe::RunTryEnterWell_451060()
             {
                 BaseAliveGameObjectPathTLV = pWellExpress;
                 mCurrentMotion = eAbeMotions::jMotion_81_WellBegin_45C7F0;
-                return 1;
+                return true;
             }
         }
     }
 
-    return 0;
+    return false;
 }
 
-void Abe::ToDieFinal_458910()
+void Abe::ToDieFinal()
 {
     InvisibleEffect* pInvisibleEffect = static_cast<InvisibleEffect*>(sObjectIds.Find_Impl(mInvisibleEffectId));
     if (pInvisibleEffect)
@@ -8329,7 +8329,7 @@ s16 Abe::CantBeDamaged_44BAB0()
     }
 }
 
-void Abe::FallOnBombs_44EC10()
+void Abe::CollideWithUxbOrMine()
 {
     const PSX_RECT bOurRect = VGetBoundingRect();
     for (s32 i = 0; i < gBaseAliveGameObjects->Size(); i++)
@@ -8612,7 +8612,7 @@ PullRingRope* Abe::GetPullRope()
     return nullptr;
 }
 
-void Abe::IntoPortalStates_451990()
+void Abe::IntoPortalStates()
 {
     auto pBirdPortal = static_cast<BirdPortal*>(sObjectIds.Find_Impl(mBirdPortalId));
     if (pBirdPortal)
@@ -8760,7 +8760,7 @@ void Abe::Calc_Well_Velocity_45C530(s16 xPosSource, s16 yPosSource, s16 xPosDest
     }
 }
 
-void Abe::FollowLift_45A500()
+void Abe::FollowLift()
 {
     LiftPoint* pLift = static_cast<LiftPoint*>(sObjectIds.Find_Impl(BaseAliveGameObject_PlatformId));
     if (pLift)
@@ -8783,7 +8783,7 @@ eAbeMotions Abe::MoveLiftUpOrDown_45A7E0(FP yVelocity)
     }
 
     pLiftPoint->Move(FP_FromInteger(0), yVelocity);
-    FollowLift_45A500();
+    FollowLift();
 
     if (sControlledCharacter == this && !(GetAnimation().GetIsLastFrame()) && GetAnimation().GetCurrentFrame() != 5)
     {

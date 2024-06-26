@@ -513,7 +513,7 @@ public:
     bool IsStanding();
     void FollowLift();
     void ExitShrykull(s16 bResetRingTimer);
-    s16 RunTryEnterWell();
+    bool RunTryEnterWell();
     void ChangeChantState(bool bKeepChanting);
     static ::BaseAliveGameObject* FindObjectToPossess();
     void ToDieFinal();
@@ -526,7 +526,7 @@ public:
     void SyncToElum(s16 elumMotion); // TODO: use elum motion enum instead
     void PickUpThrowabe_Or_PressBomb(FP fpX, s32 fpY, s16 bStandToCrouch);
     void CrouchingGameSpeak();
-    void FallOnBombs(); // TODO: this has nothing to do with falling
+    void CollideWithUxbOrMine();
     s16 ToLeftRightMovement();
     void MoveWithVelocity(FP speed);
     void ToNewElumSyncMotion(s32 elum_frame);
@@ -708,13 +708,13 @@ public:
     void Motion_163_ShrykullEnd();
     void Motion_164_PoisonGasDeath();
 
-    s16 field_10C_prev_held = 0;
-    s16 field_10E_released_buttons = 0;
+    s16 mPrevInput = 0;
+    s16 mReleasedButtons = 0;
     AllInternalStates mStatesUnion = {};
-    eAbeMotions field_112_prev_motion = eAbeMotions::None_m1;
+    eAbeMotions mKnockdownMotion = eAbeMotions::None_m1;
     s32 field_114_gnFrame = 0;
     s32 field_118_timer = 0;
-    s32 field_11C_regen_health_timer = 0;
+    s32 mRegenHealthTimer = 0;
     FP mFallMotionVelX = {};
     s32 field_12C_timer = 0;
     s16 mSay = -1; // TODO: MudSounds enum
@@ -736,7 +736,7 @@ public:
     Guid mCircularFadeId = {};
     s32 mRingPulseTimer = 0;
     s16 mHaveShrykull = 0;
-    s16 field_16E_cameraIdx = 0;
+    s16 mHandStoneCamIdx = 0;
     ReliveTypes mHandStoneType = {};
     relive::Path_HandStone* mHandStone = nullptr;
     relive::Path_MovieStone* mMovieStone = nullptr;
@@ -747,11 +747,11 @@ public:
     s16 mDstWellPath = 0;
     s16 mDstWellCamera = 0;
     s16 mObjectIdInCam = 0; // ID to identify the correct object in a cam for example when we have more than 1 door in the same cam
-    Guid mThrowable = {};
-    s8 field_19C_throwable_count = 0;
+    Guid mThrowableId = {};
+    s8 mBaseThrowableCount = 0;
     s8 mThrowDirection = 0;
     PortalSubStates mBirdPortalSubState = PortalSubStates::eJumpingInsidePortal_0;
-    IBirdPortal* mBirdPortalId = nullptr;
+    IBirdPortal* mBirdPortalId = nullptr; // TODO: make it a guid like AE
     bool mReturnToPreviousMotion = false;
     bool mWalkToRun = false;
     bool mSnapAbe = false;

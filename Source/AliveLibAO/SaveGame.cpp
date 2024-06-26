@@ -86,10 +86,10 @@ void SaveGame::LoadFromMemory(SaveData* pData, s32 bKillObjects)
     gRestartRuptureFarmsKilledMuds = pData->mRestartRuptureFarmsKilledMuds;
 
     gAbe->mHealth = FP_FromInteger(1);
-    gAbe->field_11C_regen_health_timer = sGnFrame;
+    gAbe->mRegenHealthTimer = sGnFrame;
     gAbe->SetSpriteScale(pData->mAbe_SpriteScale);
     gAbe->field_118_timer = pData->mAbe_Timer;
-    gAbe->field_19C_throwable_count = static_cast<s8>(pData->mAbe_ThrowableCount); // TODO: Type check when other save func done
+    gAbe->mBaseThrowableCount = static_cast<s8>(pData->mAbe_ThrowableCount); // TODO: Type check when other save func done
     gAbe->mbGotShot = 0;
 
     gAbe->mShrivel = false;
@@ -239,7 +239,7 @@ void SaveGame::SaveToMemory(SaveData* pSaveData)
     pSaveData->mAbe_StoneState = static_cast<s32>(gAbe->mStatesUnion.raw);
     pSaveData->mAbe_GnFrame = gAbe->field_114_gnFrame;
     pSaveData->mAbe_Timer = gAbe->field_118_timer;
-    pSaveData->mAbe_ThrowableCount = gAbe->field_19C_throwable_count;
+    pSaveData->mAbe_ThrowableCount = gAbe->mBaseThrowableCount;
     pSaveData->mAbe_ScrabaniaDone = gAbe->mScrabaniaDone;
     pSaveData->mInfiniteGrenades = gInfiniteGrenades ? -1 : 0;
     pSaveData->mAbe_ParamoniaDone = gAbe->mParamoniaDone;

@@ -191,14 +191,14 @@ void Abe_OnFrame(::BaseGameObject* pObj, u32&, const IndexedPoint& pData)
         xVel = -xVel;
     }
 
-    auto pThrowable = static_cast<::BaseThrowable*>(sObjectIds.Find_Impl(gAbe->mThrowable));
+    auto pThrowable = static_cast<::BaseThrowable*>(sObjectIds.Find_Impl(gAbe->mThrowableId));
     if (pThrowable)
     {
         pThrowable->mXPos = directed_x + gAbe->mXPos;
         pThrowable->mYPos = (pAbe->GetSpriteScale() * data_y) + gAbe->mYPos;
         pThrowable->VThrow(xVel, yVel);
         pThrowable->SetSpriteScale(pAbe->GetSpriteScale());
-        gAbe->mThrowable = Guid{};
+        gAbe->mThrowableId = Guid{};
     }
 }
 
