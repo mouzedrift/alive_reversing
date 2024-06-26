@@ -1049,6 +1049,7 @@ bool Abe::RunTryEnterWell()
             mSnapAbe = false;
             BaseAliveGameObjectPathTLV = pWellExpress;
             mCurrentMotion = eAbeMotions::Motion_80_430EF0;
+            return true;
         }
     }
 
