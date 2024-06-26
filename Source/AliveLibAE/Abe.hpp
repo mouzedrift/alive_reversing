@@ -479,11 +479,11 @@ public:
         }
     }
 
-    s16 CantBeDamaged_44BAB0();
+    s16 CantBeDamaged();
     void ChangeChantState(bool bLaughAtChantEnd);
-    void ToKnockback_44E700(s16 bKnockbackSound, s16 bDelayedAnger);
+    void ToKnockback(bool bKnockbackSound, bool bDelayedAnger);
     void SetAsDead();
-    void FleechDeath_459350();
+    void FleechDeath();
     void ExitShrykull(bool bResetRingTimer);
 
     static void CreateFromSaveState(SerializedObjectData& pData);
@@ -525,10 +525,9 @@ private:
 
     void DoRunJump();
 
-    BaseAliveGameObject* FindObjectToPossess_44B7B0();
-    void Load_Basic_Resources_44D460();
+    BaseAliveGameObject* FindObjectToPossess();
     void Free_Resources_44D420();
-    bool IsStanding_449D30();
+    bool IsStanding();
     void Free_Shrykull_Resources_45AA90();
 
     // Motions
@@ -671,32 +670,32 @@ private:
     void ToDeathDropFall();
     void ToIdle();
     void PickUpThrowabe_Or_PressBomb(FP fpX, s32 fpY, s32 bStandToCrouch);
-    s16 ToLeftRightMovement_44E340();
+    bool ToLeftRightMovement();
     void TryHoist();
-    static void Create_Fart_421D20();
-    s16 TryEnterMineCar_4569E0();
-    s32 NearDoorIsOpen_44EE10();
-    eAbeMotions HandleDoAction_455BD0();
-    void PushWall_44E890();
-    void MoveForward_44E9A0();
-    s16 CrouchingGameSpeak_453E10();
-    bool Is_Celling_Above_44E8D0();
-    void MoveWithVelocity_450FA0(FP velocityX);
-    s16 RunTryEnterDoor_451220();
+    static void CreateEvilFart();
+    bool TryEnterMineCar();
+    s32 NearDoorIsOpen();
+    eAbeMotions HandleDoAction();
+    void PushWall();
+    void MoveForward();
+    bool CrouchingGameSpeak();
+    bool IsCeilingAbove();
+    void MoveWithVelocity(FP velocityX);
+    bool RunTryEnterDoor();
     bool RunTryEnterWell();
     void ToDieFinal();
-    eAbeMotions DoGameSpeak_45AB70(s32 input);
+    eAbeMotions DoGameSpeak(s32 input);
     void CollideWithUxbOrMine();
-    s16 ForceDownIfHoisting_44BA30();
-    void BulletDamage_44C980(Bullet* pObj);
-    void GiveControlBackToMe_44BA10();
+    bool ForceDownIfHoisting();
+    void BulletDamage(Bullet* pBullet);
+    void GiveControlBackToMe();
     PullRingRope* GetPullRope();
     void IntoPortalStates();
-    void Calc_Well_Velocity_45C530(s16 xPosSource, s16 yPosSource, s16 XPosDest, s16 yPosDest);
+    void CalcWellVelocity(s16 xPosSource, s16 yPosSource, s16 XPosDest, s16 yPosDest);
     void FollowLift();
 
-    eAbeMotions MoveLiftUpOrDown_45A7E0(FP yVelocity);
-    s16 GetEvilFart_4585F0(s16 bDontLoad);
+    eAbeMotions MoveLiftUpOrDown(FP yVelocity);
+    bool TryGetEvilFart(bool bReceiveEvilFart);
     void HandleDDCheat();
 
     s32 mPrevInput = 0;

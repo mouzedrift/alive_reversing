@@ -967,7 +967,7 @@ void Fleech::Motion_13_SettleOnGround()
 
 void Fleech::Motion_14_ExtendTongueFromEnemy()
 {
-    if (mFoodObjId == gAbe->mBaseGameObjectId && (gAbe->CantBeDamaged_44BAB0() || gAbe->GetInvisible()))
+    if (mFoodObjId == gAbe->mBaseGameObjectId && (gAbe->CantBeDamaged() || gAbe->GetInvisible()))
     {
         ToIdle();
     }
@@ -980,7 +980,7 @@ void Fleech::Motion_14_ExtendTongueFromEnemy()
 
 void Fleech::Motion_15_RetractTongueFromEnemey()
 {
-    if (IsAbe(sObjectIds.Find_Impl(mFoodObjId)) && ((gAbe->CantBeDamaged_44BAB0()) || gAbe->GetInvisible()))
+    if (IsAbe(sObjectIds.Find_Impl(mFoodObjId)) && ((gAbe->CantBeDamaged()) || gAbe->GetInvisible()))
     {
         sub_42B8C0();
         ToIdle();
@@ -1798,7 +1798,7 @@ void Fleech::TongueUpdate()
                         pTarget->mYPos = mYPos;
                         if (IsAbe(pTarget))
                         {
-                            gAbe->FleechDeath_459350();
+                            gAbe->FleechDeath();
                         }
                         break;
 

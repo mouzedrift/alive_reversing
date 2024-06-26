@@ -293,7 +293,7 @@ void Door::VScreenChanged()
     SetDead(true);
 }
 
-bool Door::vIsOpen_40E800()
+bool Door::vIsOpen()
 {
     return mCurrentState == relive::Path_Door::DoorStates::eOpen;
 }

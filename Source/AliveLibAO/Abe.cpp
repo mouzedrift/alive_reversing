@@ -634,7 +634,7 @@ void Abe::VUpdate()
 
     if (!Input_IsChanting())
     {
-        mBlockChanting = false;
+        mPreventChanting = false;
     }
 
     if (gDDCheat_FlyingEnabled && sControlledCharacter == this)
@@ -731,7 +731,7 @@ void Abe::VUpdate()
             if (mbGotShot)
             {
                 motion_idx = mKnockdownMotion;
-                ToKnockback(1, 0);
+                ToKnockback(true, false);
                 mCurrentMotion = motion_idx;
                 mNextMotion = eAbeMotions::Motion_0_Idle;
                 mKnockdownMotion = eAbeMotions::Motion_0_Idle;
@@ -746,7 +746,7 @@ void Abe::VUpdate()
             {
                 if (IsStanding())
                 {
-                    ToKnockback(1, 0);
+                    ToKnockback(true, false);
                 }
             }
 
@@ -1068,7 +1068,7 @@ void Abe::ChangeChantState(bool bKeepChanting)
     }
 }
 
-::BaseAliveGameObject* Abe::FindObjectToPossess()
+BaseAliveGameObject* Abe::FindObjectToPossess()
 {
     for (s32 i = 0; i < gBaseAliveGameObjects->Size(); i++)
     {
@@ -1101,7 +1101,7 @@ void Abe::ToDieFinal()
     MusicController::static_PlayMusic(MusicController::MusicTypes::eDeathLong_14, this, 1, 0);
 }
 
-void Abe::ToKnockback(s16 bKnockbackSound, s16 bDelayedAnger)
+void Abe::ToKnockback(bool bKnockbackSound, bool bDelayedAnger)
 {
     if (sControlledCharacter->Type() != ReliveTypes::eSlig || mHealth <= FP_FromInteger(0))
     {
@@ -1772,7 +1772,7 @@ void Abe::CollideWithUxbOrMine()
     }
 }
 
-s16 Abe::ToLeftRightMovement()
+bool Abe::ToLeftRightMovement()
 {
     mVelY = FP_FromInteger(0);
     if (sControlledCharacter != this)
@@ -1833,11 +1833,11 @@ s16 Abe::ToLeftRightMovement()
 }
 
 
-void Abe::MoveWithVelocity(FP speed)
+void Abe::MoveWithVelocity(FP velocityX)
 {
     if (mVelX > FP_FromInteger(0))
     {
-        mVelX = mVelX - (GetSpriteScale() * speed);
+        mVelX = mVelX - (GetSpriteScale() * velocityX);
         if (mVelX < FP_FromInteger(0))
         {
             mVelX = FP_FromInteger(0);
@@ -1845,7 +1845,7 @@ void Abe::MoveWithVelocity(FP speed)
     }
     else if (mVelX < FP_FromInteger(0))
     {
-        mVelX = (GetSpriteScale() * speed) + mVelX;
+        mVelX = (GetSpriteScale() * velocityX) + mVelX;
         if (mVelX > FP_FromInteger(0))
         {
             mVelX = FP_FromInteger(0);
@@ -1867,9 +1867,9 @@ void Abe::ToNewElumSyncMotion(s32 elum_frame)
     GetAnimation().SetFlipX(gElum->GetAnimation().GetFlipX());
 }
 
-void Abe::SetActiveControlledCharacter()
+void Abe::GiveControlBackToMe()
 {
-    mBlockChanting = true;
+    mPreventChanting = true;
     sControlledCharacter = this;
 }
 
@@ -1902,7 +1902,7 @@ PullRingRope* Abe::GetPullRope()
 
 void Abe::ElumKnockForward()
 {
-    ToKnockback(1, 1);
+    ToKnockback(true, true);
     mCurrentMotion = eAbeMotions::Motion_128_KnockForward;
     mNextMotion = eAbeMotions::Motion_0_Idle;
     mbMotionChanged = true;
@@ -2014,7 +2014,7 @@ void Abe::BulletDamage(Bullet* pBullet)
                 {
                     if (!mRidingElum)
                     {
-                        ToKnockback(1, 1);
+                        ToKnockback(true, true);
                     }
                     else
                     {
@@ -2156,7 +2156,7 @@ bool Abe::NearDoorIsOpen()
 
             if (Rect.x <= Rect2.w && Rect.w >= Rect2.x && Rect.h >= Rect2.y && Rect.y <= Rect2.h)
             {
-                return pDoor->vIsOpen_40E800();
+                return pDoor->vIsOpen();
             }
         }
     }
@@ -2165,19 +2165,22 @@ bool Abe::NearDoorIsOpen()
     return true;
 }
 
-s16 Abe::RunTryEnterDoor()
+bool Abe::RunTryEnterDoor()
 {
+    // Can't be entering a door if we're not pressing up.
     if (!Input().IsAnyHeld(InputCommands::eUp))
     {
-        return 0;
+        return false;
     }
+
     if (GetElectrocuted())
     {
-        return 0;
+        return false;
     }
+
     if (GetAnimation().GetCurrentFrame() < 4)
     {
-        return 0;
+        return false;
     }
 
     // Are we actually on a door?
@@ -2190,12 +2193,12 @@ s16 Abe::RunTryEnterDoor()
 
     if (!pDoorTlv)
     {
-        return 0;
+        return false;
     }
 
     if (!NearDoorIsOpen())
     {
-        return 0;
+        return false;
     }
 
     BaseAliveGameObjectPathTLV = pDoorTlv;
@@ -2203,7 +2206,7 @@ s16 Abe::RunTryEnterDoor()
     mCurrentMotion = eAbeMotions::Motion_156_DoorEnter;
     mXPos = FP_FromInteger((pDoorTlv->mBottomRightX + pDoorTlv->mTopLeftX) / 2);
     MapFollowMe(true);
-    return 1;
+    return true;
 }
 
 eAbeMotions Abe::MoveLiftUpOrDown(FP yVelocity)
@@ -2501,7 +2504,7 @@ bool Abe::VTakeDamage(BaseGameObject* pFrom)
         field_18C_pObjToPossess = Guid{};
     }
 
-    // CantBeDamaged_44BAB0() helper func in AE
+    // CantBeDamaged() helper func in AE
     switch (mCurrentMotion)
     {
         case eAbeMotions::Motion_74_JumpIntoWell:
@@ -2573,6 +2576,7 @@ bool Abe::VTakeDamage(BaseGameObject* pFrom)
         case ReliveTypes::eGasCountDown:
             if (mHealth > FP_FromInteger(0))
             {
+                // NOTE: ForceDownIfHoisting() helper in AE
                 if (mCurrentMotion == eAbeMotions::Motion_64_LedgeAscend
                     || mCurrentMotion == eAbeMotions::Motion_66_LedgeHang
                     || mCurrentMotion == eAbeMotions::Motion_68_LedgeHangWobble
@@ -2597,7 +2601,7 @@ bool Abe::VTakeDamage(BaseGameObject* pFrom)
                 {
                     if (mCurrentMotion != eAbeMotions::Motion_70_Knockback && mCurrentMotion != eAbeMotions::Motion_71_KnockbackGetUp)
                     {
-                        ToKnockback(1, 1);
+                        ToKnockback(true, true);
                         mbMotionChanged = true;
                     }
                 }
@@ -2674,7 +2678,7 @@ bool Abe::VTakeDamage(BaseGameObject* pFrom)
                     field_114_gnFrame = 0;
                     return true;
                 }
-                ToKnockback(1, 1);
+                ToKnockback(true, true);
                 SfxPlayMono(relive::SoundEffects::KillEffect, 127);
             }
             break;
@@ -2684,7 +2688,7 @@ bool Abe::VTakeDamage(BaseGameObject* pFrom)
             {
                 mbMotionChanged = true;
                 mHealth = FP_FromInteger(0);
-                ToKnockback(1, 1);
+                ToKnockback(true, true);
                 mRGB.SetRGB(30, 30, 30);
 
                 relive_new Gibs(
@@ -2760,7 +2764,7 @@ bool Abe::VTakeDamage(BaseGameObject* pFrom)
                     return true;
                 }
 
-                ToKnockback(1, 1);
+                ToKnockback(true, true);
                 mbMotionChanged = true;
 
                 if (pAliveObj->mXPos < mXPos)
@@ -2818,7 +2822,7 @@ bool Abe::VTakeDamage(BaseGameObject* pFrom)
 
                 auto pAliveObj = static_cast<BaseAliveGameObject*>(pFrom);
 
-                ToKnockback(1, 1);
+                ToKnockback(true, true);
 
                 if (pAliveObj->mXPos < mXPos)
                 {
@@ -2940,8 +2944,7 @@ bool Abe::VTakeDamage(BaseGameObject* pFrom)
         if (mHealth == FP_FromInteger(0))
         {
             sControlledCharacter->VUnPosses();
-            mBlockChanting = true;
-            sControlledCharacter = this;
+            GiveControlBackToMe();
         }
     }
 
@@ -3009,7 +3012,7 @@ void Abe::TryHoist()
 void Abe::Motion_0_Idle()
 {
     FollowLift();
-    if (Input_IsChanting() && !mBlockChanting)
+    if (Input_IsChanting() && !mPreventChanting)
     {
         if (mRingPulseTimer && mHaveShrykull)
         {
@@ -3682,7 +3685,7 @@ void Abe::Motion_3_Fall()
             case eLineTypes::eBackgroundWallRight_6:
                 mXPos = hitX;
                 mYPos = hitY;
-                ToKnockback(1, 1);
+                ToKnockback(true, true);
                 break;
             default:
                 return;
@@ -4304,7 +4307,7 @@ void Abe::Motion_24_RollBegin()
 
     if (WallHit(GetSpriteScale() * FP_FromInteger(20), mVelX))
     {
-        ToKnockback(1, 1);
+        ToKnockback(true, true);
 
         mCurrentMotion = eAbeMotions::Motion_73_RollingKnockback;
     }
@@ -4348,7 +4351,7 @@ void Abe::Motion_25_RollLoop()
 
     if (WallHit(GetSpriteScale() * FP_FromInteger(20), mVelX))
     {
-        ToKnockback(1, 1);
+        ToKnockback(true, true);
         mCurrentMotion = eAbeMotions::Motion_73_RollingKnockback;
     }
     else
@@ -4409,7 +4412,7 @@ void Abe::Motion_26_RollEnd()
 
     if (WallHit(GetSpriteScale() * FP_FromInteger(20), mVelX))
     {
-        ToKnockback(1, 1);
+        ToKnockback(true, true);
         mCurrentMotion = eAbeMotions::Motion_73_RollingKnockback;
     }
     else
@@ -4435,7 +4438,7 @@ void Abe::Motion_27_RunSlideStop()
 
     if (WallHit(GetSpriteScale() * FP_FromInteger(50), mVelX))
     {
-        ToKnockback(1, 1);
+        ToKnockback(true, true);
     }
     else
     {
@@ -4474,7 +4477,7 @@ void Abe::Motion_28_RunTurn()
 
     if (WallHit(GetSpriteScale() * FP_FromInteger(50), mVelX))
     {
-        ToKnockback(1, 1);
+        ToKnockback(true, true);
     }
     else
     {
@@ -4537,7 +4540,7 @@ void Abe::Motion_29_HopBegin()
                 EventBroadcast(Event::kEventNoise, this);
                 EventBroadcast(Event::kEventSuspiciousNoise, this);
                 mVelX = FP_FromInteger(0);
-                ToKnockback(1, 1);
+                ToKnockback(true, true);
                 return;
             }
         }
@@ -4666,7 +4669,7 @@ void Abe::Motion_30_HopMid()
                 SfxPlayMono(relive::SoundEffects::RingBellHammer, 0);
             }
             mNextMotion = eAbeMotions::Motion_0_Idle;
-            ToKnockback(1, 1);
+            ToKnockback(true, true);
         }
         else
         {
@@ -4767,7 +4770,7 @@ void Abe::Motion_32_RunJumpBegin()
 
     if (WallHit(GetSpriteScale() * FP_FromInteger(50), mVelX))
     {
-        ToKnockback(1, 1);
+        ToKnockback(true, true);
     }
     else
     {
@@ -4825,7 +4828,7 @@ void Abe::Motion_33_RunJumpMid()
             SfxPlayMono(relive::SoundEffects::RingBellHammer, 0);
         }
         mNextMotion = eAbeMotions::Motion_0_Idle;
-        ToKnockback(1, 1);
+        ToKnockback(true, true);
         return;
     }
 
@@ -5114,7 +5117,7 @@ void Abe::Motion_35_RunLoop()
 
     if (WallHit(GetSpriteScale() * FP_FromInteger(50), mVelX))
     {
-        ToKnockback(1, 1);
+        ToKnockback(true, true);
         return;
     }
 
@@ -5204,7 +5207,7 @@ void Abe::Motion_35_RunLoop()
 
         if (WallHit(GetSpriteScale() * FP_FromInteger(50), gridSize))
         {
-            ToKnockback(1, 1);
+            ToKnockback(true, true);
         }
         else
         {
@@ -5308,7 +5311,7 @@ void Abe::Motion_40_RunToRoll()
 
     if (WallHit(GetSpriteScale() * FP_FromInteger(20), mVelX))
     {
-        ToKnockback(1, 1);
+        ToKnockback(true, true);
         mCurrentMotion = eAbeMotions::Motion_73_RollingKnockback;
     }
     else
@@ -6397,7 +6400,7 @@ void Abe::Motion_63_TurnToRun()
 
     if (WallHit(GetSpriteScale() * FP_FromInteger(50), mVelX))
     {
-        ToKnockback(1, 1);
+        ToKnockback(true, true);
     }
     else
     {

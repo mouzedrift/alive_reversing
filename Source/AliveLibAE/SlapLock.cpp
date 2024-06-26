@@ -450,7 +450,7 @@ bool SlapLock::VTakeDamage(BaseGameObject* pFrom)
         return false;
     }
 
-    gAbe->ToKnockback_44E700(1, 0);
+    gAbe->ToKnockback(true, false);
 
     if (mHasGhost)
     {
