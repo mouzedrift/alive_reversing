@@ -387,6 +387,8 @@ SET(AliveLibAESrc
     TestAnimation.cpp
     TestAnimation.hpp
     Layer.hpp
+    CheckpointVisualizer.cpp
+    CheckpointVisualizer.hpp
 )
 
 add_library(AliveLibAE ${AliveLibAESrc})

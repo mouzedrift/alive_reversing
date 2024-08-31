@@ -83,6 +83,7 @@
 #include "ColourfulMeter.hpp"
 #include "SecurityDoor.hpp"
 #include "LaughingGas.hpp"
+#include "CheckpointVisualizer.hpp"
 
 template <size_t arraySize>
 struct CompileTimeResourceList final
@@ -130,9 +131,18 @@ EXPORT void CC Factory_MainMenuController_4D6DB0(Path_TLV* pTlv, Path* /*pPath*/
     }
 }
 
-EXPORT void CC Factory_ContinuePoint_4D6970(Path_TLV*, Path*, TlvItemInfoUnion, LoadMode)
+EXPORT void CC Factory_ContinuePoint_4D6970(Path_TLV* pTlv, Path*, TlvItemInfoUnion, LoadMode loadMode)
 {
-    NOT_IMPLEMENTED();
+    if (loadMode == LoadMode::ConstructObject_0)
+    {
+        auto pCheckpointVisualizer = ae_new<CheckpointVisualizer>();
+        if (pCheckpointVisualizer)
+        {
+            FP xpos = FP_FromInteger((pTlv->field_8_top_left.field_0_x + pTlv->field_C_bottom_right.field_0_x) / 2);
+            FP ypos = FP_FromInteger(pTlv->field_8_top_left.field_2_y);
+            pCheckpointVisualizer->ctor(xpos, ypos, FP_FromInteger(1));
+        }
+    }
 }
 EXPORT void CC Factory_PathTransition_4D68A0(Path_TLV*, Path*, TlvItemInfoUnion, LoadMode)
 {

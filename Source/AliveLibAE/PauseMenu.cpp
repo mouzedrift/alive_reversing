@@ -60,9 +60,9 @@ PauseMenuPageEntry PauseMenu__PageEntryList_Main_55E1C8[11] = {
     {2, 184, 92, 0, "controls", 128u, 16u, 255u, 1u},
 #endif
     {2, 184, 114, 0, "status", 128u, 16u, 255u, 1u},
-    {2, 184, 136, 0, "save", 128u, 16u, 255u, 1u},
+    {2, 184, 136, 0, "save to previous checkpoint", 128u, 16u, 255u, 1u},
     {2, 184, 158, 0, "load", 128u, 16u, 255u, 1u},
-    {2, 184, 180, 0, "restart path", 128u, 16u, 255u, 1u},
+    {2, 184, 180, 0, "restart from checkpoint", 128u, 16u, 255u, 1u},
     {2, 184, 202, 0, "quit", 128u, 16u, 255u, 1u},
     {1, 184, 16, 0, "paused", 128u, 16u, 255u, 1u},
     {1, 280, 16, 0, sScreenStringBuffer_5C92F0, 128u, 16u, 255u, 0u},
@@ -1062,10 +1062,14 @@ void PauseMenu::Page_Main_Update_4903E0()
                 return;
 
             case MainPages::ePage_QuickSave_1:
-                word12C_flags &= ~1u;
-                SFX_Play_46FBA0(SoundEffect::PossessEffect_17, 40, 2400);
-                GetSoundAPI().SND_Restart();
-                Quicksave_4C90D0();
+                if (gRemainingQuicksaves > 0)
+                {
+                    word12C_flags &= ~1u;
+                    SFX_Play_46FBA0(SoundEffect::PossessEffect_17, 40, 2400);
+                    GetSoundAPI().SND_Restart();
+                    Quicksave_4C90D0();
+                }
+
                 return;
 
             case MainPages::ePage_Controls_2:
@@ -1092,7 +1096,7 @@ void PauseMenu::Page_Main_Update_4903E0()
                 field_13E_unused = -1;
                 word12C_flags |= 0x400;
                 field_13A_unused = 0;
-                Quicksave_4C90D0();
+                //Quicksave_4C90D0();
                 // Set the default save name to be the current level/path/camera
                 Path_Format_CameraName_460FB0(
                     sSaveString_5C931C,
@@ -1124,7 +1128,12 @@ void PauseMenu::Page_Main_Update_4903E0()
                 return;
 
             case MainPages::ePage_RestartPath_6:
-                RestartPath();
+                sActiveQuicksaveData_BAF7F8 = gLastCheckpointSave;
+                Quicksave_LoadActive_4C9170();
+                word12C_flags &= ~1;
+                SFX_Play_46FBA0(SoundEffect::PossessEffect_17, 40, 3400);
+                GetSoundAPI().SND_Restart();
+                //RestartPath();
                 return;
 
             case MainPages::ePage_Quit_7:
@@ -1214,7 +1223,7 @@ void PauseMenu::Page_Save_Update_491210()
             FILE* hFile = fopen(savFileName, "wb");
             if (hFile)
             {
-                fwrite(&sActiveQuicksaveData_BAF7F8, sizeof(Quicksave), 1u, hFile);
+                fwrite(&gLastCheckpointSave, sizeof(Quicksave), 1u, hFile);
                 fclose(hFile);
                 sSavedGameToLoadIdx_BB43FC = 0;
             }
@@ -1550,6 +1559,7 @@ EXPORT u16 CC sub_4A2B70()
     NOT_IMPLEMENTED();
     return 1;
 }
+static char_type sQuiksaveTextBuffer[32];
 
 void PauseMenu::Update_48FD80()
 {
@@ -1692,6 +1702,9 @@ void PauseMenu::Update_48FD80()
                 field_158_animation.Load_Pal_40A530(field_158_animation.field_20_ppBlock, pHeader->field_0_clut_offset);
                 sDisableFontFlicker_5C9304 = 1;
                 field_144_active_menu = sPM_Page_Main_5465B0;
+
+                sprintf(sQuiksaveTextBuffer, "quiksave (%d)", gRemainingQuicksaves);
+                PauseMenu__PageEntryList_Main_55E1C8[1].field_8_text = sQuiksaveTextBuffer;
 
                 // Start pause menu update/render loop
                 while (word12C_flags & 1)

@@ -47,6 +47,10 @@
 #include "Slog.hpp"
 #include "Grenade.hpp"
 #include "Mudokon.hpp"
+#include "ThrowableTotalIndicator.hpp"
+
+u32 gRemainingQuicksaves = 3;
+Quicksave gLastCheckpointSave;
 
 struct QuickSaveRestoreTable final
 {
@@ -325,7 +329,7 @@ ALIVE_ARY(1, 0xBB31D8, SaveFileRec, 128, sSaveFileRecords_BB31D8, {});
 ALIVE_VAR(1, 0xBB43FC, s32, sSavedGameToLoadIdx_BB43FC, 0);
 ALIVE_VAR(1, 0xBB43E0, s32, sTotalSaveFilesCount_BB43E0, 0);
 
-EXPORT void CC Quicksave_LoadFromMemory_4C95A0(Quicksave* quicksaveData)
+void Quicksave_LoadFromMemory_4C95A0(Quicksave* quicksaveData)
 {
     sAccumulatedObjectCount_5C1BF4 = quicksaveData->field_200_accumulated_obj_count;
     DestroyObjects_4A1F20();
@@ -344,7 +348,7 @@ EXPORT void CC Quicksave_LoadFromMemory_4C95A0(Quicksave* quicksaveData)
     gMap_5C3030.field_8_force_load = 1;
 }
 
-EXPORT void CC Quicksave_LoadActive_4C9170()
+void Quicksave_LoadActive_4C9170()
 {
     Game_ShowLoadingIcon_482D80();
     Quicksave_LoadFromMemory_4C95A0(&sActiveQuicksaveData_BAF7F8);
@@ -659,14 +663,36 @@ EXPORT void CC Quicksave_SaveToMemory_4C91A0(Quicksave* pSave)
     }
 }
 
-void CC Quicksave_4C90D0()
+bool Quicksave_4C90D0(bool bInternal)
 {
+    if (gRemainingQuicksaves <= 0 && !bInternal)
+    {
+        return false;
+    }
+
+    if (!bInternal)
+    {
+        gRemainingQuicksaves--;
+    }
+
     Game_ShowLoadingIcon_482D80();
     pScreenManager_5BB5F4->InvalidateRect_40EC90(0, 0, 640, 240, 0);
     pScreenManager_5BB5F4->InvalidateRect_40EC90(0, 0, 640, 240, 1);
     pScreenManager_5BB5F4->InvalidateRect_40EC90(0, 0, 640, 240, 2);
     Path_Get_Bly_Record_460F30(gMap_5C3030.field_0_current_level, gMap_5C3030.field_2_current_path);
     Quicksave_SaveToMemory_4C91A0(&sActiveQuicksaveData_BAF7F8);
+
+    if (!bInternal)
+    {
+        auto pIndicator = ae_new<ThrowableTotalIndicator>();
+        if (pIndicator)
+        {
+            auto pChar = sControlledCharacter_5C1B8C;
+            pIndicator->ctor_431CB0(pChar->field_B8_xpos, pChar->field_BC_ypos - FP_FromInteger(70), pChar->field_20_animation.field_C_render_layer, pChar->field_20_animation.field_14_scale, (s16) gRemainingQuicksaves, TRUE);
+        }
+    }
+
+    return true;
 }
 
 void CC Quicksave_ReadWorldInfo_4C9490(const Quicksave_WorldInfo* pInfo)
@@ -695,6 +721,7 @@ void CC Quicksave_ReadWorldInfo_4C9490(const Quicksave_WorldInfo* pInfo)
     sVisitedBarracks_5C1C04 = pInfo->field_34_visited_barracks;
     sVisitedFeecoEnder_5C1C06 = pInfo->field_36_visited_feeco_ender;
     sGnFrame_5C1B84 = pInfo->field_0_gnFrame;
+    gRemainingQuicksaves = static_cast<u32>(pInfo->gRemainingQuicksaves);
 }
 
 void CC Quicksave_SaveWorldInfo_4C9310(Quicksave_WorldInfo* pInfo)
@@ -729,6 +756,7 @@ void CC Quicksave_SaveWorldInfo_4C9310(Quicksave_WorldInfo* pInfo)
     pInfo->field_C_controlled_x = FP_GetExponent(sControlledCharacter_5C1B8C->field_B8_xpos);
     pInfo->field_E_controlled_y = rect.h;
     pInfo->field_10_controlled_scale = sControlledCharacter_5C1B8C->field_CC_sprite_scale == FP_FromDouble(1.0);
+    pInfo->gRemainingQuicksaves = static_cast<s16>(gRemainingQuicksaves);
 }
 
 EXPORT s32 CC Sort_comparitor_4D42C0(const void* pSaveRecLeft, const void* pSaveRecRight)

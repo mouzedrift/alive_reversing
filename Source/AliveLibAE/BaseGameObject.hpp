@@ -164,7 +164,9 @@ enum class AETypes : s16
     ePadding_90 = 90,
     ePadding_32 = 32,
     ePadding_17 = 17,
-    ePadding_144 = 144
+    ePadding_144 = 144,
+
+    eCheckpointVisualizer = 200
 };
 
 struct PrimHeader;

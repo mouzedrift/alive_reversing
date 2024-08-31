@@ -55,6 +55,7 @@
 #include "TestAnimation.hpp"
 #include "Sys_common.hpp"
 #include "Grid.hpp"
+#include "CheckpointVisualizer.hpp"
 
 using TAbeMotionFunction = decltype(&Abe::Motion_0_Idle_44EEB0);
 
@@ -1727,7 +1728,8 @@ void Abe::Update_449DC0()
             Quicksave_SaveWorldInfo_4C9310(&sActiveQuicksaveData_BAF7F8.field_244_restart_path_world_info);
             vGetSaveState_457110(reinterpret_cast<u8*>(&sActiveQuicksaveData_BAF7F8.field_284_restart_path_abe_state));
             sActiveQuicksaveData_BAF7F8.field_35C_restart_path_switch_states = sSwitchStates_5C1A28;
-            Quicksave_4C90D0();
+            Quicksave_4C90D0(true);
+            gLastCheckpointSave = sActiveQuicksaveData_BAF7F8;
         }
     }
 }
@@ -2644,6 +2646,14 @@ void Abe::vOn_TLV_Collision_44B5D0(Path_TLV* pTlv)
                     pContinuePoint->field_1_tlv_state = 1;
                     field_1AE_flags.Set(Flags_1AE::e1AE_Bit2_do_quicksave);
                     field_1B0_save_num = pContinuePoint->field_12_save_file_id;
+
+                    gRemainingQuicksaves = 3;
+
+                    auto pIndicator = ae_new<ThrowableTotalIndicator>();
+                    if (pIndicator)
+                    {
+                        pIndicator->ctor_431CB0(field_B8_xpos, field_BC_ypos, field_20_animation.field_C_render_layer, field_20_animation.field_14_scale, (s16)gRemainingQuicksaves, TRUE);
+                    }
                 }
             }
         }
