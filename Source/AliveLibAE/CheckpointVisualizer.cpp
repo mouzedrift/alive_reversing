@@ -72,6 +72,7 @@ void CheckpointVisualizer::VScreenChanged()
         gMap_5C3030.field_0_current_level != gMap_5C3030.field_A_level)
     {
         field_6_flags.Set(BaseGameObject::eDead_Bit3);
+        field_6_flags.Clear(BaseGameObject::eSurviveDeathReset_Bit9);
     }
 }
 
