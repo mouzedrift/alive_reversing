@@ -17,16 +17,26 @@
 #include "MotionDetector.hpp"
 #include "Function.hpp"
 #include "Bullet.hpp"
+#include "Slurg.hpp"
 
 EXPORT Greeter* Greeter::ctor_4465B0(Path_Greeter* pTlv, s32 tlvInfo)
 {
     ctor_408240(0);
     SetVTable(this, 0x54566C);
-
     SetType(AETypes::eGreeter_64);
     const AnimRecord& rec = AnimRec(AnimId::Greeter_Moving);
     u8** ppRes = Add_Resource_4DC130(ResourceManager::Resource_Animation, rec.mResourceId);
     Animation_Init_424E10(rec.mFrameTableOffset, rec.mMaxW, rec.mMaxH, ppRes, 1, 1);
+
+    if (gMap_5C3030.field_0_current_level == LevelIds::eFeeCoDepot_Ender_12)
+    {
+        insaneGreeter = true;
+    }
+
+    if (insaneGreeter)
+    {
+        SetRGB(200, 127, 127);
+    }
 
     field_DC_bApplyShadows |= 2u;
 
@@ -654,7 +664,9 @@ BaseAliveGameObject* Greeter::GetMudToZap_447690()
             break;
         }
 
-        if (pObj->Type() == AETypes::eMudokon_110)
+        if (pObj->Type() == AETypes::eMudokon_110 ||
+            pObj->Type() == AETypes::eSlig_125 ||
+            pObj->Type() == AETypes::eSlog_126)
         {
             PSX_RECT bRect = {};
             pObj->vGetBoundingRect_424FD0(&bRect, 1);
@@ -662,7 +674,10 @@ BaseAliveGameObject* Greeter::GetMudToZap_447690()
             const FP xMid = FP_FromInteger((bRect.x + bRect.w) / 2);
             const FP yMid = FP_FromInteger((bRect.y + bRect.h) / 2);
 
-            if (xMid - field_B8_xpos < (field_CC_sprite_scale * FP_FromInteger(60)) && field_B8_xpos - xMid < (field_CC_sprite_scale * FP_FromInteger(60)) && yMid - (field_BC_ypos - FP_FromInteger(4)) < (field_CC_sprite_scale * FP_FromInteger(60)) && field_BC_ypos - FP_FromInteger(4) - yMid < (field_CC_sprite_scale * FP_FromInteger(60)) && !(sActiveHero_5C1B68->field_114_flags.Get(Flags_114::e114_Bit7_Electrocuted)) && !ZapIsNotBlocked_447240(this, pObj))
+            if (xMid - field_B8_xpos < (field_CC_sprite_scale * FP_FromInteger(60)) &&
+                field_B8_xpos - xMid < (field_CC_sprite_scale * FP_FromInteger(60)) &&
+                yMid - (field_BC_ypos - FP_FromInteger(4)) < (field_CC_sprite_scale * FP_FromInteger(60)) && field_BC_ypos - FP_FromInteger(4) - yMid < (field_CC_sprite_scale * FP_FromInteger(60)) &&
+                !(pObj->field_114_flags.Get(Flags_114::e114_Bit7_Electrocuted)) && !ZapIsNotBlocked_447240(this, pObj))
             {
                 return pObj;
             }
@@ -671,12 +686,29 @@ BaseAliveGameObject* Greeter::GetMudToZap_447690()
     return nullptr;
 }
 
+void Greeter::UpdateSlurgWatchPoints()
+{
+    const s8 count = sSlurg_Step_Watch_Points_Count_5BD4DC[sSlurg_Step_Watch_Points_Idx_5C1C08];
+    if (count < 5)
+    {
+        if (field_100_pCollisionLine)
+        {
+            Slurg_Step_Watch_Points* pPoints = &sSlurg_Step_Watch_Points_5C1B28[sSlurg_Step_Watch_Points_Idx_5C1C08];
+            pPoints->field_0_points[count].field_0_xPos = FP_GetExponent(field_B8_xpos);
+            pPoints->field_0_points[count].field_2_yPos = field_100_pCollisionLine->field_0_rect.y - 5;
+            sSlurg_Step_Watch_Points_Count_5BD4DC[sSlurg_Step_Watch_Points_Idx_5C1C08] = count + 1;
+        }
+    }
+}
+
 void Greeter::vUpdate_4469B0()
 {
     if (Event_Get_422C00(kEventDeathReset))
     {
         field_6_flags.Set(BaseGameObject::eDead_Bit3);
     }
+
+    UpdateSlurgWatchPoints();
 
     switch (field_13C_brain_state)
     {
@@ -692,11 +724,14 @@ void Greeter::vUpdate_4469B0()
             }
 
             field_C8_vely = FP_FromInteger(0);
+
             if ((field_20_animation.field_4_flags.Get(AnimFlags::eBit5_FlipX)) == 0)
             {
-                field_C4_velx = -(field_CC_sprite_scale * FP_FromInteger(3));
+                const FP speed = insaneGreeter ? FP_FromInteger(9) : FP_FromInteger(3);
+                field_C4_velx = -(field_CC_sprite_scale * speed);
                 if (field_13E_targetOnLeft)
                 {
+
                     RandomishSpeak_447A70(GreeterSpeak::eHi_0);
                     field_13C_brain_state = GreeterBrainStates::eBrain_3_ChaseSpeak;
                 }
@@ -708,7 +743,8 @@ void Greeter::vUpdate_4469B0()
             }
             else
             {
-                field_C4_velx = (field_CC_sprite_scale * FP_FromInteger(3));
+                const FP speed = insaneGreeter ? FP_FromInteger(9) : FP_FromInteger(3);
+                field_C4_velx = (field_CC_sprite_scale * speed);
                 if (field_140_targetOnRight)
                 {
                     RandomishSpeak_447A70(GreeterSpeak::eHi_0);
@@ -782,10 +818,11 @@ void Greeter::vUpdate_4469B0()
                 SFX_Play_46FC20(SoundEffect::WheelSqueak_31, 10, soundDirection2, field_CC_sprite_scale);
             }
 
-            field_C4_velx = -(field_CC_sprite_scale * FP_FromInteger(5));
+            const FP speed = insaneGreeter ? FP_FromInteger(11) : FP_FromInteger(5);
+            field_C4_velx = -(field_CC_sprite_scale * speed);
             if (field_20_animation.field_4_flags.Get(AnimFlags::eBit5_FlipX))
             {
-                field_C4_velx = field_CC_sprite_scale * FP_FromInteger(5);
+                field_C4_velx = field_CC_sprite_scale * speed;
             }
 
             PSX_RECT bRect = {};

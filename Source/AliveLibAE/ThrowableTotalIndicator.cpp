@@ -6,6 +6,7 @@
 #include "ScreenManager.hpp"
 #include "PsxDisplay.hpp"
 #include "stdlib.hpp"
+#include "Sys_common.hpp"
 
 ALIVE_VAR(1, 0x5c112c, u16, bThrowableIndicatorExists_5C112C, 0);
 
@@ -98,7 +99,42 @@ const s16 kInfinity_551AEC[25] = {
     5, 1, 3, 3,
     2, 3, -2, -2};
 
-const s16* kNumbersArray_551B20[11] = {
+const s16 kCheckpoint[36] = {
+    8, 0, -6, 1,
+    -6,
+    12,
+    0,
+    13,
+    0,
+    0,
+    6,
+    1,
+    6,
+    -11,
+    0,
+    -12,
+    0,
+    2,
+    -5,
+    11,
+    -1,
+    11,
+    1,
+    2,
+    5,
+    -1,
+    5,
+    -10,
+    1,
+    -10,
+    -1,
+    -1,
+    -5,
+    0,
+    0,
+    0 };
+
+const s16* kNumbersArray_551B20[12] = {
     kNum_0_551994,
     kNum_1_5519B8,
     kNum_2_5519C4,
@@ -109,7 +145,9 @@ const s16* kNumbersArray_551B20[11] = {
     kNum_7_551A88,
     kNum_8_551A9C,
     kNum_9_551AC8,
-    kInfinity_551AEC};
+    kInfinity_551AEC,
+    kCheckpoint
+};
 
 ThrowableTotalIndicator* ThrowableTotalIndicator::ctor_431CB0(FP xpos, FP ypos, Layer layer, FP /*scale*/, s16 count, s16 bFade)
 {
@@ -157,13 +195,27 @@ ThrowableTotalIndicator* ThrowableTotalIndicator::ctor_431CB0(FP xpos, FP ypos, 
         field_18C_state = ThrowableTotalIndicatorState::eCreated_0;
     }
 
-    if (count < 0 || count > 9)
+    //if (count != 11)
+    //{
+    //    count = 99;
+    //}
+
+    //count = 11;
+
+    if (count == -1)
     {
         field_48_num_to_show = 10;
     }
     else
     {
-        field_48_num_to_show = count;
+        if (count <= 11)
+        {
+            field_48_num_to_show = count;
+        }
+        else
+        {
+            field_48_num_to_show = 10;
+        }
     }
 
     if (bFade)
@@ -293,6 +345,11 @@ void ThrowableTotalIndicator::vUpdate_431EA0()
 
 void ThrowableTotalIndicator::vRender_432070(PrimHeader** ppOt)
 {
+    if (field_48_num_to_show > ALIVE_COUNTOF(kNumbersArray_551B20))
+    {
+        ALIVE_FATAL("reading kNumbersArray array out of bounds");
+    }
+
     if (*kNumbersArray_551B20[field_48_num_to_show] <= 0)
     {
         return;
@@ -309,18 +366,32 @@ void ThrowableTotalIndicator::vRender_432070(PrimHeader** ppOt)
         // return static_cast<T>(((40 * x) + 11) / 23);
         // Can't use PsxToPCX as this deals with FP's and it adds 11 before the divide ??
 
-        xpos = FP_GetExponent(((field_28_cur_xpos - camX) * FP_FromInteger(40) + FP_FromInteger(11)) / FP_FromInteger(23));
+        xpos = FP_GetExponent(field_28_cur_xpos - camX)/* * FP_FromInteger(40) + FP_FromInteger(11)) / FP_FromInteger(23))*/;
         ypos = FP_GetExponent(field_2C_cur_ypos - camY);
         const FP x0 = FP_FromInteger(kNumbersArray_551B20[field_48_num_to_show][(4 * counter) + 1]) * field_38_scale;
         const FP y0 = FP_FromInteger(kNumbersArray_551B20[field_48_num_to_show][(4 * counter) + 2]) * field_38_scale;
         const FP x1 = FP_FromInteger(kNumbersArray_551B20[field_48_num_to_show][(4 * counter) + 3]) * field_38_scale;
         const FP y1 = FP_FromInteger(kNumbersArray_551B20[field_48_num_to_show][(4 * counter) + 4]) * field_38_scale;
+
+        s16 primBaseX = 0;
+        s16 primVertX = 0;
+        if (field_48_num_to_show == 11)
+        {
+            primBaseX = PsxToPCX(xpos);
+            primVertX = PsxToPCX(xpos);
+        }
+        else
+        {
+            primBaseX = PsxToPCX(xpos, 11);
+            primVertX = PsxToPCX(xpos, 11);
+        }
+
         Line_G2* pLine = &field_4C_lines[gPsxDisplay_5C1130.field_C_buffer_index][counter];
 
         LineG2_Init(pLine);
 
-        SetXY0(pLine, xpos + FP_GetExponent(x0), ypos + FP_GetExponent(y0));
-        SetXY1(pLine, xpos + FP_GetExponent(x1), ypos + FP_GetExponent(y1));
+        SetXY0(pLine, primBaseX + FP_GetExponent(x0), ypos + FP_GetExponent(y0));
+        SetXY1(pLine, primVertX + FP_GetExponent(x1), ypos + FP_GetExponent(y1));
 
         SetRGB0(pLine, field_42_r & 0xFF, field_44_g & 0xFF, field_46_b & 0xFF);
         SetRGB1(pLine, field_42_r & 0xFF, field_44_g & 0xFF, field_46_b & 0xFF);
@@ -334,10 +405,17 @@ void ThrowableTotalIndicator::vRender_432070(PrimHeader** ppOt)
 
     OrderingTable_Add_4F8AA0(OtLayer(ppOt, field_40_layer), &pTPage->mBase);
 
+    //pScreenManager_5BB5F4->InvalidateRect_40EC90(
+    //    xpos - 8,
+    //    ypos - 8,
+    //    xpos + 8,
+    //    ypos + 8,
+    //    pScreenManager_5BB5F4->field_3A_idx);
+
     pScreenManager_5BB5F4->InvalidateRect_40EC90(
-        xpos - 8,
-        ypos - 8,
-        xpos + 8,
-        ypos + 8,
+        PsxToPCX(xpos - 31),
+        ypos - 21,
+        PsxToPCX(xpos + 31),
+        ypos + 31,
         pScreenManager_5BB5F4->field_3A_idx);
 }

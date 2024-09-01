@@ -3236,8 +3236,15 @@ void Abe::VOn_Tlv_Collision_421130(Path_TLV* pTlv)
                 }
                 gOldKilledMuds_5076D0 = sKilledMudokons_5076BC;
                 gOldSavedMuds_5076D4 = sRescuedMudokons_5076C0;
+                
+                char_type camNameBuffer[48] = {};
+                Path_Format_CameraName_4346B0(camNameBuffer, gMap_507BA8.field_0_current_level, gMap_507BA8.field_2_current_path, gMap_507BA8.field_4_current_camera);
+                camNameBuffer[8] = 0;
 
+                char_type saveName[100] = "autosave ";
+                strcat(saveName, camNameBuffer);
                 SaveGame::SaveToMemory_459490(&gSaveBuffer_505668);
+                SaveGame::SaveToFile_45A110(saveName);
 
                 const FP camXPos = FP_NoFractional(pScreenManager_4FF7C8->field_10_pCamPos->field_0_x - FP_FromInteger(pScreenManager_4FF7C8->field_14_xpos));
 

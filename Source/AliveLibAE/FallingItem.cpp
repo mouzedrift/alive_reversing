@@ -13,6 +13,7 @@
 #include "Particle.hpp"
 #include "ScreenShake.hpp"
 #include "Abe.hpp"
+#include "Slurg.hpp"
 
 const AnimId sFallingItemData_544DC0[15][2] = {
     {AnimId::AE_FallingRock_Falling, AnimId::AE_FallingRock_Waiting},
@@ -218,6 +219,18 @@ void FallingItem::vScreenChanged_428180()
     }
 }
 
+void FallingItem::UpdateSlurgWatchPoints()
+{
+    const s8 count = sSlurg_Step_Watch_Points_Count_5BD4DC[sSlurg_Step_Watch_Points_Idx_5C1C08];
+    if (count < 5)
+    {
+        Slurg_Step_Watch_Points* pPoints = &sSlurg_Step_Watch_Points_5C1B28[sSlurg_Step_Watch_Points_Idx_5C1C08];
+        pPoints->field_0_points[count].field_0_xPos = FP_GetExponent(field_B8_xpos);
+        pPoints->field_0_points[count].field_2_yPos = FP_GetExponent(field_BC_ypos) - 5;
+        sSlurg_Step_Watch_Points_Count_5BD4DC[sSlurg_Step_Watch_Points_Idx_5C1C08] = count + 1;
+    }
+}
+
 EXPORT void FallingItem::vUpdate_427780()
 {
     if (Event_Get_422C00(kEventDeathReset))
@@ -320,6 +333,7 @@ EXPORT void FallingItem::vUpdate_427780()
             }
 
             DamageHitItems_427F40();
+            UpdateSlurgWatchPoints();
 
             if (field_C8_vely < FP_FromInteger(20))
             {

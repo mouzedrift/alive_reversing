@@ -428,6 +428,12 @@ EXPORT void LiftPoint::vMove_4626A0(FP xSpeed, FP ySpeed, s32 /*not_used*/)
     field_C4_velx = xSpeed * field_CC_sprite_scale;
     field_C8_vely = ySpeed * field_CC_sprite_scale;
 
+    if (gMap_5C3030.field_0_current_level == LevelIds::eFeeCoDepot_Ender_12 && gMap_5C3030.field_2_current_path == 11 && (gMap_5C3030.field_4_current_camera == 7 || gMap_5C3030.field_4_current_camera == 8))
+    {
+        field_C4_velx /= FP_FromDouble(2);
+        field_C8_vely /= FP_FromDouble(2);
+    }
+
     if (FP_GetExponent(xSpeed) || FP_GetExponent(ySpeed))
     {
         field_12C_bMoving |= 1u;

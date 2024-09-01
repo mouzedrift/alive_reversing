@@ -232,16 +232,12 @@ static void Main_ParseCommandLineArguments()
     {
         if (_strcmpi(pCmdLine, "-it_is_me_your_father") == 0)
         {
-            Input_GetCurrentKeyStates_48E630();
-            if (Input_IsVKPressed_48E5D0(VK_SHIFT))
-            {
-                gDDCheatMode_508BF8 = 1;
-                PSX_DispEnv_Set_48D900(2);
-                PSX_EMU_Set_screen_mode_499910(2);
-            }
+            gDDCheatMode_508BF8 = 1;
+            PSX_DispEnv_Set_48D900(2);
+            PSX_EMU_Set_screen_mode_499910(2);
         }
         // Force DDCheat
-#if FORCE_DDCHEAT
+#if _DEBUG
         gDDCheatMode_508BF8 = 1;
 #endif
     }
@@ -622,13 +618,13 @@ EXPORT void Game_Run_4373D0()
 
     Path_Set_NewData_FromLvls();
 
-#if DEVELOPER_MODE
+//#if DEVELOPER_MODE
     // Boot directly to the "abe hello" screen
     gMap_507BA8.Init_443EE0(LevelIds::eMenu_0, 1, 1, CameraSwapEffects::eInstantChange_0, 0, 0);
-#else
+//#else
     // Normal copy right screen boot
-    gMap_507BA8.Init_443EE0(LevelIds::eMenu_0, 1, 10, CameraSwapEffects::eInstantChange_0, 0, 0);
-#endif
+    //gMap_507BA8.Init_443EE0(LevelIds::eMenu_0, 1, 10, CameraSwapEffects::eInstantChange_0, 0, 0);
+//#endif
 
     DDCheat_Allocate_409560();
 

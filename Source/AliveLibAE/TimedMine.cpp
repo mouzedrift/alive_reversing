@@ -334,6 +334,7 @@ s16 TimedMine::vTakeDamage_410FA0(BaseGameObject* pFrom)
         case AETypes::eAbilityRing_104:
         case AETypes::eExplosion_109:
         case AETypes::eShrykull_121:
+        case AETypes::eRockSpawner_48:
         {
             field_6_flags.Set(BaseGameObject::eDead_Bit3);
             auto pExplosion = ae_new<BaseBomb>();

@@ -18,6 +18,7 @@
 #include "Sys.hpp"
 #include "PathDataExtensions.hpp"
 #include "GameAutoPlayer.hpp"
+#include "Gibs.hpp"
 
 ALIVE_VAR(1, 0x5ca4d8, s8, sQuicksave_SaveNextFrame_5CA4D8, 0);
 ALIVE_VAR(1, 0x5ca4d9, s8, sQuicksave_LoadNextFrame_5CA4D9, 0);
@@ -201,7 +202,7 @@ PauseMenuPageEntry PauseMenu__PageEntryList_Load_55e3a0[9] = {
     {1, 184, 105, 0, "", 128, 16, 255, Centre},
     {1, 184, 130, 0, "", 128, 16, 255, Centre},
     {1, 184, 188, 0, "", 128, 16, 255, Centre},
-    {1, 184, 213, 0, "Esc  Cancel        F6  Load QuikSave", 128, 16, 255, Centre},
+    {1, 184, 213, 0, "Esc  Cancel", 128, 16, 255, Centre},
     {1, 0, 0, 0, nullptr, 0u, 0u, 0u, 0u}};
 
 
@@ -1219,6 +1220,7 @@ void PauseMenu::Page_Save_Update_491210()
         strcat(savFileName, ".sav");
         if (access_impl(savFileName, 4) || bWriteSaveFile_5C937C) // check file is writable
         {
+            //Quicksave_4C90D0();
             bWriteSaveFile_5C937C = false;
             FILE* hFile = fopen(savFileName, "wb");
             if (hFile)

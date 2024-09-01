@@ -8,7 +8,7 @@
 #include "BaseAnimatedWithPhysicsGameObject.hpp"
 #include "Factory.hpp"
 #include "Input.hpp"
-#include "BitField.hpp"
+#include "../AliveLibCommon/BitField.hpp"
 
 void MainMenu_ForceLink();
 

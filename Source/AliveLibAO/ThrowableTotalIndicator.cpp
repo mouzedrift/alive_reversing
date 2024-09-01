@@ -9,6 +9,7 @@
 #include "PsxDisplay.hpp"
 #include "ScreenManager.hpp"
 #include "Math.hpp"
+#include "../AliveLibCommon/Sys_common.hpp"
 
 namespace AO {
 
@@ -270,6 +271,11 @@ const s16* kNumbersArray_4C56A8[12] = {
 
 void ThrowableTotalIndicator::VRender_41B810(PrimHeader** ppOt)
 {
+    if (field_38_num_to_show > ALIVE_COUNTOF(kNumbersArray_4C56A8))
+    {
+        ALIVE_FATAL("reading kNumbersArray array out of bounds");
+    }
+
     if (*kNumbersArray_4C56A8[field_38_num_to_show] <= 0)
     {
         return;
@@ -375,13 +381,25 @@ ThrowableTotalIndicator* ThrowableTotalIndicator::ctor_41B520(FP xpos, FP ypos, 
         field_19C_state = ThrowableTotalIndicatorState::eCreated_0;
     }
 
+    //if (count != 11)
+    //{
+    //    count = 99;
+    //}
+
     if (count == -1)
     {
         field_38_num_to_show = 10;
     }
     else
     {
-        field_38_num_to_show = count;
+        if (count <= 11)
+        {
+            field_38_num_to_show = count;
+        }
+        else
+        {
+            field_38_num_to_show = 10;
+        }
     }
 
     if (bFade)

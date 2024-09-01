@@ -5,7 +5,7 @@
 #include "../AliveLibCommon/BitField.hpp"
 #include "Input.hpp"
 #include "Path.hpp"
-
+#include "QuikSave.hpp"
 
 #define ABE_MOTIONS_ENUM(ENTRY)                      \
     ENTRY(Motion_0_Idle_44EEB0)                      \
@@ -742,8 +742,12 @@ public:
 
     s32 field_1B4_padding;
     s32 field_1B8_padding;
+    bool mQuicksaveDeath = false;
+    u32 mTextTimer = 0;
+    Quicksave mCheckpointSave = {};
+    s16 mPrevCheckpointSaveId = 0;
 };
-ALIVE_ASSERT_SIZEOF(Abe, 0x1BC);
+//ALIVE_ASSERT_SIZEOF(Abe, 0x1BC);
 
 ALIVE_VAR_EXTERN(Abe*, sActiveHero_5C1B68);
 ALIVE_VAR_EXTERN(BaseAliveGameObject*, sControlledCharacter_5C1B8C);

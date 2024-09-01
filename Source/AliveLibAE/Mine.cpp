@@ -317,6 +317,7 @@ s16 Mine::vTakeDamage_46BB20(BaseGameObject* pFrom)
         case AETypes::eExplosion_109:
         case AETypes::eMudokon_110:
         case AETypes::eShrykull_121:
+        case AETypes::eRockSpawner_48:
             auto pBomb = ae_new<BaseBomb>();
             if (pBomb)
             {

@@ -9,6 +9,9 @@
 #include "SwitchStates.hpp"
 #include "stdlib.hpp"
 #include "PathData.hpp"
+#include "ObjectIds.hpp"
+#include "PlatformBase.hpp"
+#include "Game.hpp"
 
 ALIVE_VAR(1, 0x5C1C08, u16, sSlurg_Step_Watch_Points_Idx_5C1C08, 0);
 ALIVE_ARY(1, 0x5BD4DC, s8, 2, sSlurg_Step_Watch_Points_Count_5BD4DC, {});
@@ -231,6 +234,19 @@ void Slurg::Burst_4C8AE0()
     }
 }
 
+void Slurg::VOnTrapDoorOpen()
+{
+    auto pPlatform = static_cast<PlatformBase*>(sObjectIds_5C1B70.Find_449CF0(field_110_id));
+    if (pPlatform)
+    {
+        pPlatform->VRemove(this);
+        field_110_id = -1;
+        field_F8_LastLineYPos = field_BC_ypos;
+        //VSetMotion_4081C0(eSligMotions::M_OutToFall_38_4B4570);
+        field_11C_state = Slurg_States::eFalling_3;
+    }
+}
+
 void Slurg::vUpdate_4C8790()
 {
     const FP oldXPos = field_B8_xpos;
@@ -263,6 +279,62 @@ void Slurg::vUpdate_4C8790()
                 break;
             }
         }
+    }
+
+    FP xOff = {};
+    if (field_20_animation.field_4_flags.Get(AnimFlags::eBit5_FlipX))
+    {
+        xOff = FP_FromInteger(10) * field_CC_sprite_scale;
+    }
+    else
+    {
+        xOff = FP_FromInteger(-10) * field_CC_sprite_scale;
+    }
+
+    PathLine* pLine2 = nullptr;
+    FP hitX2 = {};
+    FP hitY2 = {};
+    if (!sCollisions_DArray_5C1128->Raycast_417A60(
+        xOff + field_B8_xpos,
+        field_BC_ypos - FP_FromInteger(10),
+        xOff + field_B8_xpos,
+        field_BC_ypos + FP_FromInteger(10),
+        &pLine2,
+        &hitX2,
+        &hitY2,
+        field_D6_scale != 0 ? 1 : 16))
+    {
+        VOnTrapDoorOpen();
+        field_F8_LastLineYPos = field_BC_ypos;
+        //return;
+    }
+
+    if (field_104_collision_line_type != -1)
+    {
+        sCollisions_DArray_5C1128->Raycast_417A60(
+            field_B8_xpos,
+            field_BC_ypos - FP_FromInteger(20),
+            field_B8_xpos,
+            field_BC_ypos + FP_FromInteger(20),
+            &field_100_pCollisionLine,
+            &field_B8_xpos,
+            &field_BC_ypos,
+            1 << field_104_collision_line_type);
+
+        if (field_100_pCollisionLine)
+        {
+            if (field_100_pCollisionLine->field_8_type == eLineTypes::eUnknown_32 || field_100_pCollisionLine->field_8_type == eLineTypes::eUnknown_36)
+            {
+                vOnCollisionWith_424EE0(
+                    { bRect.x, static_cast<s16>(bRect.y + 5) },
+                    { bRect.w, static_cast<s16>(bRect.h + 5) },
+                    ObjList_5C1B78,
+                    1,
+                    (TCollisionCallBack)&BaseAliveGameObject::OnTrapDoorIntersection_408BA0);
+            }
+        }
+
+        field_104_collision_line_type = 0;
     }
 
     switch (field_11C_state)
@@ -305,6 +377,27 @@ void Slurg::vUpdate_4C8790()
                 field_6_flags.Set(BaseGameObject::eDead_Bit3);
             }
             break;
+
+        case Slurg_States::eFalling_3:
+        {
+            FP hitX = {};
+            FP hitY = {};
+            PathLine* pLine = nullptr;
+            if (InAirCollision_408810(&pLine, &hitX, &hitY, FP_FromDouble(1.8)))
+            {
+                field_C8_vely = -field_C8_vely * FP_FromDouble(0.4);
+                field_100_pCollisionLine = pLine;
+                field_BC_ypos = hitY;
+                field_F8_LastLineYPos = hitY;
+
+                if (field_C8_vely > -FP_FromInteger(1))
+                {
+                    field_C8_vely = FP_FromInteger(0);
+                    field_11C_state = Slurg_States::eMoving_0;
+                }
+            }
+            break;
+        }
 
         default:
             break;

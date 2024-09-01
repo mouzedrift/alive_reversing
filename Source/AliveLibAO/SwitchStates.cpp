@@ -8,6 +8,11 @@ ALIVE_VAR(1, 0x505568, SwitchStates, sSwitchStates_505568, {});
 
 void SwitchStates_Set(u16 idx, s8 value)
 {
+#if _DEBUG
+    const char_type* str = value == 1 ? "enabling" : "disabling";
+    LOG_INFO(str << " switch id " << idx);
+#endif
+
     sSwitchStates_505568.mData[idx] = value;
 }
 

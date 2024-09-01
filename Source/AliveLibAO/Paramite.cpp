@@ -1574,39 +1574,20 @@ s16 Paramite::Brain_1_SurpriseWeb_448D00()
         }
 
         case Brain_1_SurpriseWeb::eBrain1_AppearingRight_1:
-            if (sActiveHero_507678->field_A8_xpos <= field_A8_xpos
-                || field_BC_sprite_scale != sActiveHero_507678->field_BC_sprite_scale
-                || !gMap_507BA8.Is_Point_In_Current_Camera_4449C0(
-                    field_B2_lvl_number,
-                    field_B0_path_number,
-                    field_A8_xpos,
-                    field_AC_ypos,
-                    1))
+            if (!SwitchStates_Get(field_13C_surprise_web_switch_id))
             {
-                if (!SwitchStates_Get(field_13C_surprise_web_switch_id))
-                {
-                    return field_110_brain_sub_state;
-                }
+                return field_110_brain_sub_state;
             }
             field_10_anim.field_4_flags.Clear(AnimFlags::eBit5_FlipX);
             field_114_timer = gnFrameCount_507670 + field_112_surprise_web_delay_timer;
             return Brain_1_SurpriseWeb::eBrain1_StartAnimation_3;
 
         case Brain_1_SurpriseWeb::eBrain1_AppearingLeft_2:
-            if (sActiveHero_507678->field_A8_xpos >= field_A8_xpos
-                || field_BC_sprite_scale != sActiveHero_507678->field_BC_sprite_scale
-                || !gMap_507BA8.Is_Point_In_Current_Camera_4449C0(
-                    field_B2_lvl_number,
-                    field_B0_path_number,
-                    field_A8_xpos,
-                    field_AC_ypos,
-                    1))
+            if (!SwitchStates_Get(field_13C_surprise_web_switch_id))
             {
-                if (!SwitchStates_Get(field_13C_surprise_web_switch_id))
-                {
-                    return field_110_brain_sub_state;
-                }
+                return field_110_brain_sub_state;
             }
+
             field_10_anim.field_4_flags.Set(AnimFlags::eBit5_FlipX);
             field_114_timer = gnFrameCount_507670 + field_112_surprise_web_delay_timer;
             return Brain_1_SurpriseWeb::eBrain1_StartAnimation_3;

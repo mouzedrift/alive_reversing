@@ -265,7 +265,7 @@ void FallingItem::VUpdate_41A120()
                         pParticleBurst->ctor_40D0F0(
                             field_A8_xpos,
                             field_AC_ypos,
-                            25,
+                            12,
                             field_BC_sprite_scale,
                             BurstType::eMeat_4);
                     }
@@ -278,7 +278,7 @@ void FallingItem::VUpdate_41A120()
                         pParticleBurst->ctor_40D0F0(
                             field_A8_xpos,
                             field_AC_ypos,
-                            25,
+                            12,
                             field_BC_sprite_scale,
                             BurstType::eFallingRocks_0);
                     }
@@ -290,7 +290,7 @@ void FallingItem::VUpdate_41A120()
                     pParticleBurst->ctor_40D0F0(
                         field_A8_xpos,
                         field_AC_ypos,
-                        25,
+                        12,
                         field_BC_sprite_scale,
                         BurstType::eSticks_1);
                 }

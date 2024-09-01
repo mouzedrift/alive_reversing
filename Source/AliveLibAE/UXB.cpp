@@ -346,6 +346,7 @@ s16 UXB::vTakeDamage_4DF850(BaseGameObject* pFrom)
         case AETypes::eAbilityRing_104:
         case AETypes::eExplosion_109:
         case AETypes::eShrykull_121:
+        case AETypes::eRockSpawner_48:
             break;
 
         default:

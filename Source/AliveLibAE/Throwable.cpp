@@ -43,6 +43,11 @@ const AETypes throwable_types_55FAFC[252] = {
 
 EXPORT BaseThrowable* CCSTD Make_Throwable_49AF30(FP xpos, FP ypos, s16 count)
 {
+    if (gMap_5C3030.field_0_current_level == LevelIds::eFeeCoDepot_Ender_12 && gMap_5C3030.field_2_current_path == 11)
+    {
+        return ae_new<Grenade>()->ctor_447F70(xpos, ypos, count, 0, 0, 0);
+    }
+
     switch (throwable_types_55FAFC[gMap_5C3030.field_22_overlayID])
     {
         case AETypes::eBone_11:

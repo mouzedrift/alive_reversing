@@ -34,7 +34,8 @@ enum class Slurg_States : s16
 {
     eMoving_0 = 0,
     eStopped_1 = 1,
-    eBurst_2 = 2
+    eBurst_2 = 2,
+    eFalling_3 = 3
 };
 
 enum SlurgFlags
@@ -77,6 +78,7 @@ public:
     virtual s32 VGetSaveState(u8* pSaveBuffer) override;
     virtual s16 VTakeDamage_408730(BaseGameObject* pFrom) override;
     virtual void VOn_TLV_Collision_4087F0(Path_TLV* pTlv) override;
+    virtual void VOnTrapDoorOpen();
 
     EXPORT static s32 CC CreateFromSaveState_4C8DF0(const u8* pData);
 

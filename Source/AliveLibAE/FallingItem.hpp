@@ -43,6 +43,8 @@ public:
     }
 
 private:
+    void UpdateSlurgWatchPoints();
+
     EXPORT void dtor_427EB0();
 
     EXPORT FallingItem* vdtor_427530(s32 flags);
