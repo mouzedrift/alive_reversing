@@ -207,6 +207,16 @@ enum class Choice_short : s16
 
 struct Path_TLV
 {
+    s16 Width() const
+    {
+        return field_C_bottom_right.field_0_x - field_8_top_left.field_0_x;
+    }
+
+    s16 Height() const
+    {
+        return field_C_bottom_right.field_2_y - field_8_top_left.field_2_y;
+    }
+
     BitField8<TLV_Flags> field_0_flags;
     u8 field_1_tlv_state;
     s16 field_2_length;

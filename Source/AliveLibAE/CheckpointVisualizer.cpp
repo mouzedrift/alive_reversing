@@ -68,8 +68,8 @@ CheckpointVisualizer* CheckpointVisualizer::ctor(FP xpos, FP ypos, FP spriteScal
 
 void CheckpointVisualizer::VScreenChanged()
 {
-    if (gMap_5C3030.field_2_current_path != gMap_5C3030.field_C_path ||
-        gMap_5C3030.field_0_current_level != gMap_5C3030.field_A_level)
+    if (gMap_5C3030.field_0_current_level != gMap_5C3030.field_A_level ||
+        gMap_5C3030.field_2_current_path != gMap_5C3030.field_C_path)
     {
         field_6_flags.Set(BaseGameObject::eDead_Bit3);
         field_6_flags.Clear(BaseGameObject::eSurviveDeathReset_Bit9);
@@ -83,11 +83,18 @@ void CheckpointVisualizer::VUpdate()
         return;
     }
 
+    mRender = gMap_5C3030.Is_Point_In_Current_Camera_4810D0(gMap_5C3030.field_0_current_level, gMap_5C3030.field_2_current_path, mInitialXPos, mInitialYPos, 0);
+
     mCurrentYPos += FP_FromDouble(0.3) * Math_Sine_496DD0(static_cast<u8>(3 * sGnFrame_5C1B84));
 }
 
 void CheckpointVisualizer::VRender(PrimHeader** ppOt)
 {
+    if (!mRender)
+    {
+        return;
+    }
+
     const FP camX = FP_NoFractional(pScreenManager_5BB5F4->field_20_pCamPos->field_0_x);
     const FP camY = FP_NoFractional(pScreenManager_5BB5F4->field_20_pCamPos->field_4_y);
 

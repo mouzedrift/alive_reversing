@@ -23,11 +23,5 @@ private:
     u8 mR = 127;
     u8 mG = 127;
     u8 mB = 127;
-
-    enum class State
-    {
-        eGoingUp,
-        eGoingDown
-    };
-    State mState = State::eGoingUp;
+    bool mRender = true;
 };

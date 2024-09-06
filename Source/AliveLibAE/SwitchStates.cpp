@@ -11,12 +11,21 @@ EXPORT void CC SwitchStates_SetRange_465FA0(u16 start, u16 end)
 {
     if (start <= end)
     {
+#if _DEBUG
+        LOG_INFO("resetting switch id range " << start << "-" << end << " to 0");
+#endif
+
         memset(&sSwitchStates_5C1A28.mData[start], 0, end - start + 1);
     }
 }
 
 EXPORT void CC SwitchStates_Set_465FF0(u16 idx, s8 value)
 {
+#if _DEBUG
+    const char_type* str = value == 1 ? "enabling" : "disabling";
+    LOG_INFO(str << " switch id " << idx);
+#endif
+
     sSwitchStates_5C1A28.mData[idx] = value;
 }
 

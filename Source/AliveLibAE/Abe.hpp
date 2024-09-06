@@ -746,6 +746,7 @@ public:
     u32 mTextTimer = 0;
     Quicksave mCheckpointSave = {};
     s16 mPrevCheckpointSaveId = 0;
+    bool mTouchingCheckpoint = false;
 };
 //ALIVE_ASSERT_SIZEOF(Abe, 0x1BC);
 
