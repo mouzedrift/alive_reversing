@@ -18,6 +18,8 @@
 #include "qactiongroup.h"
 #include "ReliveApiWrapper.hpp"
 #include "ShowContext.hpp"
+#include "qdiriterator.h"
+#include "ProjectExplorerTree.hpp"
 
 static void FatalError(const char* msg)
 {
@@ -38,7 +40,7 @@ EditorMainWindow::EditorMainWindow(QWidget* aParent)
 
     // Construct the UI from the XML
     m_ui->setupUi(this);
-
+    
     UpdateWindowTitle();
     setMenuActionsEnabled(false);
 
@@ -114,6 +116,9 @@ EditorMainWindow::EditorMainWindow(QWidget* aParent)
     // Disable context menu on the QToolBar
     m_ui->toolBar->setContextMenuPolicy(Qt::PreventContextMenu);
 
+    connect(m_ui->actionConvert_relive_data_folder_to_project, &QAction::triggered, this, &EditorMainWindow::ConvertReliveDataToProject);
+    connect(m_ui->actionOpen_project, &QAction::triggered, this, &EditorMainWindow::OpenProject);
+
     statusBar()->showMessage(tr("Ready"));
 }
 
@@ -163,6 +168,11 @@ void EditorMainWindow::setMenuActionsEnabled(bool enable)
             action->setEnabled(enable);
         }
     }
+}
+
+bool EditorMainWindow::OpenPath(QString fileName, bool createNewPath)
+{
+    return onOpenPath(fileName, createNewPath);
 }
 
 bool EditorMainWindow::onOpenPath(QString fullFileName, bool createNewPath)
@@ -836,4 +846,111 @@ void EditorMainWindow::on_action_snap_collision_objects_on_y_toggled(bool on)
 void EditorMainWindow::on_action_snap_map_objects_y_toggled(bool on)
 {
     mSnapSettings.MapObjectSnapping().mSnapY = on;
+}
+
+static constexpr int kProjectVersion = 1;
+
+void EditorMainWindow::CreateNewProject()
+{
+
+}
+
+void EditorMainWindow::ConvertReliveDataToProject()
+{
+    nlohmann::json j;
+    nlohmann::json levels = nlohmann::json::array();
+
+    QString folderPath = QFileDialog::getExistingDirectory(this, tr("Open relive_data folder"));
+
+    QFileInfo reliveData(folderPath);
+    if (!reliveData.isDir() || reliveData.fileName() != "relive_data")
+    {
+        return;
+    }
+
+    j["project_version"] = kProjectVersion;
+
+    QDirIterator it(folderPath, QDirIterator::Subdirectories);
+    while (it.hasNext())
+    {
+        QString dir = it.next();
+        QFileInfo info(dir);
+        qDebug() << dir;
+
+        QString fileName = info.fileName();
+        if (info.isDir())
+        {
+            if ((fileName == "ae" || fileName == "ao"))
+            {
+                j["game"] = info.fileName().toStdString();
+                j["root_dir"] = dir.toStdString();
+            }
+            else if (fileName == "paths")
+            {
+                QDir levelDir(dir);
+                levelDir.cdUp();
+
+                levels.push_back(levelDir.absolutePath().toStdString());
+            }
+        }
+
+    }
+
+    j["levels"] = levels;
+
+    std::string json = j.dump(4);
+    QFile projectJson(folderPath + "/project.json");
+    projectJson.open(QIODevice::OpenModeFlag::WriteOnly);
+    projectJson.write(json.c_str());
+    projectJson.close();
+}
+
+void EditorMainWindow::OpenProject()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open project file"), tr("project.json"), tr("project.json"));
+    if (fileName.isEmpty())
+    {
+        return;
+    }
+
+    QFile projectJson(fileName);
+
+    projectJson.open(QIODevice::OpenModeFlag::ReadOnly | QIODevice::OpenModeFlag::Text);
+    std::string jsonString = QString::fromUtf8(projectJson.readAll()).toStdString();
+
+    nlohmann::json j = nlohmann::json::parse(jsonString);
+
+    ProjectFile projectFile;
+    projectFile.gameName = j["game"].template get<std::string>().c_str();
+    projectFile.projectVersion = j["project_version"];
+    projectFile.rootDir = j["root_dir"].template get<std::string>().c_str();
+
+    for (const auto& levelPath : j["levels"])
+    {
+        std::string path;
+        levelPath.get_to(path);
+        projectFile.levelPaths.append(QString(path.c_str()));
+    }
+
+    auto pDockWidget = new QDockWidget(this);
+    pDockWidget->setWindowTitle("Project Explorer");
+    pDockWidget->setAllowedAreas(Qt::DockWidgetArea::LeftDockWidgetArea);
+    pDockWidget->setFeatures(QDockWidget::DockWidgetFeature::NoDockWidgetFeatures);
+
+    auto pLineEdit = new QLineEdit(pDockWidget);
+    pLineEdit->setPlaceholderText("Project Search");
+
+    auto pProjectExplorerTree = new ProjectExplorerTree(pDockWidget, pLineEdit, this, projectFile);
+
+    auto pLayout = new QVBoxLayout();
+    pLayout->setSizeConstraint(QLayout::SizeConstraint::SetMaximumSize);
+    pLayout->addWidget(pLineEdit);
+    pLayout->addWidget(pProjectExplorerTree);
+
+    auto pWidget = new QWidget(this);
+    pWidget->setLayout(pLayout);
+
+    pDockWidget->setWidget(pWidget);
+    addDockWidget(Qt::LeftDockWidgetArea, pDockWidget);
+
 }

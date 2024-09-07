@@ -590,10 +590,6 @@ Do you want to overwrite it?</source>
         <translation>Kollisionen verbinden</translation>
     </message>
     <message>
-        <source>CTRL+J</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Item transparency</source>
         <translation>Item Transparenz</translation>
     </message>
@@ -668,6 +664,34 @@ Do you want to overwrite it?</source>
     <message>
         <source>You can&apos;t cut/copy paste data between AO and AE</source>
         <translation>Du kannst keine Daten zwischen AO und AE ausschneiden/kopieren</translation>
+    </message>
+    <message>
+        <source>Ctrl+J</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Convert relive_data folder to project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open relive_data folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open project file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>project.json</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -836,6 +860,13 @@ Do you want to overwrite it?</source>
     <message>
         <source>Move %1 item(s)</source>
         <translation>Bewege %1 item(s)</translation>
+    </message>
+</context>
+<context>
+    <name>NewProjectDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

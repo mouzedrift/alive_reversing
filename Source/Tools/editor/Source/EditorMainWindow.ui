@@ -96,6 +96,9 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionNew_project"/>
+    <addaction name="actionOpen_project"/>
+    <addaction name="actionConvert_relive_data_folder_to_project"/>
     <addaction name="actionNew_path"/>
     <addaction name="action_open_path"/>
     <addaction name="separator"/>
@@ -874,7 +877,7 @@
     <string>Connect collisions</string>
    </property>
    <property name="shortcut">
-    <string>CTRL+J</string>
+    <string>Ctrl+J</string>
    </property>
   </action>
   <action name="actionItem_transparency">
@@ -946,6 +949,21 @@
    </property>
    <property name="text">
     <string>Export and play</string>
+   </property>
+  </action>
+  <action name="actionNew_project">
+   <property name="text">
+    <string>New project</string>
+   </property>
+  </action>
+  <action name="actionConvert_relive_data_folder_to_project">
+   <property name="text">
+    <string>Convert relive_data folder to project</string>
+   </property>
+  </action>
+  <action name="actionOpen_project">
+   <property name="text">
+    <string>Open project</string>
    </property>
   </action>
  </widget>

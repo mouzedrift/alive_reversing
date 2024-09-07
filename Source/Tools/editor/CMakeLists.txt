@@ -137,6 +137,8 @@ set(PROJECT_SOURCES
         Source/ReflectedEnumProperties.hpp
         Source/ColourPickerProperty.cpp
         Source/ColourPickerProperty.hpp
+        Source/ProjectExplorerTree.cpp
+        Source/ProjectExplorerTree.hpp
         Source/resources.qrc
         ${TS_FILES}
 )

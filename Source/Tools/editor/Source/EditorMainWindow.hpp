@@ -11,6 +11,14 @@ namespace Ui
     class EditorMainWindow;
 }
 
+struct ProjectFile
+{
+    QString gameName;
+    int projectVersion;
+    QList<QString> levelPaths;
+    QString rootDir;
+};
+
 class EditorMainWindow final : public QMainWindow
 {
     Q_OBJECT
@@ -18,6 +26,8 @@ class EditorMainWindow final : public QMainWindow
 public:
     explicit EditorMainWindow( QWidget* aParent = 0 );
     ~EditorMainWindow();
+    bool OpenPath(QString fileName, bool createNewPath);
+
 private slots:
     void on_actionExport_and_play_triggered();
 
@@ -96,6 +106,10 @@ private:
     void UpdateWindowTitle();
     void DisconnectTabSignals();
     void closeEvent(QCloseEvent* pEvent) override;
+    void CreateNewProject();
+    void ConvertReliveDataToProject();
+    void OpenProject();
+
 private:
     Ui::EditorMainWindow* m_ui;
     QSettings m_Settings;

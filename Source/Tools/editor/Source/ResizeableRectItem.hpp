@@ -32,6 +32,7 @@ private:  // From QGraphicsItem
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* aEvent) override;
     void paint(QPainter* aPainter, const QStyleOptionGraphicsItem* aOption, QWidget* aWidget = nullptr) override;
     void hoverMoveEvent(QGraphicsSceneHoverEvent* aEvent) override;
+    void hoverEnterEvent(QGraphicsSceneHoverEvent* aEvent) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent* aEvent) override;
     QVariant itemChange(GraphicsItemChange aChange, const QVariant& aValue) override;
     QRectF boundingRect() const override;
@@ -94,4 +95,5 @@ private:
 
     QString mNoIconObjectName = "";
     QString mIconPath;
+    bool mHoveringItem = false;
 };
