@@ -14,12 +14,13 @@
 #include "Slig.hpp"
 #include "ExplosionSet.hpp"
 
-Explosion* Explosion::ctor_4A1200(FP xpos, FP ypos, FP scale, s16 bSmall)
+Explosion* Explosion::ctor_4A1200(FP xpos, FP ypos, FP scale, s16 bSmall, bool disableFlash)
 {
     BaseAnimatedWithPhysicsGameObject_ctor_424930(0);
     SetVTable(this, 0x546CB8);
     SetType(AETypes::eExplosion_109);
 
+    mDisableFlash = disableFlash;
     field_F4_bSmall = bSmall;
     if (field_F4_bSmall)
     {
@@ -117,11 +118,15 @@ void Explosion::vUpdate_4A1510()
 
         case 4:
         {
-            auto pFlash = ae_new<Flash>();
-            if (pFlash)
+            if (!mDisableFlash)
             {
-                pFlash->ctor_428570(Layer::eLayer_Above_FG1_39, 255u, 255u, 255u, 1, TPageAbr::eBlend_1, 1);
+                auto pFlash = ae_new<Flash>();
+                if (pFlash)
+                {
+                    pFlash->ctor_428570(Layer::eLayer_Above_FG1_39, 255u, 255u, 255u, 1, TPageAbr::eBlend_1, 1);
+                }
             }
+
             rect.x = FP_GetExponent(FP_FromInteger(-38) * field_FC_explosion_size);
             rect.w = FP_GetExponent(FP_FromInteger(38) * field_FC_explosion_size);
             rect.y = FP_GetExponent(FP_FromInteger(-38) * field_FC_explosion_size);
@@ -147,10 +152,13 @@ void Explosion::vUpdate_4A1510()
                 pParticleBurst->ctor_41CF50(field_B8_xpos, field_BC_ypos, field_F4_bSmall ? 6 : 20, field_F8_scale, BurstType::eBigRedSparks_3, field_F4_bSmall ? 11 : 13);
             }
 
-            auto pFlash = ae_new<Flash>();
-            if (pFlash)
+            if (!mDisableFlash)
             {
-                pFlash->ctor_428570(Layer::eLayer_Above_FG1_39, 255u, 255u, 255u, 1, TPageAbr::eBlend_3, 1);
+                auto pFlash = ae_new<Flash>();
+                if (pFlash)
+                {
+                    pFlash->ctor_428570(Layer::eLayer_Above_FG1_39, 255u, 255u, 255u, 1, TPageAbr::eBlend_3, 1);
+                }
             }
             break;
         }

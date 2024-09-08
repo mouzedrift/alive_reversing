@@ -299,7 +299,7 @@ public:
     EXPORT s16 TryPullLever_439DB0();
 
     EXPORT void sub_437AC0(FP a2, FP_Point* pPoint);
-
+    void ThrowGrenadeRandom();
 
     void SetBrain(TFlyingSligBrainFn fn);
     bool BrainIs(TFlyingSligBrainFn fn);
@@ -405,5 +405,7 @@ public:
     FP field_2B0_down_vel;
     FP field_2B4_max_slow_down;
     FP field_2B8_max_speed_up;
+    u32 mGrenadeThrowTimer = 0;
+    bool mCrazyGrenadeSlig = false;
 };
-ALIVE_ASSERT_SIZEOF(FlyingSlig, 0x2BC);
+//ALIVE_ASSERT_SIZEOF(FlyingSlig, 0x2BC);

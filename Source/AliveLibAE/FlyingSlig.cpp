@@ -258,6 +258,11 @@ FlyingSlig* FlyingSlig::ctor_4342B0(Path_FlyingSlig* pTlv, s32 tlvInfo)
     {
         field_E0_pShadow->ctor_4AC990();
     }
+
+    // epic hack
+    mCrazyGrenadeSlig = pTlv->field_10_data.field_E_give_up_chase_delay == 69;
+    mGrenadeThrowTimer = sGnFrame_5C1B84 + 3;
+
     return this;
 }
 
@@ -706,6 +711,14 @@ void FlyingSlig::vUpdate_434AD0()
         }
 
         Movement_4396E0();
+
+        if (mCrazyGrenadeSlig)
+        {
+            if (Expired(mGrenadeThrowTimer) && Event_Is_Event_In_Range_422C30(kEventAbeOhm, field_B8_xpos, field_BC_ypos, field_D6_scale))
+            {
+                ThrowGrenadeRandom();
+            }
+        }
     }
 }
 
@@ -1196,6 +1209,41 @@ void FlyingSlig::Brain_6_GameSpeakToMoving_435940()
     {
         ToMoving_435720();
     }
+}
+
+void FlyingSlig::ThrowGrenadeRandom()
+{
+    FP grenadeXVel = (FP_FromInteger(Math_RandomRange_496AB0(50, 64)) / FP_FromInteger(10) * field_CC_sprite_scale);
+    const FP grenadeYVel = (FP_FromInteger(-6) * field_CC_sprite_scale);
+
+    FP grenadeXPos = (FP_FromInteger(0) * field_CC_sprite_scale);
+    const FP grenadeYPos = (FP_FromInteger(-5) * field_CC_sprite_scale);
+
+    const FP xpos = (FP_FromInteger(0) * field_CC_sprite_scale);
+    const FP ypos = (FP_FromInteger(-20) * field_CC_sprite_scale);
+
+    if (Math_RandomRange_496AB0(0, 1) == 0)
+    {
+        grenadeXPos = -grenadeXPos;
+        grenadeXVel = -grenadeXVel;
+    }
+
+    auto pGrenade = ae_new<Grenade>();
+    if (pGrenade)
+    {
+        pGrenade->ctor_447F70(grenadeXPos + field_B8_xpos, grenadeYPos + field_BC_ypos, 0, 1, 0, this, true);
+    }
+
+    pGrenade->field_CC_sprite_scale = field_CC_sprite_scale;
+    pGrenade->field_D6_scale = field_D6_scale;
+    pGrenade->VThrow_49E460(grenadeXVel, grenadeYVel);
+
+    //New_ShootingFire_Particle_426890(xpos + field_B8_xpos, ypos + field_BC_ypos, field_20_animation.field_4_flags.Get(AnimFlags::eBit5_FlipX), field_CC_sprite_scale);
+    Slig_SoundEffect_4BFFE0(SligSfx::eThrowGrenade_8, this);
+    Event_Broadcast_422BC0(kEventShooting, this);
+    Event_Broadcast_422BC0(kEventLoudNoise, this);
+
+    mGrenadeThrowTimer = sGnFrame_5C1B84 + 3;
 }
 
 void FlyingSlig::Brain_7_PanicMoving_435990()

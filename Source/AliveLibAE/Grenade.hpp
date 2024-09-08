@@ -56,7 +56,7 @@ ALIVE_ASSERT_SIZEOF_ALWAYS(Grenade_SaveState, 0x3C);
 class Grenade final : public BaseThrowable
 {
 public:
-    EXPORT Grenade* ctor_447F70(FP xpos, FP ypos, s16 numGrenades, s16 a5, s16 a6, BaseGameObject* pOwner);
+    EXPORT Grenade* ctor_447F70(FP xpos, FP ypos, s16 numGrenades, s16 a5, s16 a6, BaseGameObject* pOwner, bool disableFlash = false);
 
     virtual BaseGameObject* VDestructor(s32 flags) override;
 
@@ -143,5 +143,6 @@ private:
     s16 field_134_bExplodeNow;
     s16 field_136_padding;
     BaseGameObject* field_138_pOwner;
+    bool mDisableFlash = false;
 };
-ALIVE_ASSERT_SIZEOF(Grenade, 0x13C);
+//ALIVE_ASSERT_SIZEOF(Grenade, 0x13C);

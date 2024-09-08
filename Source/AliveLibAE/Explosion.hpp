@@ -6,7 +6,7 @@
 class Explosion final : public ::BaseAnimatedWithPhysicsGameObject
 {
 public:
-    EXPORT Explosion* ctor_4A1200(FP xpos, FP ypos, FP scale, s16 bSmall);
+    EXPORT Explosion* ctor_4A1200(FP xpos, FP ypos, FP scale, s16 bSmall, bool disableFlash = false);
 
     virtual BaseGameObject* VDestructor(s32 flags) override;
 
@@ -30,5 +30,6 @@ private:
     //s16 field_F6_pad;
     FP field_F8_scale;
     FP field_FC_explosion_size;
+    bool mDisableFlash = false;
 };
-ALIVE_ASSERT_SIZEOF(Explosion, 0x100);
+//ALIVE_ASSERT_SIZEOF(Explosion, 0x100);

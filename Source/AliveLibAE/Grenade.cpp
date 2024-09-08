@@ -15,7 +15,7 @@
 #include "Explosion.hpp"
 #include "Grid.hpp"
 
-Grenade* Grenade::ctor_447F70(FP xpos, FP ypos, s16 numGrenades, s16 bBlowUpOnCollision, s16 unused, BaseGameObject* pOwner)
+Grenade* Grenade::ctor_447F70(FP xpos, FP ypos, s16 numGrenades, s16 bBlowUpOnCollision, s16 unused, BaseGameObject* pOwner, bool disableFlash)
 {
     ctor_408240(0);
     SetVTable(this, 0x5456E0);
@@ -44,6 +44,7 @@ Grenade* Grenade::ctor_447F70(FP xpos, FP ypos, s16 numGrenades, s16 bBlowUpOnCo
 
     field_138_pOwner = pOwner;
     field_130_unused = unused;
+    mDisableFlash = disableFlash;
 
     return this;
 }
@@ -285,7 +286,7 @@ void Grenade::BlowUp_4483C0(s16 bSmallExplosion)
             field_B8_xpos,
             field_BC_ypos - (field_CC_sprite_scale * FP_FromInteger(5)),
             field_CC_sprite_scale,
-            bSmallExplosion);
+            bSmallExplosion, mDisableFlash);
         field_11C_explosion_id = pExplosion->field_8_object_id;
     }
 
