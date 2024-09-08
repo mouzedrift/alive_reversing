@@ -1740,6 +1740,39 @@ void Abe::Update_449DC0()
             sActiveQuicksaveData_BAF7F8.field_35C_restart_path_switch_states = sSwitchStates_5C1A28;
             Quicksave_4C90D0(true);
             gLastCheckpointSave = sActiveQuicksaveData_BAF7F8;
+
+            char_type camNameBuffer[48] = {};
+            Path_Format_CameraName_460FB0(camNameBuffer, gMap_5C3030.field_0_current_level, gMap_5C3030.field_2_current_path, gMap_5C3030.field_4_current_camera);
+            camNameBuffer[8] = 0;
+
+            char_type targetSaveName[100] = {};
+            for (u32 i = 0;;i++)
+            {
+                char_type saveName[100] = "cp ";
+
+                strcat(saveName, camNameBuffer);
+                strcat(saveName, " ");
+                strcat(saveName, std::to_string(i).c_str());
+                strcat(saveName, ".sav");
+
+                // check the file doesn't exist
+                if (access_impl(saveName, 0) == -1)
+                {
+                    strcpy(targetSaveName, saveName);
+                    break;
+                }
+            }
+
+            if (access_impl(targetSaveName, 4)) // check file is writable
+            {
+                FILE* hFile = fopen(targetSaveName, "wb");
+                if (hFile)
+                {
+                    fwrite(&gLastCheckpointSave, sizeof(Quicksave), 1u, hFile);
+                    fclose(hFile);
+                    sSavedGameToLoadIdx_BB43FC = 0;
+                }
+            }
         }
     }
 }

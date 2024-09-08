@@ -325,7 +325,7 @@ void QuikSave_RestoreBlyData_D481890_4C9BE0(const u8* pSaveData)
 
 ALIVE_VAR(1, 0xBAF7F8, Quicksave, sActiveQuicksaveData_BAF7F8, {});
 ALIVE_VAR(1, 0x5C1BF4, s32, sAccumulatedObjectCount_5C1BF4, 0);
-ALIVE_ARY(1, 0xBB31D8, SaveFileRec, 128, sSaveFileRecords_BB31D8, {});
+ALIVE_ARY(1, 0xBB31D8, SaveFileRec, 1024, sSaveFileRecords_BB31D8, {});
 ALIVE_VAR(1, 0xBB43FC, s32, sSavedGameToLoadIdx_BB43FC, 0);
 ALIVE_VAR(1, 0xBB43E0, s32, sTotalSaveFilesCount_BB43E0, 0);
 
@@ -780,7 +780,7 @@ void CC Quicksave_FindSaves_4D4150()
 
     IO_EnumerateDirectory("*.sav", [](const char_type* fileName, u32 lastWriteTime)
                           {
-                              if (sTotalSaveFilesCount_BB43E0 < 128)
+                              if (sTotalSaveFilesCount_BB43E0 < 1024)
                               {
                                   size_t fileNameLen = strlen(fileName) - 4;
                                   if (fileNameLen > 0)
