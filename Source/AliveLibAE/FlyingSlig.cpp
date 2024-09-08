@@ -497,7 +497,10 @@ s32 FlyingSlig::vGetSaveState_43B1E0(FlyingSlig_State* pState)
     {
         pState->field_36_line_idx = static_cast<s16>(field_100_pCollisionLine - sCollisions_DArray_5C1128->field_0_pArray);
     }
-
+    else
+    {
+        LOG_WARNING("COLLISION LINE IS NULL");
+    }
     pState->field_38_launch_switch_id = field_17C_launch_switch_id;
 
     pState->field_3A.Set(FlyingSlig_State::eBit1_bPossessed, this == sControlledCharacter_5C1B8C);
@@ -2932,6 +2935,11 @@ s16 FlyingSlig::sub_436C60(PSX_RECT* pRect, s16 arg_4)
 
 Bool32 FlyingSlig::sub_436B20()
 {
+    if (!field_100_pCollisionLine)
+    {
+        return false;
+    }
+
     PathLine* pLastNextOrPrevLine = nullptr;
 
     FP lastNextSegmentLength = FP_FromInteger(9999);
