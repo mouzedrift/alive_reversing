@@ -2689,7 +2689,8 @@ void Abe::vOn_TLV_Collision_44B5D0(Path_TLV* pTlv)
                     field_1AE_flags.Set(Flags_1AE::e1AE_Bit2_do_quicksave);
                     field_1B0_save_num = pContinuePoint->field_12_save_file_id;
 
-                    gRemainingQuicksaves = 3;
+                    // hack to reuse the field_12_save_file_id property to set the remaining quicksaves
+                    gRemainingQuicksaves = pContinuePoint->field_12_save_file_id;
 
                     auto pIndicator = ae_new<ThrowableTotalIndicator>();
                     if (pIndicator)
