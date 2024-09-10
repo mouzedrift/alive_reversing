@@ -207,10 +207,11 @@ void Rock::InTheAir_49E4B0()
                     break;
                 }
 
-                if (!gMap_5C3030.Is_Point_In_Current_Camera_4810D0(field_C2_lvl_number, field_C0_path_number, field_B8_xpos, field_BC_ypos, 0))
-                {
-                    return;
-                }
+                // NOTE: this seems to make the rock fall through collisions and disappear when you change the screen while it's in the air
+                //if (!gMap_5C3030.Is_Point_In_Current_Camera_4810D0(field_C2_lvl_number, field_C0_path_number, field_B8_xpos, field_BC_ypos, 0))
+                //{
+                //    return;
+                //}
 
                 if (field_11C_state == RockStates::eBouncing_4 && field_C8_vely < FP_FromInteger(5))
                 {
