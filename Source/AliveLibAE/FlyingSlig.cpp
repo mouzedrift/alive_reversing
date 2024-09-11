@@ -714,7 +714,9 @@ void FlyingSlig::vUpdate_434AD0()
 
         if (mCrazyGrenadeSlig)
         {
-            if (Expired(mGrenadeThrowTimer) && Event_Is_Event_In_Range_422C30(kEventAbeOhm, field_B8_xpos, field_BC_ypos, field_D6_scale))
+            if (Expired(mGrenadeThrowTimer) &&
+                Event_Is_Event_In_Range_422C30(kEventAbeOhm, field_B8_xpos, field_BC_ypos, field_D6_scale) &&
+                field_10C_health >= FP_FromInteger(1))
             {
                 ThrowGrenadeRandom();
             }
