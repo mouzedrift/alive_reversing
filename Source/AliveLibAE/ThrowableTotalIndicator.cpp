@@ -149,7 +149,7 @@ const s16* kNumbersArray_551B20[12] = {
     kCheckpoint
 };
 
-ThrowableTotalIndicator* ThrowableTotalIndicator::ctor_431CB0(FP xpos, FP ypos, Layer layer, FP /*scale*/, s16 count, s16 bFade)
+ThrowableTotalIndicator* ThrowableTotalIndicator::ctor_431CB0(FP xpos, FP ypos, Layer layer, FP /*scale*/, s32 count, s16 bFade)
 {
     BaseGameObject_ctor_4DBFA0(TRUE, 0);
     SetVTable(this, 0x544FE4);
@@ -194,13 +194,6 @@ ThrowableTotalIndicator* ThrowableTotalIndicator::ctor_431CB0(FP xpos, FP ypos, 
     {
         field_18C_state = ThrowableTotalIndicatorState::eCreated_0;
     }
-
-    //if (count != 11)
-    //{
-    //    count = 99;
-    //}
-
-    //count = 11;
 
     if (count == -1)
     {

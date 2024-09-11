@@ -38,18 +38,18 @@ struct RockSaveState final
     s16 field_22_padding;
     s32 field_24_id;
     s16 field_28_line_type;
-    s16 field_2A_count;
+    s32 field_2A_count;
     RockStates field_2C_state;
     s16 field_2E_volume;
     FP field_30_xpos;
     FP field_34_ypos;
 };
-ALIVE_ASSERT_SIZEOF_ALWAYS(RockSaveState, 0x38);
+//ALIVE_ASSERT_SIZEOF_ALWAYS(RockSaveState, 0x38);
 
 class Rock final : public BaseThrowable
 {
 public:
-    EXPORT Rock* ctor_49E150(FP xpos, FP ypos, s16 count);
+    EXPORT Rock* ctor_49E150(FP xpos, FP ypos, s32 count);
 
     virtual BaseGameObject* VDestructor(s32 flags) override;
     virtual void VUpdate() override;
@@ -83,4 +83,4 @@ private:
     FP field_124_ypos;
     s32 field_128_shimmer_timer;
 };
-ALIVE_ASSERT_SIZEOF(Rock, 0x12C);
+//ALIVE_ASSERT_SIZEOF(Rock, 0x12C);

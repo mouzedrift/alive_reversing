@@ -1748,8 +1748,10 @@ void Abe::Update_449DC0()
             char_type targetSaveName[100] = {};
             for (u32 i = 0;;i++)
             {
-                char_type saveName[100] = "cp ";
+                char_type saveName[100] = {};
 
+                strcat(saveName, "saves/");
+                strcat(saveName, "cp ");
                 strcat(saveName, camNameBuffer);
                 strcat(saveName, " ");
                 strcat(saveName, std::to_string(i).c_str());
@@ -8563,7 +8565,7 @@ void Abe::PickUpThrowabe_Or_PressBomb_454090(FP fpX, s32 fpY, s32 bStandToCrouch
             case AETypes::eMeat_84:
             case AETypes::eRock_105:
                 field_106_current_motion = eAbeMotions::Motion_111_PickupItem_4564A0;
-                field_1A2_throwable_count += static_cast<s8>(static_cast<BaseThrowable*>(pSlappableOrCollectable)->VGetCount_448080()); // TODO: Check types are correct.
+                field_1A2_throwable_count += static_cast<BaseThrowable*>(pSlappableOrCollectable)->VGetCount_448080();
                 if (!bThrowableIndicatorExists_5C112C)
                 {
                     auto pThrowableIndicator = ae_new<ThrowableTotalIndicator>();

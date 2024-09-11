@@ -14,7 +14,7 @@
 #include "Particle.hpp"
 #include "Grid.hpp"
 
-Bone* Bone::ctor_4112C0(FP xpos, FP ypos, s16 countId)
+Bone* Bone::ctor_4112C0(FP xpos, FP ypos, s32 countId)
 {
     ctor_408240(0);
     field_11A_bDead = 0;
@@ -105,7 +105,7 @@ s32 Bone::VGetSaveState(u8* pSaveBuffer)
     return vGetSaveState_412ED0(reinterpret_cast<Bone_SaveState*>(pSaveBuffer));
 }
 
-s16 Bone::VGetCount_448080()
+s32 Bone::VGetCount_448080()
 {
     return vGetCount_412500();
 }
@@ -609,7 +609,7 @@ void Bone::vUpdate_411BC0()
     }
 }
 
-s16 Bone::vGetCount_412500()
+s32 Bone::vGetCount_412500()
 {
     if (field_11C_state == BoneStates::eOnGround_3 && field_118_count == 0)
     {

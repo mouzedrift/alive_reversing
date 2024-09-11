@@ -16,7 +16,7 @@ enum class ThrowableTotalIndicatorState : s16
 class ThrowableTotalIndicator final : public BaseGameObject
 {
 public:
-    EXPORT ThrowableTotalIndicator* ctor_431CB0(FP xpos, FP ypos, Layer layer, FP scale, s16 count, s16 bFade);
+    EXPORT ThrowableTotalIndicator* ctor_431CB0(FP xpos, FP ypos, Layer layer, FP scale, s32 count, s16 bFade);
     virtual BaseGameObject* VDestructor(s32 flags) override;
     virtual void VScreenChanged() override;
     virtual void VUpdate() override;
@@ -42,7 +42,7 @@ private:
     s16 field_42_r;
     s16 field_44_g;
     s16 field_46_b;
-    s16 field_48_num_to_show;
+    s32 field_48_num_to_show;
     Line_G2 field_4C_lines[2][6];
     Prim_SetTPage field_16C_tPage[2];
     ThrowableTotalIndicatorState field_18C_state;

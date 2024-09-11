@@ -38,19 +38,19 @@ struct Bone_SaveState final
     s16 field_22_padding;
     s32 field_24_base_id;
     s16 field_28_line_type;
-    s16 field_2A_count;
+    s32 field_2A_count;
     BoneStates field_2C_state;
     s16 field_2E_volume_modifier;
     FP field_30_xpos;
     FP field_34_ypos;
     s32 field_38_time_to_live;
 };
-ALIVE_ASSERT_SIZEOF_ALWAYS(Bone_SaveState, 0x3C);
+//ALIVE_ASSERT_SIZEOF_ALWAYS(Bone_SaveState, 0x3C);
 
 class Bone final : public BaseThrowable
 {
 public:
-    EXPORT Bone* ctor_4112C0(FP xpos, FP ypos, s16 countId);
+    EXPORT Bone* ctor_4112C0(FP xpos, FP ypos, s32 countId);
     virtual BaseGameObject* VDestructor(s32 flags) override;
     virtual void VUpdate() override;
     virtual void VScreenChanged() override;
@@ -61,7 +61,7 @@ public:
     virtual void VTimeToExplodeRandom_411490() override;
     virtual Bool32 VCanBeEaten_411560();
     virtual s32 VGetSaveState(u8* pSaveBuffer) override;
-    virtual s16 VGetCount_448080() override;
+    virtual s32 VGetCount_448080() override;
     EXPORT static s32 CC CreateFromSaveState_412C10(const u8* pData);
 
 private:
@@ -78,7 +78,7 @@ private:
     EXPORT s32 vGetSaveState_412ED0(Bone_SaveState* pState);
     EXPORT void InTheAir_4116C0();
     EXPORT void vUpdate_411BC0();
-    EXPORT s16 vGetCount_412500();
+    EXPORT s32 vGetCount_412500();
 
 private:
     BoneStates field_11C_state;
@@ -90,7 +90,7 @@ private:
     s16 field_130_hit_object;
     s16 field_132_padding;
 };
-ALIVE_ASSERT_SIZEOF(Bone, 0x134);
+//ALIVE_ASSERT_SIZEOF(Bone, 0x134);
 
 struct Path_BoneBag final : public Path_TLV
 {

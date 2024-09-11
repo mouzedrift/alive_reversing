@@ -12,7 +12,7 @@
 #include "Grid.hpp"
 #include <assert.h>
 
-Rock* Rock::ctor_49E150(FP xpos, FP ypos, s16 count)
+Rock* Rock::ctor_49E150(FP xpos, FP ypos, s32 count)
 {
     ctor_408240(0);
     SetVTable(this, 0x546AF8);

@@ -65,7 +65,7 @@ void BaseThrowable::VOnPickUpOrSlapped()
     vOnPickUpOrSlapped_4114D0();
 }
 
-s16 BaseThrowable::VGetCount_448080()
+s32 BaseThrowable::VGetCount_448080()
 {
     return vGetCount_448080();
 }
@@ -134,7 +134,7 @@ void BaseThrowable::vOnPickUpOrSlapped_4114D0()
     VToDead_4114B0();
 }
 
-s16 BaseThrowable::vGetCount_448080()
+s32 BaseThrowable::vGetCount_448080()
 {
     return field_118_count;
 }

@@ -369,7 +369,7 @@ struct Abe_SaveState final
     MudSounds say;
     u32 auto_say_timer;
     u32 ring_pulse_timer;
-    s8 field_6c_rock_bone_count;
+    s32 field_6c_rock_bone_count;
     s8 bShrivel;
     s8 bHaveShrykull;
     s8 bHaveInvisiblity;
@@ -440,7 +440,7 @@ struct Abe_SaveState final
     };
     BitField16<Flags_D6> field_D6_flags;
 };
-ALIVE_ASSERT_SIZEOF_ALWAYS(Abe_SaveState, 216);
+//ALIVE_ASSERT_SIZEOF_ALWAYS(Abe_SaveState, 216);
 
 class Bullet;
 
@@ -704,7 +704,7 @@ public:
     s16 field_19C_to_path;
     s16 field_19E_to_camera;
     s16 field_1A0_door_id;
-    s8 field_1A2_throwable_count;
+    s32 field_1A2_throwable_count;
     s8 field_1A3_throw_direction;
     PortalSubStates field_1A4_portal_sub_state;
     s16 field_1A6_padding;

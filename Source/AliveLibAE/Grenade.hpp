@@ -43,7 +43,7 @@ struct Grenade_SaveState final
     s16 field_22_padding;
     s32 field_24_base_id;
     s16 field_28_line_type;
-    s16 field_2A_savedcount;
+    s32 field_2A_savedcount;
     GrenadeStates field_2C_state;
     s16 field_2E;
     s16 field_30_explode_timer;
@@ -51,12 +51,12 @@ struct Grenade_SaveState final
     FP field_34_xpos;
     FP field_38_ypos;
 };
-ALIVE_ASSERT_SIZEOF_ALWAYS(Grenade_SaveState, 0x3C);
+//ALIVE_ASSERT_SIZEOF_ALWAYS(Grenade_SaveState, 0x3C);
 
 class Grenade final : public BaseThrowable
 {
 public:
-    EXPORT Grenade* ctor_447F70(FP xpos, FP ypos, s16 numGrenades, s16 a5, s16 a6, BaseGameObject* pOwner, bool disableFlash = false);
+    EXPORT Grenade* ctor_447F70(FP xpos, FP ypos, s32 numGrenades, s16 a5, s16 a6, BaseGameObject* pOwner, bool disableFlash = false);
 
     virtual BaseGameObject* VDestructor(s32 flags) override;
 

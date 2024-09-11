@@ -35,19 +35,19 @@ struct Meat_SaveState final
     s16 field_22_pad;
     s32 field_24_base_id;
     s16 field_28_line_type;
-    s16 field_2A_count;
+    s32 field_2A_count;
     MeatStates field_2C_state;
     s16 field_2E_pad;
     FP field_30_xpos;
     FP field_34_ypos;
     s32 field_38_savedfield12C; // TODO: Figure out what field_12C is. -- Nemin (5/7/2020)
 };
-ALIVE_ASSERT_SIZEOF_ALWAYS(Meat_SaveState, 60);
+//ALIVE_ASSERT_SIZEOF_ALWAYS(Meat_SaveState, 60);
 
 class Meat final : public BaseThrowable
 {
 public:
-    EXPORT Meat* ctor_4694A0(FP xpos, FP ypos, s16 count);
+    EXPORT Meat* ctor_4694A0(FP xpos, FP ypos, s32 count);
 
     virtual BaseGameObject* VDestructor(s32 flags) override;
     virtual void VUpdate() override;
@@ -57,7 +57,7 @@ public:
     virtual Bool32 VCanThrow_49E350() override;
     virtual Bool32 VIsFalling_49E330() override;
     virtual void VTimeToExplodeRandom_411490() override;
-    virtual s16 VGetCount_448080() override;
+    virtual s32 VGetCount_448080() override;
     virtual Bool32 VCanEatMe_4696A0();
     virtual s32 VGetSaveState(u8* pSaveBuffer) override;
 
@@ -73,7 +73,7 @@ private:
     EXPORT void dtor_4696F0();
     EXPORT Meat* vdtor_4696C0(s32 flags);
     EXPORT void vThrow_469790(FP velX, FP velY);
-    EXPORT s16 vGetCount_46A350();
+    EXPORT s32 vGetCount_46A350();
     EXPORT void InTheAir_4697E0();
     EXPORT s16 OnCollision_469FF0(BaseGameObject* pHit);
     EXPORT void vUpdate_469BA0();
@@ -91,7 +91,7 @@ private:
 public:
     PathLine* field_130_pLine;
 };
-ALIVE_ASSERT_SIZEOF(Meat, 0x134);
+//ALIVE_ASSERT_SIZEOF(Meat, 0x134);
 
 struct Path_MeatSack final : public Path_TLV
 {

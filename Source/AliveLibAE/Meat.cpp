@@ -14,7 +14,7 @@
 #include "Particle.hpp"
 #include "Grid.hpp"
 
-Meat* Meat::ctor_4694A0(FP xpos, FP ypos, s16 count)
+Meat* Meat::ctor_4694A0(FP xpos, FP ypos, s32 count)
 {
     ctor_408240(0);
     SetVTable(this, 0x546040);
@@ -99,7 +99,7 @@ void Meat::VTimeToExplodeRandom_411490()
     // TODO
 }
 
-s16 Meat::VGetCount_448080()
+s32 Meat::VGetCount_448080()
 {
     return vGetCount_46A350();
 }
@@ -188,7 +188,7 @@ void Meat::vThrow_469790(FP velX, FP velY)
     }
 }
 
-s16 Meat::vGetCount_46A350()
+s32 Meat::vGetCount_46A350()
 {
     if (field_11C_state == MeatStates::eWaitForPickUp_4 && field_118_count == 0)
     {

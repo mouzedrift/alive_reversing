@@ -22,7 +22,7 @@ public:
     virtual Bool32 VIsFalling_49E330() = 0;
     virtual void VTimeToExplodeRandom_411490() = 0;
 
-    virtual s16 VGetCount_448080();
+    virtual s32 VGetCount_448080();
 
     virtual void VToDead_4114B0();
 
@@ -33,10 +33,10 @@ private:
     EXPORT void vToDead_4114B0();
     EXPORT void vOnPickUpOrSlapped_4114D0();
 
-    EXPORT s16 vGetCount_448080();
+    EXPORT s32 vGetCount_448080();
 
 protected:
-    s16 field_118_count;
+    s32 field_118_count;
     s16 field_11A_bDead;
 };
 

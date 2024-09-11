@@ -15,7 +15,7 @@
 #include "Explosion.hpp"
 #include "Grid.hpp"
 
-Grenade* Grenade::ctor_447F70(FP xpos, FP ypos, s16 numGrenades, s16 bBlowUpOnCollision, s16 unused, BaseGameObject* pOwner, bool disableFlash)
+Grenade* Grenade::ctor_447F70(FP xpos, FP ypos, s32 numGrenades, s16 bBlowUpOnCollision, s16 unused, BaseGameObject* pOwner, bool disableFlash)
 {
     ctor_408240(0);
     SetVTable(this, 0x5456E0);
