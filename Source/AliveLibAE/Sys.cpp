@@ -985,7 +985,12 @@ static void QuitEvent(bool isRecordedEvent, bool isRecording)
     }
 
     const MessageBoxButton recordedButtonResult = actuallyQuit ? MessageBoxButton::eYes : MessageBoxButton::eNo;
-    const MessageBoxButton button = isRecordedEvent ? recordedButtonResult : Sys_MessageBox(Sys_GetWindowHandle_4EE180(), "Do you really want to quit?", "R.E.L.I.V.E.", MessageBoxType::eQuestion);
+
+    #ifdef _DEBUG
+        const MessageBoxButton button = isRecordedEvent ? recordedButtonResult : MessageBoxButton::eYes;
+    #else
+        const MessageBoxButton button = isRecordedEvent ? recordedButtonResult : Sys_MessageBox(Sys_GetWindowHandle_4EE180(), "Do you really want to quit?", "R.E.L.I.V.E.", MessageBoxType::eQuestion);
+    #endif
 
     if (isRecording)
     {
