@@ -2370,6 +2370,12 @@ s16 Abe::vTakeDamage_44BB50(BaseGameObject* pFrom)
                 field_114_flags.Set(Flags_114::e114_MotionChanged_Bit2);
             }
 
+            // clamp the max objects abe can drop or else we'll run out of object id's
+            if (field_1A2_throwable_count > 9)
+            {
+                field_1A2_throwable_count = 9;
+            }
+
             // The zap makes Abe drop his stuff everywhere
             for (s32 i = 0; i < field_1A2_throwable_count; i++)
             {
