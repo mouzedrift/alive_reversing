@@ -778,7 +778,7 @@ void CC Quicksave_FindSaves_4D4150()
 {
     sTotalSaveFilesCount_BB43E0 = 0;
 
-    IO_EnumerateDirectory("*.sav", [](const char_type* fileName, u32 lastWriteTime)
+    IO_EnumerateDirectory("saves/*.sav", [](const char_type* fileName, u32 lastWriteTime)
                           {
                               if (sTotalSaveFilesCount_BB43E0 < 1024)
                               {

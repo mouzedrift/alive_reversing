@@ -2404,7 +2404,8 @@ EXPORT MainMenuNextCam MainMenuController::tLoadGame_Input_4D3EF0(u32 input)
 
         // Load selected save
         char_type filename[40] = {};
-        strcpy(filename, sSaveFileRecords_BB31D8[sSavedGameToLoadIdx_BB43FC].field_0_fileName);
+        strcpy(filename, "saves/");
+        strcat(filename, sSaveFileRecords_BB31D8[sSavedGameToLoadIdx_BB43FC].field_0_fileName);
         strcat(filename, ".sav");
 
         std::string strPath = FS::GetPrefPath() + filename;

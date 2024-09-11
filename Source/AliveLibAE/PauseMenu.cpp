@@ -1216,7 +1216,8 @@ void PauseMenu::Page_Save_Update_491210()
     char_type savFileName[40] = {};
     if (field_13C_save_state == SaveState::DoSave_4)
     {
-        strcpy(savFileName, sSaveString_5C931C);
+        strcpy(savFileName, "saves/");
+        strcat(savFileName, sSaveString_5C931C);
         strcat(savFileName, ".sav");
         if (access_impl(savFileName, 4) || bWriteSaveFile_5C937C) // check file is writable
         {
@@ -1483,7 +1484,8 @@ void PauseMenu::Page_Load_Update_490D50()
 
         if (sTotalSaveFilesCount_BB43E0)
         {
-            strcpy(saveFileName, sSaveFileRecords_BB31D8[sSavedGameToLoadIdx_BB43FC].field_0_fileName);
+            strcpy(saveFileName, "saves/");
+            strcat(saveFileName, sSaveFileRecords_BB31D8[sSavedGameToLoadIdx_BB43FC].field_0_fileName);
             strcat(saveFileName, ".sav");
             FILE* hFile = ae_fopen_520C64(saveFileName, "rb");
             if (hFile)

@@ -546,6 +546,8 @@ EXPORT void CC Game_Run_466D40()
 
     Game_Init_LoadingIcon_482CD0();
 
+    mkdir("saves");
+
     // Main loop start
     Game_Loop_467230();
 
