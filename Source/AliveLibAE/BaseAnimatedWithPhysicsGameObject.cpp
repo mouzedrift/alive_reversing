@@ -13,6 +13,11 @@
 #include "Sfx.hpp"
 #include "Particle.hpp"
 
+#define MAGIC_ENUM_RANGE_MIN 0
+#define MAGIC_ENUM_RANGE_MAX 1024
+#include <magic_enum/include/magic_enum.hpp>
+
+
 BaseAnimatedWithPhysicsGameObject* BaseAnimatedWithPhysicsGameObject::BaseAnimatedWithPhysicsGameObject_ctor_424930(s16 resourceArraySize)
 {
     BaseGameObject_ctor_4DBFA0(1, resourceArraySize);
@@ -216,6 +221,7 @@ void BaseAnimatedWithPhysicsGameObject::Animation_Init_424E10(s32 frameTableOffs
     {
         field_6_flags.Set(BaseGameObject::eDead_Bit3);
         field_6_flags.Set(BaseGameObject::eListAddFailed_Bit1);
+        LOG_ERROR("animation init failed for type " << magic_enum::enum_name(Type()));
     }
 }
 
@@ -267,8 +273,16 @@ void BaseAnimatedWithPhysicsGameObject::VOnThrowableHit(BaseGameObject* pFrom)
 PSX_RECT* BaseAnimatedWithPhysicsGameObject::GetBoundingRect_424FD0(PSX_RECT* pRect, s32 pointIdx)
 {
     const FrameInfoHeader* pAnimFrameHeader = field_20_animation.Get_FrameHeader_40B730(-1);
-
     PSX_RECT rect = {};
+
+    // epic hack to prevent crashing when an object tries to lookup the bounding rect but the animation
+    // hasn't been initialised yet
+    if (!pAnimFrameHeader)
+    {
+        *pRect = rect;
+        return pRect;
+    }
+
     // Normally this data is 3 points, one that is the frame offset and then 2 that make up the bounding rect.
     // So usually pointIdx is 1. However the way the data is structured it could be anything to treat any index
     // into the array of points as a unique bounding rectangle. Also it appears there can be more than 3 points
