@@ -517,17 +517,17 @@ Drill* Drill::vdtor_4206A0(s32 flags)
 
 void Drill::vScreenChanged_4214B0()
 {
-    if (field_F4_state != DrillStates::State_0_Restart_Cycle)
-    {
-        if (field_128_flags.Get(Flags::eBit6_StartPosIsBottom))
-        {
-            field_124_xyoff = FP_FromInteger(0);
-        }
-        else
-        {
-            field_124_xyoff = FP_FromInteger(field_F6_width);
-        }
-    }
+    //if (field_F4_state != DrillStates::State_0_Restart_Cycle)
+    //{
+    //    if (field_128_flags.Get(Flags::eBit6_StartPosIsBottom))
+    //    {
+    //        field_124_xyoff = FP_FromInteger(0);
+    //    }
+    //    else
+    //    {
+    //        field_124_xyoff = FP_FromInteger(field_F6_width);
+    //    }
+    //}
 
     // Stop that sound
     if (field_10C_audio_channels_mask)
@@ -571,28 +571,29 @@ void Drill::vScreenChanged_4214B0()
 
 void Drill::vRender_4213D0(PrimHeader** ppOt)
 {
-    if (gMap_5C3030.Is_Point_In_Current_Camera_4810D0(
-            field_C2_lvl_number,
-            field_C0_path_number,
-            field_B8_xpos,
-            field_BC_ypos,
-            0))
+    const bool render = gMap_5C3030.Is_Point_In_Current_Camera_4810D0(
+        field_C2_lvl_number,
+        field_C0_path_number,
+        field_B8_xpos,
+        field_BC_ypos,
+        0);
+
+    if (field_FA_direction == DrillDirection::eDown_0)
     {
-        if (field_FA_direction == DrillDirection::eDown_0)
-        {
-            field_BC_ypos = field_114_yPos - field_124_xyoff;
-            BaseAnimatedWithPhysicsGameObject::VRender(ppOt);
-        }
-        else if (field_FA_direction == DrillDirection::eRight_1)
-        {
-            field_B8_xpos = field_110_xPos + field_124_xyoff;
-            BaseAnimatedWithPhysicsGameObject::VRender(ppOt);
-        }
-        else if (field_FA_direction == DrillDirection::eLeft_2)
-        {
-            field_B8_xpos = field_110_xPos - field_124_xyoff;
-            BaseAnimatedWithPhysicsGameObject::VRender(ppOt);
-        }
+        field_BC_ypos = field_114_yPos - field_124_xyoff;
+    }
+    else if (field_FA_direction == DrillDirection::eRight_1)
+    {
+        field_B8_xpos = field_110_xPos + field_124_xyoff;
+    }
+    else if (field_FA_direction == DrillDirection::eLeft_2)
+    {
+        field_B8_xpos = field_110_xPos - field_124_xyoff;
+    }
+
+    if (render)
+    {
+        BaseAnimatedWithPhysicsGameObject::VRender(ppOt);
     }
 }
 
