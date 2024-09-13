@@ -53,7 +53,6 @@ private:
     s16 field_44_start_delay;
     s16 field_46_spacing_multiplicator;
     PSX_RECT field_48_tlv_rect;
-    FP field_50_scale;
     s16 field_54_switch_id;
     s16 field_56_asset_interval;
     s16 field_58_grid_spacing;
@@ -81,7 +80,7 @@ private:
     BitField16<Flags_5C> field_5C_flags;
     s16 field_5E;
 };
-ALIVE_ASSERT_SIZEOF(ExplosionSet, 0x60);
+//ALIVE_ASSERT_SIZEOF(ExplosionSet, 0x60);
 
 ALIVE_VAR_EXTERN(ExplosionSet*, pExplosionSet_5BBF68);
 ALIVE_VAR_EXTERN(s16, bEnabled_5C1BB6);

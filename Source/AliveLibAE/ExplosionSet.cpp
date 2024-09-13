@@ -30,7 +30,6 @@ ExplosionSet* ExplosionSet::ctor_414CA0()
     {
         pExplosionSet_5BBF68 = this;
         field_6_flags.Set(BaseGameObject::eDrawable_Bit4);
-        field_50_scale = FP_FromInteger(1);
         field_40 = 0;
         field_42 = 1;
         field_44_start_delay = 0;
@@ -74,18 +73,13 @@ void ExplosionSet::Init_4151D0(Path_ExplosionSet* pTlv)
     field_48_tlv_rect.w = pTlv->field_C_bottom_right.field_0_x - pTlv->field_8_top_left.field_0_x;
     field_48_tlv_rect.h = pTlv->field_C_bottom_right.field_2_y - pTlv->field_8_top_left.field_2_y;
 
-    if (pTlv->field_20_scale != Scale_short::eFull_0)
-    {
-        field_50_scale = FP_FromDouble(0.5);
-    }
-
     field_44_start_delay = pTlv->field_16_start_delay;
 
     field_5C_flags.Set(Flags_5C::eBit1_spawn_assets, pTlv->field_14_spawn_assets == Choice_short::eYes_1);
     field_5C_flags.Set(Flags_5C::eBit2_flipX, pTlv->field_18_start_direction == XDirection_short::eRight_1);
     field_56_asset_interval = pTlv->field_1A_asset_interval;
-    field_58_grid_spacing = FP_GetExponent(FP_FromInteger(pTlv->field_1C_grid_spacing) * ScaleToGridSize_4498B0(field_50_scale));
-    field_5A_increasing_grid_spacing = FP_GetExponent(FP_FromInteger(pTlv->field_1E_increasing_grid_spacing) * ScaleToGridSize_4498B0(field_50_scale));
+    field_58_grid_spacing = FP_GetExponent(FP_FromInteger(pTlv->field_1C_grid_spacing) * ScaleToGridSize_4498B0(FP_FromInteger(1)));
+    field_5A_increasing_grid_spacing = FP_GetExponent(FP_FromInteger(pTlv->field_1E_increasing_grid_spacing) * ScaleToGridSize_4498B0(FP_FromInteger(1)));
     field_54_switch_id = pTlv->field_12_switch_id;
 
     if (!bEnabled_5C1BB6)
@@ -219,7 +213,13 @@ void ExplosionSet::vUpdate_414E30()
             auto pFallingItem = ae_new<FallingItem>();
             if (pFallingItem)
             {
-                pFallingItem->ctor_427560(xpos, field_48_tlv_rect.y, field_50_scale < FP_FromInteger(1), 0, 0, 1, 0);
+                pFallingItem->ctor_427560(xpos, field_48_tlv_rect.y, 0, 0, 0, 1, 0);
+            }
+
+            auto pFallingItem2 = ae_new<FallingItem>();
+            if (pFallingItem2)
+            {
+                pFallingItem2->ctor_427560(xpos, field_48_tlv_rect.y, 1, 0, 0, 1, 0);
             }
 
             field_46_spacing_multiplicator++;
@@ -232,7 +232,15 @@ void ExplosionSet::vUpdate_414E30()
                 {
                     const FP explodeX = FP_FromInteger(Math_RandomRange_496AB0(field_48_tlv_rect.y + 20, field_48_tlv_rect.y + 230));
                     const FP explodeY = FP_FromInteger(Math_RandomRange_496AB0(field_48_tlv_rect.x, xpos));
-                    pExplosion->ctor_4A1200(explodeY, explodeX, field_50_scale, 0);
+                    pExplosion->ctor_4A1200(explodeY, explodeX, FP_FromInteger(1), 0);
+                }
+
+                auto pExplosion2 = ae_new<Explosion>();
+                if (pExplosion2)
+                {
+                    const FP explodeX = FP_FromInteger(Math_RandomRange_496AB0(field_48_tlv_rect.y + 20, field_48_tlv_rect.y + 230));
+                    const FP explodeY = FP_FromInteger(Math_RandomRange_496AB0(field_48_tlv_rect.x, xpos));
+                    pExplosion2->ctor_4A1200(explodeY, explodeX, FP_FromDouble(0.5), 0);
                 }
             }
         }
