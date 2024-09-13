@@ -20,6 +20,7 @@
 #include "LiftPoint.hpp"
 #include "Slurg.hpp"
 #include "Grid.hpp"
+#include "Gibs.hpp"
 
 static const TintEntry sScrabTints_560260[15] = {
     {LevelIds_s8::eMines_1, 127u, 127u, 127u},
@@ -3862,6 +3863,27 @@ s16 Scrab::vTakeDamage_4A45E0(BaseGameObject* pFrom)
 
     switch (pFrom->Type())
     {
+        case AETypes::eDrill_30:
+        case AETypes::eBaseBomb_46:
+        case AETypes::eExplosion_109:
+        {
+            Event_Broadcast_422BC0(kEventMudokonComfort | kEventSpeaking, this);
+            auto pGibs = ae_new<Gibs>();
+            if (pGibs)
+            {
+                pGibs->ctor_40FB40(GibType::Slog_2, field_B8_xpos, field_BC_ypos, field_C4_velx, field_C8_vely, field_CC_sprite_scale, 0);
+            }
+            field_10C_health = FP_FromInteger(0);
+            field_6_flags.Set(BaseGameObject::eDead_Bit3);
+            field_20_animation.field_4_flags.Clear(AnimFlags::eBit3_Render);
+            if (sControlledCharacter_5C1B8C != this)
+            {
+                return 1;
+            }
+            SND_SEQ_Play_4CAB10(SeqId::DeathDrums_29, 1, 127, 127);
+        }
+        return 1;
+
         case AETypes::eFleech_50:
             field_10C_health = field_10C_health - FP_FromDouble(0.13);
             if (field_10C_health < FP_FromInteger(0))
