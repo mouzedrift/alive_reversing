@@ -2374,6 +2374,10 @@ s16 Abe::vTakeDamage_44BB50(BaseGameObject* pFrom)
             if (field_1A2_throwable_count > 9)
             {
                 field_1A2_throwable_count = 9;
+                if (gpThrowableArray_5D1E2C)
+                {
+                    gpThrowableArray_5D1E2C->field_20_count = 9;
+                }
             }
 
             // The zap makes Abe drop his stuff everywhere
