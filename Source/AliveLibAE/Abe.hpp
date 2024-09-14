@@ -439,6 +439,7 @@ struct Abe_SaveState final
         eD6_Bit1_shadow_at_bottom = 0x1
     };
     BitField16<Flags_D6> field_D6_flags;
+    u32 mCheckpointTimeout;
 };
 //ALIVE_ASSERT_SIZEOF_ALWAYS(Abe_SaveState, 216);
 
@@ -747,13 +748,14 @@ public:
     Quicksave mCheckpointSave = {};
     s16 mPrevCheckpointSaveId = 0;
     bool mTouchingCheckpoint = false;
+    u32 mCheckpointTimeout = 0;
 };
 //ALIVE_ASSERT_SIZEOF(Abe, 0x1BC);
 
 ALIVE_VAR_EXTERN(Abe*, sActiveHero_5C1B68);
 ALIVE_VAR_EXTERN(BaseAliveGameObject*, sControlledCharacter_5C1B8C);
 
-ALIVE_VAR_EXTERN(s16, gAbeBulletProof_5C1BDA);
+ALIVE_VAR_EXTERN(bool, gAbeInvincible_5C1BDA);
 
 extern const char_type* const sAbeMotionNames[130];
 

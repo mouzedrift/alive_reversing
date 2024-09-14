@@ -1248,6 +1248,8 @@ s32 CC Abe::CreateFromSaveState_44D4F0(const u8* pData)
         }
     }
 
+    sActiveHero_5C1B68->mCheckpointTimeout = pSaveState->mCheckpointTimeout;
+
     return sizeof(Abe_SaveState);
 }
 
@@ -1335,12 +1337,12 @@ const FP sAbe_yVel_table_545790[8] = {
     FP_FromInteger(4),
     FP_FromInteger(4)};
 
-ALIVE_VAR(1, 0x5c1bda, s16, gAbeBulletProof_5C1BDA, 0);
+ALIVE_VAR(1, 0x5c1bda, bool, gAbeInvincible_5C1BDA, false);
 
 
 void Abe::Update_449DC0()
 {
-    if (gAbeBulletProof_5C1BDA) // Some flag to reset HP?
+    if (gAbeInvincible_5C1BDA) // Some flag to reset HP?
     {
         field_114_flags.Clear(Flags_114::e114_Bit7_Electrocuted);
         field_10C_health = FP_FromDouble(1.0);
@@ -1394,7 +1396,7 @@ void Abe::Update_449DC0()
         return;
     }
 
-    if (gAbeBulletProof_5C1BDA)
+    if (gAbeInvincible_5C1BDA)
     {
         field_10C_health = FP_FromDouble(1.0);
     }
@@ -1958,6 +1960,7 @@ void Abe::vScreenChanged_44D240()
         {
             field_198_has_evil_fart = 0;
         }
+        mCheckpointTimeout = 0;
     }
 
     if (gMap_5C3030.field_0_current_level != gMap_5C3030.field_A_level && !(field_114_flags.Get(Flags_114::e114_Bit9_RestoredFromQuickSave)))
@@ -2219,11 +2222,18 @@ s32 Abe::vGetSaveState_457110(u8* pSaveBuffer)
 
     pSaveState->field_D6_flags.Set(Abe_SaveState::eD6_Bit1_shadow_at_bottom, field_E0_pShadow->field_14_flags.Get(Shadow::Flags::eBit1_ShadowAtBottom));
 
+    pSaveState->mCheckpointTimeout = mCheckpointTimeout;
+
     return sizeof(Abe_SaveState);
 }
 
 s16 Abe::vTakeDamage_44BB50(BaseGameObject* pFrom)
 {
+    if (gAbeInvincible_5C1BDA)
+    {
+        return 0;
+    }
+
     // Stop chant sound music.
     SND_SEQ_Stop_4CAE60(SeqId::MudokonChant1_10);
 
@@ -2242,7 +2252,7 @@ s16 Abe::vTakeDamage_44BB50(BaseGameObject* pFrom)
         return 0;
     }
 
-    if (gAbeBulletProof_5C1BDA)
+    if (gAbeInvincible_5C1BDA)
     {
         return 0;
     }
@@ -2692,7 +2702,7 @@ void Abe::vOn_TLV_Collision_44B5D0(Path_TLV* pTlv)
     {
         if (pTlv->field_4_type == TlvTypes::ContinuePoint_0)
         {
-            if (!mTouchingCheckpoint)
+            if (!mTouchingCheckpoint && (mCheckpointTimeout == 0 || Expired(mCheckpointTimeout)))
             {
                 auto pContinuePoint = static_cast<Path_ContinuePoint*>(pTlv);
                 if ((pContinuePoint->field_10_scale != Path_ContinuePoint::Scale::eHalf_1 || field_CC_sprite_scale == FP_FromInteger(1)) && (pContinuePoint->field_10_scale != Path_ContinuePoint::Scale::eFull_2 || field_CC_sprite_scale == FP_FromDouble(0.5))
@@ -2703,6 +2713,7 @@ void Abe::vOn_TLV_Collision_44B5D0(Path_TLV* pTlv)
 
                     // hack to reuse the field_12_save_file_id property to set the remaining quicksaves
                     gRemainingQuicksaves = pContinuePoint->field_12_save_file_id;
+                    mCheckpointTimeout = sGnFrame_5C1B84 + 300;
 
                     auto pIndicator = ae_new<ThrowableTotalIndicator>();
                     if (pIndicator)
@@ -3749,7 +3760,7 @@ void Abe::Motion_3_Fall_459B60()
                 if (field_1AC_flags.Get(Flags_1AC::e1AC_Bit7_land_softly)
                     || (pSoftLanding && field_10C_health > FP_FromInteger(0))                                   // If we are dead soft landing won't save us
                     || ((field_BC_ypos - field_F8_LastLineYPos) < (field_CC_sprite_scale * FP_FromInteger(180)) // Check we didn't fall far enough to be killed
-                        && (field_10C_health > FP_FromInteger(0) || gAbeBulletProof_5C1BDA)))                   //TODO possibly OG bug: those conditions should probably be grouped the following way: ((A || B || C ) && D)
+                        && (field_10C_health > FP_FromInteger(0) || gAbeInvincible_5C1BDA)))                   //TODO possibly OG bug: those conditions should probably be grouped the following way: ((A || B || C ) && D)
                 {
                     field_106_current_motion = eAbeMotions::Motion_16_LandSoft_45A360;
                 }
@@ -6371,7 +6382,7 @@ void Abe::Motion_71_Knockback_455090()
     {
         if (!(field_114_flags.Get(Flags_114::e114_MotionChanged_Bit2)) && (field_100_pCollisionLine || !(field_20_animation.field_4_flags.Get(AnimFlags::eBit3_Render))))
         {
-            if (field_10C_health > FP_FromInteger(0) || gAbeBulletProof_5C1BDA || field_114_flags.Get(Flags_114::e114_Bit7_Electrocuted))
+            if (field_10C_health > FP_FromInteger(0) || gAbeInvincible_5C1BDA || field_114_flags.Get(Flags_114::e114_Bit7_Electrocuted))
             {
                 field_106_current_motion = eAbeMotions::Motion_72_KnockbackGetUp_455340;
             }
@@ -6425,7 +6436,7 @@ void Abe::Motion_74_RollingKnockback_455290()
     {
         if (!(field_114_flags.Get(Flags_114::e114_MotionChanged_Bit2)))
         {
-            if (field_10C_health > FP_FromInteger(0) || gAbeBulletProof_5C1BDA)
+            if (field_10C_health > FP_FromInteger(0) || gAbeInvincible_5C1BDA)
             {
                 field_106_current_motion = eAbeMotions::Motion_72_KnockbackGetUp_455340;
             }
@@ -7337,7 +7348,7 @@ void Abe::Motion_101_KnockForward_455420()
     {
         if (!field_114_flags.Get(Flags_114::e114_MotionChanged_Bit2) && (field_100_pCollisionLine || !field_20_animation.field_4_flags.Get(AnimFlags::eBit3_Render)))
         {
-            if (field_10C_health > FP_FromInteger(0) || gAbeBulletProof_5C1BDA)
+            if (field_10C_health > FP_FromInteger(0) || gAbeInvincible_5C1BDA)
             {
                 field_106_current_motion = eAbeMotions::jMotion_103_KnockForwardGetUp_455380;
             }
@@ -7485,7 +7496,7 @@ void Abe::Motion_109_ZShotRolling_455550()
     Event_Broadcast_422BC0(kEventSuspiciousNoise, this);
     Motion_3_Fall_459B60();
 
-    if (field_106_current_motion != eAbeMotions::Motion_109_ZShotRolling_455550 && !gAbeBulletProof_5C1BDA)
+    if (field_106_current_motion != eAbeMotions::Motion_109_ZShotRolling_455550 && !gAbeInvincible_5C1BDA)
     {
         if (field_110_id != -1)
         {
@@ -7516,7 +7527,7 @@ void Abe::Motion_110_ZShot_455670()
     Event_Broadcast_422BC0(kEventSuspiciousNoise, this);
     Motion_3_Fall_459B60();
 
-    if (field_106_current_motion != eAbeMotions::Motion_110_ZShot_455670 && !gAbeBulletProof_5C1BDA)
+    if (field_106_current_motion != eAbeMotions::Motion_110_ZShot_455670 && !gAbeInvincible_5C1BDA)
     {
         if (field_110_id != -1)
         {

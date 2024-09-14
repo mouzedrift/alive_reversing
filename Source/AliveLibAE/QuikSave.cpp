@@ -716,7 +716,7 @@ void CC Quicksave_ReadWorldInfo_4C9490(const Quicksave_WorldInfo* pInfo)
     gTotalMeterBars_5C1BFA = pInfo->field_2D_total_meter_bars;
     gbDrawMeterCountDown_5C1BF8 = pInfo->field_30_bDrawMeterCountDown;
     sGasTimer_5C1BE8 = pInfo->field_38_gas_timer;
-    gAbeBulletProof_5C1BDA = pInfo->field_3C_bBulletProof;
+    gAbeInvincible_5C1BDA = pInfo->field_3C_bBulletProof;
     sVisitedBonewerks_5C1C02 = pInfo->field_32_visited_bonewerks;
     sVisitedBarracks_5C1C04 = pInfo->field_34_visited_barracks;
     sVisitedFeecoEnder_5C1C06 = pInfo->field_36_visited_feeco_ender;
@@ -748,7 +748,7 @@ void CC Quicksave_SaveWorldInfo_4C9310(Quicksave_WorldInfo* pInfo)
     pInfo->field_16_muds_in_area = static_cast<s8>(sMudokonsInArea_5C1BC4); // TODO: Check types
     pInfo->field_2D_total_meter_bars = gTotalMeterBars_5C1BFA;
     pInfo->field_30_bDrawMeterCountDown = gbDrawMeterCountDown_5C1BF8;
-    pInfo->field_3C_bBulletProof = gAbeBulletProof_5C1BDA;
+    pInfo->field_3C_bBulletProof = gAbeInvincible_5C1BDA;
     pInfo->field_32_visited_bonewerks = sVisitedBonewerks_5C1C02;
     pInfo->field_34_visited_barracks = sVisitedBarracks_5C1C04;
     pInfo->field_36_visited_feeco_ender = sVisitedFeecoEnder_5C1C06;

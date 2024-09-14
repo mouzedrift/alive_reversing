@@ -157,7 +157,7 @@ void GameEnderController::vUpdate_43B920()
                     // Good ending
                     if (sRescuedMudokons_5C1BC2 >= Path_GoodEndingMuds(gMap_5C3030.field_0_current_level, gMap_5C3030.field_2_current_path))
                     {
-                        gAbeBulletProof_5C1BDA = 0;
+                        gAbeInvincible_5C1BDA = false;
                         sFeeco_Restart_KilledMudCount_5C1BC6 = 0;
                         sFeecoRestart_SavedMudCount_5C1BC8 = 0;
 
@@ -185,14 +185,14 @@ void GameEnderController::vUpdate_43B920()
                         if (sKilledMudokons_5C1BC0 >= Path_BadEndingMuds(gMap_5C3030.field_0_current_level, gMap_5C3030.field_2_current_path))
                         {
                             // Very bad ending
-                            gAbeBulletProof_5C1BDA = TRUE;
+                            gAbeInvincible_5C1BDA = true;
                             gMap_5C3030.SetActiveCam_480D30(LevelIds::eBrewery_Ender_10, 1, 15, CameraSwapEffects::eUnknown_11, 18, 0);
                             field_24_state = GameEnderController_States::eBadEnding_3;
                         }
                         else
                         {
                             // Bad ending
-                            gAbeBulletProof_5C1BDA = FALSE;
+                            gAbeInvincible_5C1BDA = false;
                             gMap_5C3030.SetActiveCam_480D30(LevelIds::eBrewery_Ender_10, 1, 16, CameraSwapEffects::eUnknown_11, 18, 0);
                             field_24_state = GameEnderController_States::eBadEnding_3;
                             sRescuedMudokons_5C1BC2 = sFeecoRestart_SavedMudCount_5C1BC8;

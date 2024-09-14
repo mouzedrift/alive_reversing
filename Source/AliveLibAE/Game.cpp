@@ -116,7 +116,7 @@ EXPORT void CC Init_GameStates_43BF40()
     gbDrawMeterCountDown_5C1BF8 = FALSE;
     gTotalMeterBars_5C1BFA = 0;
 
-    gAbeBulletProof_5C1BDA = 0;
+    gAbeInvincible_5C1BDA = false;
 
     SwitchStates_SetRange_465FA0(2u, 255u);
 }

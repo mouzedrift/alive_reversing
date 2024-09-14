@@ -11,6 +11,7 @@
 #include "Sound/Midi.hpp"
 #include "PauseMenu.hpp"
 #include "GameAutoPlayer.hpp"
+#include "Abe.hpp"
 
 #if USE_SDL2
     #include "SDL.h"
@@ -898,6 +899,21 @@ static void KeyDownEvent(SDL_Scancode scanCode)
         // LOG_INFO("Key down " << vk);
 
         Input_SetKeyState_4EDD80(vk, 1);
+
+        #ifdef _DEBUG
+        if (vk == VK_F1)
+        {
+            gAbeInvincible_5C1BDA = !gAbeInvincible_5C1BDA;
+            if (gAbeInvincible_5C1BDA)
+            {
+                LOG_INFO("abe is invincible");
+            }
+            else
+            {
+                LOG_INFO("abe is no longer invincible");
+            }
+        }
+        #endif
 
         if (vk == VK_F5)
         {

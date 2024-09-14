@@ -6775,7 +6775,7 @@ void Mudokon::M_Fall_49_472C60()
                          FP_GetExponent(field_BC_ypos),
                          TlvTypes::SoftLanding_75)
                      && field_10C_health > FP_FromInteger(0))
-                    || (field_BC_ypos - field_F8_LastLineYPos < (field_CC_sprite_scale * FP_FromInteger(180)) && (field_10C_health > FP_FromInteger(0) || gAbeBulletProof_5C1BDA)))
+                    || (field_BC_ypos - field_F8_LastLineYPos < (field_CC_sprite_scale * FP_FromInteger(180)) && (field_10C_health > FP_FromInteger(0) || gAbeInvincible_5C1BDA)))
                 {
                     field_106_current_motion = eMudMotions::M_LandSoft2_42_4743F0;
                 }

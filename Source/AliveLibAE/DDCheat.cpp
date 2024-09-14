@@ -298,6 +298,7 @@ void DDCheat::Update_415780()
                 sActiveHero_5C1B68->field_C2_lvl_number = static_cast<LevelIds>(sTeleport_Level_550F5C);
                 sActiveHero_5C1B68->field_C0_path_number = sTeleport_Path_550F5E;
                 sDDCheat_FlyingEnabled_5C2C08 = false;
+                gAbeInvincible_5C1BDA = false;
                 sControlledCharacter_5C1B8C->field_100_pCollisionLine = nullptr;
                 sControlledCharacter_5C1B8C->field_F8_LastLineYPos = sControlledCharacter_5C1B8C->field_BC_ypos;
                 field_3C_flags.Clear(DDCheat::Flags_3C::e3C_Bit1);
@@ -307,6 +308,7 @@ void DDCheat::Update_415780()
         if ((gMap_5C3030.field_0_current_level != LevelIds::eMenu_0 && gMap_5C3030.field_0_current_level != LevelIds::eNone) && sActiveHero_5C1B68 && activePadPressed & InputCommands::Enum::eCheatMode)
         {
             sDDCheat_FlyingEnabled_5C2C08 = !sDDCheat_FlyingEnabled_5C2C08;
+            gAbeInvincible_5C1BDA = sDDCheat_FlyingEnabled_5C2C08;
             if (!sDDCheat_FlyingEnabled_5C2C08)
             {
                 if (sControlledCharacter_5C1B8C == sActiveHero_5C1B68)

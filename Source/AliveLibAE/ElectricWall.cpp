@@ -146,6 +146,7 @@ void ElectricWall::vUpdate_422030()
             field_FC_sound_timer = sGnFrame_5C1B84 + Math_RandomRange_496AB0(24, 40);
         }
 
+
         PSX_RECT bRect = {};
         vGetBoundingRect_424FD0(&bRect, 1);
 
@@ -161,6 +162,11 @@ void ElectricWall::vUpdate_422030()
             if (!pObj)
             {
                 break;
+            }
+
+            if (gAbeInvincible_5C1BDA && pObj->Type() == AETypes::eAbe_69)
+            {
+                continue;
             }
 
             switch (pObj->Type())
@@ -199,7 +205,7 @@ void ElectricWall::vUpdate_422030()
                         else
                         {
                             // Touching the wall, rip
-                            if (!(pObj->field_114_flags.Get(Flags_114::e114_Bit7_Electrocuted)) && (pObj != sActiveHero_5C1B68 || !gAbeBulletProof_5C1BDA))
+                            if (!(pObj->field_114_flags.Get(Flags_114::e114_Bit7_Electrocuted)) && (pObj != sActiveHero_5C1B68 || !gAbeInvincible_5C1BDA))
                             {
                                 pObj->field_114_flags.Set(Flags_114::e114_Bit7_Electrocuted);
 
