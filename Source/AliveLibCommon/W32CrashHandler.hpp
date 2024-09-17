@@ -19,33 +19,54 @@
 
 inline void create_minidump(PEXCEPTION_POINTERS apExceptionInfo)
 {
-    wchar_t fileNameW[512] = {};
-    char_type fileNameA[512] = {};
+    const SDL_MessageBoxButtonData buttons[] = {
+        {SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 0, "No"},
+        {SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 1, "Yes"}};
+
+    const SDL_MessageBoxData messageboxdata = {
+        SDL_MESSAGEBOX_ERROR,
+        nullptr,
+        "R.E.L.I.V.E.",
+        "R.E.L.I.V.E. has crashed, write minidump to disk? (this will make fixing the bug easier)",
+        ALIVE_COUNTOF(buttons),
+        buttons,
+        nullptr
+    };
+
+    int buttonid;
+    SDL_ShowMessageBox(&messageboxdata, &buttonid);
+
+    // selected yes
+    if (buttonid == 1)
+    {
+        wchar_t fileNameW[512] = {};
+        char_type fileNameA[512] = {};
 
         #ifdef BUILD_NUMBER
-    _snwprintf(fileNameW, _countof(fileNameW), L"core_pid_%d_build_%d.dmp", ::GetCurrentProcessId(), BUILD_NUMBER);
-    _snprintf(fileNameA, _countof(fileNameA), "core_pid_%d_build_%d.dmp", ::GetCurrentProcessId(), BUILD_NUMBER);
+        _snwprintf(fileNameW, _countof(fileNameW), L"core_pid_%d_build_%d.dmp", ::GetCurrentProcessId(), BUILD_NUMBER);
+        _snprintf(fileNameA, _countof(fileNameA), "core_pid_%d_build_%d.dmp", ::GetCurrentProcessId(), BUILD_NUMBER);
         #else
-    _snwprintf(fileNameW, _countof(fileNameW), L"core_pid_%d.dmp", ::GetCurrentProcessId());
-    _snprintf(fileNameA, _countof(fileNameA), "core_pid_%d.dmp", ::GetCurrentProcessId());
+        _snwprintf(fileNameW, _countof(fileNameW), L"core_pid_%d.dmp", ::GetCurrentProcessId());
+        _snprintf(fileNameA, _countof(fileNameA), "core_pid_%d.dmp", ::GetCurrentProcessId());
         #endif
 
-    HANDLE hFile = ::CreateFileW(fileNameW, GENERIC_WRITE, FILE_SHARE_WRITE, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
-    if (hFile != INVALID_HANDLE_VALUE)
-    {
-        MINIDUMP_EXCEPTION_INFORMATION exceptionInfo = {};
-        exceptionInfo.ThreadId = ::GetCurrentThreadId();
-        exceptionInfo.ExceptionPointers = apExceptionInfo;
-        exceptionInfo.ClientPointers = FALSE;
+        HANDLE hFile = ::CreateFileW(fileNameW, GENERIC_WRITE, FILE_SHARE_WRITE, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+        if (hFile != INVALID_HANDLE_VALUE)
+        {
+            MINIDUMP_EXCEPTION_INFORMATION exceptionInfo = {};
+            exceptionInfo.ThreadId = ::GetCurrentThreadId();
+            exceptionInfo.ExceptionPointers = apExceptionInfo;
+            exceptionInfo.ClientPointers = FALSE;
 
-        const s32 flags = MiniDumpWithFullMemory | MiniDumpWithFullMemoryInfo | MiniDumpWithHandleData | MiniDumpWithUnloadedModules | MiniDumpWithThreadInfo;
+            const s32 flags = MiniDumpWithFullMemory | MiniDumpWithFullMemoryInfo | MiniDumpWithHandleData | MiniDumpWithUnloadedModules | MiniDumpWithThreadInfo;
 
-        ::MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), hFile, static_cast<MINIDUMP_TYPE>(flags), &exceptionInfo, nullptr, nullptr);
-        ::CloseHandle(hFile);
+            ::MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), hFile, static_cast<MINIDUMP_TYPE>(flags), &exceptionInfo, nullptr, nullptr);
+            ::CloseHandle(hFile);
 
-        char_type errMsg[1024] = {};
-        _snprintf(errMsg, _countof(errMsg), "R.E.L.I.V.E. has crashed, dump written to %s in the game folder", fileNameA);
-        Alive_Show_ErrorMsg(errMsg);
+            char_type errMsg[1024] = {};
+            _snprintf(errMsg, _countof(errMsg), "R.E.L.I.V.E. has crashed, dump written to %s in the game folder", fileNameA);
+            Alive_Show_ErrorMsg(errMsg);
+        }
     }
 }
 
