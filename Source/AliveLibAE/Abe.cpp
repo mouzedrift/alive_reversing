@@ -1752,7 +1752,7 @@ void Abe::Update_449DC0()
             {
                 char_type saveName[100] = {};
 
-                strcat(saveName, "saves/");
+                strcpy(saveName, "saves/");
                 strcat(saveName, "cp ");
                 strcat(saveName, camNameBuffer);
                 strcat(saveName, " ");

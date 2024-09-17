@@ -1597,7 +1597,46 @@ void PauseMenu::Update_48FD80()
             {
                 if (sQuicksave_SaveNextFrame_5CA4D8)
                 {
-                    Quicksave_4C90D0();
+                    if (Quicksave_4C90D0())
+                    {
+                        char_type targetSaveName[100] = {};
+                        for (u32 i = 1; i <= 3; i++)
+                        {
+                            char_type saveName[100] = {};
+
+                            strcpy(saveName, "saves/");
+                            strcat(saveName, "quicksave ");
+                            strcat(saveName, std::to_string(i).c_str());
+                            strcat(saveName, ".sav");
+
+                            // check the file doesn't exist
+                            if (access_impl(saveName, 0) == -1)
+                            {
+                                strcpy(targetSaveName, saveName);
+                                break;
+                            }
+                            else if (i == 3)
+                            {
+                                sprintf(targetSaveName, "saves/quicksave %d.sav", mLastQuicksaveIdx++);
+
+                                // wrap around
+                                if (mLastQuicksaveIdx > 3)
+                                {
+                                    mLastQuicksaveIdx = 1; 
+                                }
+                            }
+                            
+                        }
+
+                        FILE* hFile = fopen(targetSaveName, "wb");
+                        if (hFile)
+                        {
+                            fwrite(&sActiveQuicksaveData_BAF7F8, sizeof(Quicksave), 1u, hFile);
+                            fclose(hFile);
+                            sSavedGameToLoadIdx_BB43FC = 0;
+                        }
+                    }
+
                     pHero = sActiveHero_5C1B68;
                     pControlledChar = sControlledCharacter_5C1B8C;
                     sQuicksave_SaveNextFrame_5CA4D8 = 0;
