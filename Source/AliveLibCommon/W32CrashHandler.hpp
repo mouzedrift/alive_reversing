@@ -17,11 +17,36 @@
 
         #pragma comment(lib, "dbghelp.lib")
 
-inline void create_minidump(PEXCEPTION_POINTERS /* apExceptionInfo*/)
+inline void create_minidump(PEXCEPTION_POINTERS apExceptionInfo)
 {
-    char_type errMsg[1024] = {};
-    _snprintf(errMsg, _countof(errMsg), "R.E.L.I.V.E. has crashed");
-    Alive_Show_ErrorMsg(errMsg);
+    wchar_t fileNameW[512] = {};
+    char_type fileNameA[512] = {};
+
+        #ifdef BUILD_NUMBER
+    _snwprintf(fileNameW, _countof(fileNameW), L"core_pid_%d_build_%d.dmp", ::GetCurrentProcessId(), BUILD_NUMBER);
+    _snprintf(fileNameA, _countof(fileNameA), "core_pid_%d_build_%d.dmp", ::GetCurrentProcessId(), BUILD_NUMBER);
+        #else
+    _snwprintf(fileNameW, _countof(fileNameW), L"core_pid_%d.dmp", ::GetCurrentProcessId());
+    _snprintf(fileNameA, _countof(fileNameA), "core_pid_%d.dmp", ::GetCurrentProcessId());
+        #endif
+
+    HANDLE hFile = ::CreateFileW(fileNameW, GENERIC_WRITE, FILE_SHARE_WRITE, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (hFile != INVALID_HANDLE_VALUE)
+    {
+        MINIDUMP_EXCEPTION_INFORMATION exceptionInfo = {};
+        exceptionInfo.ThreadId = ::GetCurrentThreadId();
+        exceptionInfo.ExceptionPointers = apExceptionInfo;
+        exceptionInfo.ClientPointers = FALSE;
+
+        const s32 flags = MiniDumpWithFullMemory | MiniDumpWithFullMemoryInfo | MiniDumpWithHandleData | MiniDumpWithUnloadedModules | MiniDumpWithThreadInfo;
+
+        ::MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), hFile, static_cast<MINIDUMP_TYPE>(flags), &exceptionInfo, nullptr, nullptr);
+        ::CloseHandle(hFile);
+
+        char_type errMsg[1024] = {};
+        _snprintf(errMsg, _countof(errMsg), "R.E.L.I.V.E. has crashed, dump written to %s in the game folder", fileNameA);
+        Alive_Show_ErrorMsg(errMsg);
+    }
 }
 
     #else
