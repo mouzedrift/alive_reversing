@@ -546,7 +546,11 @@ EXPORT void CC Game_Run_466D40()
 
     Game_Init_LoadingIcon_482CD0();
 
-    mkdir("saves");
+    #ifdef __linux__ 
+        mkdir("saves", 0755);
+    #else
+        mkdir("saves");
+    #endif
 
     // Main loop start
     Game_Loop_467230();
