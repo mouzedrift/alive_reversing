@@ -1,0 +1,147 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+# build setting(s)
+env:
+  CONFIGURATION: Debug
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-2022
+            name: Windows32
+          - os: windows-2022
+            name: Windows64
+          - os: ubuntu-latest
+            name: Linux
+          - os: macos-13
+            name: macOS
+
+    steps:
+    - name: Checkout repository recursively
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: 'Windows: Install SDL2'
+      if: runner.os == 'Windows'
+      run: |
+        Invoke-WebRequest 'https://www.libsdl.org/release/SDL2-devel-2.0.22-VC.zip' -OutFile "$env:GITHUB_WORKSPACE\SDL2.zip"
+        7z x SDL2.zip
+
+    # ======================================
+    #      Windows32
+    # ======================================
+
+    - name: 'Windows32: Build'
+      if: matrix.name == 'Windows32'
+      run: |
+        mkdir build
+        cd build
+        cmake .. -G"Visual Studio 17 2022" -DSDL2_DIR="$env:GITHUB_WORKSPACE\SDL2-2.0.22" -A Win32 -DCI_PROVIDER="GitHub" -DBUILD_NUMBER="$env:GITHUB_RUN_NUMBER"
+        cmake --build . --config $env:CONFIGURATION
+        cpack -G ZIP -C $env:CONFIGURATION
+
+    # ======================================
+    #      Windows64
+    # ======================================
+
+    - name: 'Windows64: Build'
+      if: matrix.name == 'Windows64'
+      run: |
+        mkdir build
+        cd build
+        cmake .. -G"Visual Studio 17 2022" -DSDL2_DIR="$env:GITHUB_WORKSPACE\SDL2-2.0.22" -A x64 -DCI_PROVIDER="GitHub" -DBUILD_NUMBER="$env:GITHUB_RUN_NUMBER"
+        cmake --build . --config $env:CONFIGURATION
+        cpack -G ZIP -C $env:CONFIGURATION
+        
+    # ======================================
+    #      Linux
+    # ======================================
+
+    - name: 'Linux: Install SDL2'
+      if: matrix.name == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libsdl2-dev
+
+    - name: 'Linux: Build'
+      if: matrix.name == 'Linux'
+      run: |
+        mkdir build
+        cd build
+        cmake .. -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=$CONFIGURATION -DCI_PROVIDER="GitHub" -DBUILD_NUMBER=$GITHUB_RUN_NUMBER
+        make -j$(nproc)
+        cpack -G DEB
+
+    # ======================================
+    #      macOS
+    # ======================================
+
+    - name: 'macOS: Install SDL2'
+      if: matrix.name == 'macOS'
+      run: |
+        brew install sdl2
+
+    - name: 'macOS: Build'
+      if: matrix.name == 'macOS'
+      run: |
+        mkdir build
+        cd build
+        cmake .. -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=$CONFIGURATION -DCI_PROVIDER="GitHub" -DBUILD_NUMBER=$GITHUB_RUN_NUMBER
+        make -j4
+
+    # ======================================
+    #      Artifacts
+    # ======================================
+
+    # Move the artifacts to the same directory so when we upload them as a zip archive, all the files are in the same directory.
+    - name: 'Windows: Copy artifacts'
+      if: runner.os == 'Windows'
+      run: |
+        cd build
+        mkdir relive_binaries
+        Copy-Item Source\relive\$env:CONFIGURATION\relive.exe relive_binaries\relive.exe
+        Copy-Item Source\AliveDllAE\$env:CONFIGURATION\SDL2.dll relive_binaries\SDL2.dll
+        mkdir relive_symbols
+        Copy-Item Source\relive\$env:CONFIGURATION\relive.pdb relive_symbols\relive.pdb
+        Copy-Item Source\AliveDllAE\$env:CONFIGURATION\AliveDllAE.pdb relive_symbols\AliveDllAE.pdb
+        Copy-Item Source\AliveDllAO\$env:CONFIGURATION\AliveDllAO.pdb relive_symbols\AliveDllAO.pdb
+
+    - name: 'Windows: Upload relive binaries'
+      if: runner.os == 'Windows'
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.name }}-${{ env.CONFIGURATION }}-relive-binaries
+        path: build\relive_binaries\
+
+    - name: 'Windows: Upload relive symbols'
+      uses: actions/upload-artifact@v4
+      if: runner.os == 'Windows'
+      with:
+        name: ${{ matrix.name }}-${{ env.CONFIGURATION }}-relive-symbols
+        path: build\relive_symbols\
+
+    - name: 'Linux: Upload relive deb'
+      if: matrix.name == 'Linux'
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.name }}-${{ env.CONFIGURATION }}-relive.deb
+        path: build/relive-0.1-Linux.deb
+
+   # - name: 'macOS: Upload relive dmg'
+   #   if: matrix.name == 'macOS'
+   #   uses: actions/upload-artifact@v4
+   #   with:
+   #     name: ${{ matrix.name }}-${{ env.CONFIGURATION }}-relive.dmg
+   #     path: build/relive-0.1-Darwin.dmg
