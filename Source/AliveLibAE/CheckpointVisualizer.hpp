@@ -24,4 +24,5 @@ private:
     u8 mG = 127;
     u8 mB = 127;
     bool mRender = true;
+    u8 mRandomY;
 };

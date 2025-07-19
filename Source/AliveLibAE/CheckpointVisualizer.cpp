@@ -85,7 +85,8 @@ void CheckpointVisualizer::VUpdate()
 
     mRender = gMap_5C3030.Is_Point_In_Current_Camera_4810D0(gMap_5C3030.field_0_current_level, gMap_5C3030.field_2_current_path, mInitialXPos, mInitialYPos, 0);
 
-    mCurrentYPos += FP_FromDouble(0.3) * Math_Sine_496DD0(static_cast<u8>(3 * sGnFrame_5C1B84));
+    mCurrentYPos += FP_FromDouble(0.3) * Math_Sine_496DD0(mRandomY);
+    mRandomY += 1;
 }
 
 void CheckpointVisualizer::VRender(PrimHeader** ppOt)
