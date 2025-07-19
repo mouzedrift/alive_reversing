@@ -213,7 +213,7 @@ void LaughingGas::DoRender_432740()
     f32 local_array[6];
 
     u16* memPtr = field_19C_pMem;
-    s32 rgb_base = (1 << sRedShift_C215C4) + (1 << sGreenShift_C1D180);
+    s32 rgb_base = (1 << sRedShift_C215C4) + (1 << sBlueShift_C19140);
 
     if (field_36_bLaughing_gas == Choice_short::eNo_0)
     {
