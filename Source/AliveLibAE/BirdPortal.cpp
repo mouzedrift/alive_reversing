@@ -163,7 +163,7 @@ void BirdPortal::vUpdate_498280()
                 Event_Broadcast_422BC0(GetEvent_499A70(), this);
                 SFX_Play_46FA90(SoundEffect::Dove_13, 70, field_60_scale);
             }
-            else if (IsScaredAway_4992A0() || Event_Get_422C00(kEventShooting))
+            else if ((IsScaredAway_4992A0() || Event_Get_422C00(kEventShooting)) && field_24_portal_type != PortalType::eAbe_0)
             {
                 for (auto& id : field_44_dove_ids)
                 {
