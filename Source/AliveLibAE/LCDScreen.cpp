@@ -208,16 +208,25 @@ LCDScreen* LCDScreen::ctor_460680(Path_LCDScreen* params, TlvItemInfoUnion itemI
 
     IRenderer::GetRenderer()->PalSetData(rec, sLCDScreen_Palette2);
 
-    if (SwitchStates_Get_466020(field_2B2_toggle_message_switch_id))
-    {
-        field_A0_message = gLCDMessages.GetMessage(gMap_5C3030.field_0_current_level, gMap_5C3030.field_2_current_path, field_2B0_message_2_id);
-    }
-    else
+    mIsStaticMessage = params->field_18_toggle_message_switch_id == 999;
+
+    if (mIsStaticMessage)
     {
         field_A0_message = gLCDMessages.GetMessage(gMap_5C3030.field_0_current_level, gMap_5C3030.field_2_current_path, field_2AA_message_1_id);
     }
+    else
+    {
+        if (SwitchStates_Get_466020(field_2B2_toggle_message_switch_id))
+        {
+            field_A0_message = gLCDMessages.GetMessage(gMap_5C3030.field_0_current_level, gMap_5C3030.field_2_current_path, field_2B0_message_2_id);
+        }
+        else
+        {
+            field_A0_message = gLCDMessages.GetMessage(gMap_5C3030.field_0_current_level, gMap_5C3030.field_2_current_path, field_2AA_message_1_id);
+        }
+    }
 
-    //field_A0_message = "                               THIS IS A TEST";
+    //field_A0_message = "HELLO! HELLO! HELLO! HELLO! HELLO! HELLO! HELLO! HELLO! HELLO! ";
 
     String_FormatString_4969D0(field_A0_message, field_A8_message_buffer, 512, 1);
     field_A0_message = field_A8_message_buffer;
@@ -233,6 +242,7 @@ LCDScreen* LCDScreen::ctor_460680(Path_LCDScreen* params, TlvItemInfoUnion itemI
     field_2A8_play_sound_toggle = 0;
     gObjList_drawables_5C1124->Push_Back_40CAF0(this);
 
+
     return this;
 }
 
@@ -241,6 +251,11 @@ void LCDScreen::Update_460A00()
     if (Event_Get_422C00(kEventDeathReset))
     {
         field_6_flags.Set(BaseGameObject::eDead_Bit3);
+    }
+
+    if (mIsStaticMessage)
+    {
+        return;
     }
 
 #if LCD_PS1_SPEED

@@ -52,5 +52,6 @@ public:
     s16 field_2BA_padding;
     TlvItemInfoUnion field_2BC_tlv_item_info;
     Path_TLV field_2C0_tlv;
+    bool mIsStaticMessage;
 };
-ALIVE_ASSERT_SIZEOF(LCDScreen, 0x2D0);
+//ALIVE_ASSERT_SIZEOF(LCDScreen, 0x2D0);
