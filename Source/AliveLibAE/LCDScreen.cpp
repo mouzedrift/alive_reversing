@@ -337,7 +337,7 @@ void LCDScreen::Render_460CB0(PrimHeader** ppOt)
         const s32 screenXWorld = PsxToPCX(screenX);
         const s32 maxWidth = field_2C0_tlv.field_C_bottom_right.field_0_x - FP_GetExponent(camPos->field_0_x);
 
-        const Layer textLayer = mIsStaticMessage ? Layer::eLayer_Above_FG1_39 : Layer::eLayer_RopeWebDrill_24;
+        const Layer textLayer = Layer::eLayer_RopeWebDrill_24;
 
         PSX_RECT clipRect = {
             0,
