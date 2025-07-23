@@ -274,7 +274,7 @@ void ColourfulMeter::vRender_43D2B0(PrimHeader** ppOt)
             TPageAbr::eBlend_1,
             1,
             0,
-            Layer::eLayer_BeforeWell_22,
+            Layer::eLayer_Above_FG1_39,
             127, 127, 127,
             0,
             FP_FromInteger(1),
