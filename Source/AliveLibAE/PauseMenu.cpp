@@ -1565,6 +1565,24 @@ EXPORT u16 CC sub_4A2B70()
 }
 static char_type sQuiksaveTextBuffer[32];
 
+static bool IsInNecrumTombPuzzle()
+{
+    if (gMap_5C3030.field_0_current_level == LevelIds::eNecrum_2 && gMap_5C3030.field_2_current_path == 3)
+    {
+        static s16 tombPuzzleCams[] = {9, 10, 21, 0, 22, 23, 12, 28, 13, 27, 14, 26, 15, 25};
+        for (s16 i = 0; i < ALIVE_COUNTOF(tombPuzzleCams); i++)
+        {
+            s16 cam = tombPuzzleCams[i];
+            if (gMap_5C3030.field_4_current_camera == cam)
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 void PauseMenu::Update_48FD80()
 {
     Abe* pHero = sActiveHero_5C1B68;
@@ -1691,11 +1709,12 @@ void PauseMenu::Update_48FD80()
                 word12C_flags = (word12C_flags & ~8) | 1;
                 field_12E_selected_glow = 40;
                 field_130_selected_glow_counter = 8;
+
                 Path_Format_CameraName_460FB0(
                     sScreenStringBuffer_5C92F0,
                     gMap_5C3030.field_0_current_level,
                     gMap_5C3030.field_2_current_path,
-                    gMap_5C3030.field_4_current_camera);
+                    IsInNecrumTombPuzzle() ? Math_RandomRange_496AB0(0, 99) : gMap_5C3030.field_4_current_camera);
 
                 // TODO: never read ??
                 //byte_5C92F8 = 0;
