@@ -2381,33 +2381,33 @@ s16 Abe::vTakeDamage_44BB50(BaseGameObject* pFrom)
             }
 
             // clamp the max objects abe can drop or else we'll run out of object id's
-            if (field_1A2_throwable_count > 9)
-            {
-                field_1A2_throwable_count = 9;
-                if (gpThrowableArray_5D1E2C)
-                {
-                    gpThrowableArray_5D1E2C->field_20_count = 9;
-                }
-            }
+            //if (field_1A2_throwable_count > 9)
+            //{
+            //    field_1A2_throwable_count = 9;
+            //    if (gpThrowableArray_5D1E2C)
+            //    {
+            //        gpThrowableArray_5D1E2C->field_20_count = 9;
+            //    }
+            //}
 
-            // The zap makes Abe drop his stuff everywhere
-            for (s32 i = 0; i < field_1A2_throwable_count; i++)
-            {
-                BaseThrowable* pThrowable = Make_Throwable_49AF30(
-                    field_B8_xpos,
-                    field_BC_ypos - FP_FromInteger(30),
-                    0);
+            //// The zap makes Abe drop his stuff everywhere
+            //for (s32 i = 0; i < field_1A2_throwable_count; i++)
+            //{
+            //    BaseThrowable* pThrowable = Make_Throwable_49AF30(
+            //        field_B8_xpos,
+            //        field_BC_ypos - FP_FromInteger(30),
+            //        0);
 
-                // Random explode time ?
-                const FP rand1 = FP_FromRaw((Math_NextRandom() - 127) << 11); // TODO: Wat?
-                const FP rand2 = (FP_FromDouble(0.03125) * FP_FromRaw(Math_NextRandom())) - FP_FromInteger(2);
-                pThrowable->VThrow_49E460(rand1, rand2);
+            //    // Random explode time ?
+            //    const FP rand1 = FP_FromRaw((Math_NextRandom() - 127) << 11); // TODO: Wat?
+            //    const FP rand2 = (FP_FromDouble(0.03125) * FP_FromRaw(Math_NextRandom())) - FP_FromInteger(2);
+            //    pThrowable->VThrow_49E460(rand1, rand2);
 
-                pThrowable->field_CC_sprite_scale = field_CC_sprite_scale;
-                pThrowable->field_D6_scale = field_D6_scale;
-                pThrowable->VTimeToExplodeRandom_411490(); // Start count down ?
-            }
-            field_1A2_throwable_count = 0;
+            //    pThrowable->field_CC_sprite_scale = field_CC_sprite_scale;
+            //    pThrowable->field_D6_scale = field_D6_scale;
+            //    pThrowable->VTimeToExplodeRandom_411490(); // Start count down ?
+            //}
+            //field_1A2_throwable_count = 0;
             break;
 
         case AETypes::eRockSpawner_48:
