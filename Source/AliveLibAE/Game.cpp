@@ -33,6 +33,7 @@
 #include "../relive_lib/SwitchStates.hpp"
 #include "../relive_lib/Collisions.hpp"
 #include "../relive_lib/GameObjects/PlatformBase.hpp"
+#include "../relive_lib/GameObjects/CommandWriter.hpp"
 
 u32 sGnFrame = 0;
 
@@ -403,6 +404,7 @@ void Game_Run()
     gMap.Init(EReliveLevelIds::eMenu, 1, 25, CameraSwapEffects::eInstantChange_0, 0, 0);
 
     DDCheat_Allocate();
+    relive_new CommandWriter();
 
     gEventSystem = relive_new GameSpeak();
 

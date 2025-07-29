@@ -35,6 +35,7 @@
 #include "../relive_lib/GameObjects/GasCountDown.hpp"
 #include "../relive_lib/GameObjects/PlatformBase.hpp"
 #include "GameEnderController.hpp"
+#include "../relive_lib/GameObjects/CommandWriter.hpp"
 
 // Note: Using AE var
 //bool gDDCheatOn = false;
@@ -291,6 +292,7 @@ void Game_Run()
     gMap.Init(EReliveLevelIds::eMenu, 1, 10, CameraSwapEffects::eInstantChange_0, 0, 0);
 
     DDCheat_Allocate();
+    relive_new CommandWriter();
 
     gEventSystem = relive_new GameSpeak();
 

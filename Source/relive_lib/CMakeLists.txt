@@ -550,6 +550,8 @@ SET(game_objects_src
     GameObjects/TimerTrigger.hpp
     GameObjects/AbilityRing.cpp
     GameObjects/AbilityRing.hpp
+    GameObjects/CommandWriter.cpp
+    GameObjects/CommandWriter.hpp
 )
 
 SET(data_conversion_src

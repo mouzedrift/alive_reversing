@@ -61,6 +61,7 @@
 #include "Path.hpp"
 #include "../relive_lib/data_conversion/PathTlvsAO.hpp"
 #include "GameEnderController.hpp"
+#include "../relive_lib/GameObjects/CommandWriter.hpp"
 
 namespace AO {
 
@@ -629,6 +630,12 @@ const u32 sAbe_yVel_table_4BB138[8] = {0, 4294705152, 4294705152, 4294705152, 0,
 
 void Abe::VUpdate()
 {
+    if (Input().IsAnyPressed(InputCommands::ePause))
+    {
+        SaveGame::LoadFromMemory(&gSaveBuffer, 1);
+        gCommandWriter->ResetCurrentCommand();
+    }
+
     if (gAbeInvulnerableCheat)
     {
         mHealth = FP_FromInteger(1);
