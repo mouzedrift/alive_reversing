@@ -1139,7 +1139,7 @@ void DataConversion::ConvertDataAE(const DataVersions& dv)
 void DataConversion::DataVersions::Save(const FileSystem::Path& dataDir) const
 {
     auto j = nlohmann::json{
-        {"fmv_version", mFmvVersion},
+        {"fmv_version", 0},
         {"path_version", mPathVersion},
         {"palette_version", mPaletteVersion},
         {"animation_version", mAnimationVersion},
