@@ -70,7 +70,7 @@ inline std::string WindowTitleAO()
 
 inline std::string WindowTitleAE()
 {
-    return "R.E.L.I.V.E. Oddworld Abe's Exoddus" + BuildAndBitnesString();
+    return "R.E.L.I.V.E. Suddoxe's Eba Edition" + BuildAndBitnesString();
 }
 
 inline void Alive_Show_ErrorMsg(const char_type* msg)
