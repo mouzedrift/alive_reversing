@@ -476,7 +476,7 @@ void CameraManager::CreateCamera(bool dropEvent, QPixmap img)
 
         const std::string newCamName = CameraNameFromId(camId);
 
-        if (!SaveCameraImage(img, mTab->GetPathDirectory(), pItem->GetCamera()->mName, index))
+        if (!SaveCameraImage(img, mTab->GetPathDirectory(), newCamName, index))
         {
             return;
         }
