@@ -908,7 +908,7 @@ bool Sys_WindowClass_Register(const char_type* lpWindowName, s32 x, s32 y, s32 n
 {
     TRACE_ENTRYEXIT;
 
-    sHwnd = SDL_CreateWindow(lpWindowName, x, y, nWidth, nHeight, SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_HIDDEN | extraAttributes);
+    sHwnd = SDL_CreateWindow(lpWindowName, x, y, nWidth, nHeight, SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_HIDDEN | SDL_WINDOW_FULLSCREEN_DESKTOP | extraAttributes);
     if (sHwnd)
     {
         LOG_INFO("Window created");
@@ -916,6 +916,7 @@ bool Sys_WindowClass_Register(const char_type* lpWindowName, s32 x, s32 y, s32 n
         Input_InitKeyStateArray_4EDD60();
 
         SDL_ShowCursor(SDL_DISABLE);
+        SDL_SetRelativeMouseMode(SDL_TRUE); // this is also required to hide the cursor
 
         // SDL will not send a window focused message on start up, so default to activated
         sAppIsActivated = true;

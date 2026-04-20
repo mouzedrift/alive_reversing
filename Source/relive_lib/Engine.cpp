@@ -36,8 +36,8 @@ void Engine::CmdLineRenderInit()
     gDDCheatOn = mClp.SwitchExists("-ddcheat") || mClp.SwitchExists("-it_is_me_your_father");
 #endif
 
-    IRenderer::Renderers rendererToCreate = IRenderer::Renderers::Sdl2;
-    LOG_INFO("Default renderer is Sdl2");
+    IRenderer::Renderers rendererToCreate = IRenderer::Renderers::OpenGL;
+    LOG_INFO("Default renderer is OpenGL");
 
     char renderer[256] = {};
     if (mClp.ExtractNamePairArgument(renderer, "-renderer="))
