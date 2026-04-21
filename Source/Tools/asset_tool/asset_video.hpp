@@ -398,7 +398,7 @@ static void ExportDDVThreadFunc()
 
 static void ExportAllDDVThreadFunc()
 {
-    int ddvCount = ddvFiles.size();
+    size_t ddvCount = ddvFiles.size();
 
     for (int i = 0; i < ddvCount; i++)
     {

@@ -1183,6 +1183,21 @@ static bool DumpAnim(std::string path, AnimRecord& rec)
             srcY++;
         }
 
+        RGBAPixel red = {255, 0, 0, 255};
+
+        // draw red outline for the original sprite bounds
+        for (int x = 0; x < width; x++)
+        {
+            dstImage[(copyY * bounds.w) + (copyX + x)] = red;
+            dstImage[((copyY + (height * 2) - 1) * bounds.w) + (copyX + x)] = red;
+        }
+
+        for (int y = 0; y < (height * 2); y++)
+        {
+            dstImage[((copyY + y) * bounds.w) + copyX] = red;
+            dstImage[((copyY + y) * bounds.w) + (copyX + width - 1)] = red;
+        }
+
         stbi_write_png((path + "/" + std::to_string(i) + ".png").c_str(), bounds.w, bounds.h * 2, 4, dstImage.data(), bounds.w * 4);
     }
 
