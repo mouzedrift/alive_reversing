@@ -81,6 +81,8 @@ void Engine::Run()
     // Moved from PsxDisplay init to prevent desync
     PSX_PutDispEnv_4F5890();
 
+    bool bOnlyConvertData = mClp.SwitchExists("-only_convert_data");
+
     // TODO: HACK mini loop till Game.cpp is merged
     DataConversionUI dcu(mGameType);
     if (dcu.ConversionRequired())
@@ -99,6 +101,11 @@ void Engine::Run()
     else
     {
         LOG_INFO("Data is up to date, skip conversion");
+    }
+
+    if (bOnlyConvertData)
+    {
+        return;
     }
 
     GetGameAutoPlayer().Pause(false);
