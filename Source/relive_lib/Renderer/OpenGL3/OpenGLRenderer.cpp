@@ -194,6 +194,14 @@ void OpenGLRenderer::EndFrame()
     {
         DebugWindow();
     }
+    else
+    {
+        const Uint32 flags = SDL_GetWindowFlags(Sys_GetWindowHandle());
+        if (flags & SDL_WINDOW_FULLSCREEN_DESKTOP)
+        {
+            ImGui::SetMouseCursor(ImGuiMouseCursor_None);
+        }
+    }
 
     ImGui::Render();
     ImGui::EndFrame();
