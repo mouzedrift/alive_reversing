@@ -69,19 +69,19 @@ void Engine::CmdLineRenderInit()
 
 void Engine::Run()
 {
-    gPsxDisplay.Init();
+    bool bOnlyConvertData = mClp.SwitchExists("-only_convert_data");
 
     GetGameAutoPlayer().ProcessCommandLine(mClp);
-    CmdLineRenderInit();
+    if (!bOnlyConvertData)
+    {
+        gPsxDisplay.Init();
+        CmdLineRenderInit();
+        PSX_PutDispEnv_4F5890();
+    }
 
     // Another hack till refactor branch replaces master
     GetGameAutoPlayer().Pause(true);
     GetGameAutoPlayer().DisableRecorder();
-
-    // Moved from PsxDisplay init to prevent desync
-    PSX_PutDispEnv_4F5890();
-
-    bool bOnlyConvertData = mClp.SwitchExists("-only_convert_data");
 
     // TODO: HACK mini loop till Game.cpp is merged
     DataConversionUI dcu(mGameType);
@@ -90,11 +90,12 @@ void Engine::Run()
         do
         {
             dcu.VUpdate();
-
-            dcu.VRender(gPsxDisplay.mDrawEnv.mOrderingTable);
-
-            SYS_EventsPump();
-            gPsxDisplay.RenderOrderingTable();
+            if (!bOnlyConvertData)
+            {
+                dcu.VRender(gPsxDisplay.mDrawEnv.mOrderingTable);
+                SYS_EventsPump();
+                gPsxDisplay.RenderOrderingTable();
+            }
         }
         while (!dcu.GetDead());
     }
