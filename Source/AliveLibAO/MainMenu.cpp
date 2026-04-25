@@ -7,7 +7,7 @@
 #include "Game.hpp"
 #include "../relive_lib/Sfx.hpp"
 #include "DDCheat.hpp"
-#include "CheatController.hpp"
+#include "../relive_lib/GameObjects/CheatController.hpp"
 #include "Abe.hpp"
 #include "Math.hpp"
 #include "CameraSwapper.hpp"
@@ -32,6 +32,9 @@
 #include "GameEnderController.hpp"
 
 namespace AO {
+
+constexpr s32 kShortDemoTimer = 300;
+constexpr s32 kLongDemoTimer = 1500;
 
 static const AnimId sButtonAnimIds[4] = {
     AnimId::MenuHighlight_Circle,
@@ -433,10 +436,11 @@ Menu::Menu(relive::Path_TLV* /*pTlv*/, const Guid& tlvId)
     mToLevelSelect = false;
     mUsingLvlSelectCheat = false;
 
-    gEnableFartGasCheat = false;
-    gVoiceCheat = false;
-    gEnableCheatFMV = false;
-    gEnableCheatLevelSelect = false;
+    CheatController::gEnableFartGasCheat = false;
+    CheatController::gVoiceCheat = false;
+    CheatController::gEnableCheatFMV = false;
+    CheatController::gEnableCheatLevelSelect = false;
+
     gKilledMudokons = 0;
     gRescuedMudokons = 0;
     GameEnderController::gRestartRuptureFarmsKilledMuds = 0;
@@ -599,8 +603,8 @@ void Menu::CopyRight_Update()
 
 void Menu::FMV_Select_Update()
 {
-    gEnableCheatFMV = false;
-    gEnableCheatLevelSelect = false;
+    CheatController::gEnableCheatFMV = false;
+    CheatController::gEnableCheatLevelSelect = false;
 
     if (gMovieRefCount == 0)
     {
@@ -985,7 +989,8 @@ void Menu::MainScreen_Update()
         SFX_Play_Pitch(relive::SoundEffects::MenuNavigation, 45, 400);
         bSmallerTimeout = sDemoPlay;
     }
-    const s32 idleMax = bSmallerTimeout != 0 ? 300 : 1500;
+
+    const s32 idleMax = bSmallerTimeout != 0 ? kShortDemoTimer : kLongDemoTimer;
     if (Input().IsAnyPressed(InputObject::PadIndex::First, (InputCommands::eThrowItem | InputCommands::eUnPause_OrConfirm | InputCommands::eDoAction | InputCommands::eCheatMode | InputCommands::eBack)) || mIdleInputCounter > idleMax)
     {
         if (mIdleInputCounter <= idleMax)
@@ -1047,6 +1052,7 @@ void Menu::MainScreen_Update()
 
             char_type fileNameBuf[20] = {};
             sprintf(fileNameBuf, "PLAYBK%02d.JOY", gJoyResId);
+            sprintf(gActiveDemoName, "PLAYBK%02d.JOY", gJoyResId);
             //ResourceManager::LoadResourceFile_4551E0(fileNameBuf, 0, 0, 0);
 
             auto pMenuTrans = sObjectIds.Find_Impl(mMenuTransId);
@@ -1065,9 +1071,9 @@ void Menu::MainScreen_Update()
         }
     }
 
-    if (gEnableCheatFMV)
+    if (CheatController::gEnableCheatFMV)
     {
-        gEnableCheatFMV = false;
+        CheatController::gEnableCheatFMV = false;
         mToFmvSelect = true;
         sActiveList = sFmvList;
         sListCount = ALIVE_COUNTOF(sFmvList);
@@ -1099,9 +1105,9 @@ void Menu::MainScreen_Update()
         }*/
     }
 
-    if (gEnableCheatLevelSelect)
+    if (CheatController::gEnableCheatLevelSelect)
     {
-        gEnableCheatLevelSelect = false;
+        CheatController::gEnableCheatLevelSelect = false;
         mToLevelSelect = true;
         sActiveList = sLevelList;
         sListCount = ALIVE_COUNTOF(sLevelList);
@@ -1628,36 +1634,33 @@ void Menu::FMV_Or_Level_Select_Back_Update()
 
 void Menu::Loading_Update()
 {
-    if (!gAttract)
+    auto pMenuTrans = static_cast<MainMenuTransition*>(sObjectIds.Find_Impl(mMenuTransId));
+    if (pMenuTrans)
     {
-        auto pMenuTrans = static_cast<MainMenuTransition*>(sObjectIds.Find_Impl(mMenuTransId));
-        if (pMenuTrans)
+        if (pMenuTrans->field_16_bDone)
         {
-            if (pMenuTrans->field_16_bDone)
+            if (gAttract)
             {
-                if (gAttract)
-                {
-                    char_type buffer[92] = {};
-                    sprintf(buffer, "loading Joy # %d\n", gJoyResId);
-                    // Never used ??
-                    LOG_INFO(buffer);
-                }
-
-                pMenuTrans->SetDead(true);
-                mMenuTransId = Guid{};
-
-                /*
-                if (!field_E4_res_array[0])
-                {
-                    ProgressInProgressFilesLoading();
-                }*/
-
-                GetAnimation().Set_Animation_Data(GetAnimRes(AnimId::MenuAbeSpeak_Idle));
-                //ResourceManager::FreeResource_455550(field_E4_res_array[0]);
-                //field_E4_res_array[0] = nullptr;
-                //ResourceManager::Reclaim_Memory_455660(0);
-                mFnUpdate = &Menu::NewGameStart;
+                char_type buffer[92] = {};
+                sprintf(buffer, "loading Joy # %d\n", gJoyResId);
+                // Never used ??
+                LOG_INFO(buffer);
             }
+
+            pMenuTrans->SetDead(true);
+            mMenuTransId = Guid{};
+
+            /*
+            if (!field_E4_res_array[0])
+            {
+                ProgressInProgressFilesLoading();
+            }*/
+
+            GetAnimation().Set_Animation_Data(GetAnimRes(AnimId::MenuAbeSpeak_Idle));
+            //ResourceManager::FreeResource_455550(field_E4_res_array[0]);
+            //field_E4_res_array[0] = nullptr;
+            //ResourceManager::Reclaim_Memory_455660(0);
+            mFnUpdate = &Menu::NewGameStart;
         }
     }
 }
@@ -1694,8 +1697,7 @@ void Menu::NewGameStart()
         const bool oldDeathReset = GetSurviveDeathReset();
         SetSurviveDeathReset(true);
         // TODO: The ctor of the playback should load the demo res itself
-        u8** ppRes = nullptr; //ResourceManager::GetLoadedResource(ResourceManager::Resource_Plbk, gJoyResId, 1, 0);
-        relive_new DemoPlayback(ppRes);
+        relive_new DemoPlayback();
         SetSurviveDeathReset(oldDeathReset);
     }
     else
