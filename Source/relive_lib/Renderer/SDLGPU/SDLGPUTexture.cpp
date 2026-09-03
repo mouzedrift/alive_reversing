@@ -52,7 +52,7 @@ void SDLGPUTexture::Reset()
     mTexture = nullptr;
 }
 
-void SDLGPUTexture::Upload(SDL_GPUCommandBuffer* commandBuffer, const void* pixels, Uint32 pitch)
+void SDLGPUTexture::Upload(SDL_GPUCommandBuffer* commandBuffer, const void* pixels, Uint32 pitch, Uint32 bytesPerPixel)
 {
     SDL_GPUTransferBufferCreateInfo transferInfo = {};
     transferInfo.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD;
@@ -69,7 +69,7 @@ void SDLGPUTexture::Upload(SDL_GPUCommandBuffer* commandBuffer, const void* pixe
 
     SDL_GPUTextureTransferInfo source = {};
     source.transfer_buffer = transfer;
-    source.pixels_per_row = pitch / 4;
+    source.pixels_per_row = pitch / bytesPerPixel;
     source.rows_per_layer = mHeight;
     SDL_GPUTextureRegion destination = {};
     destination.texture = mTexture;

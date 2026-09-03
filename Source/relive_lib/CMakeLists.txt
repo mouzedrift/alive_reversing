@@ -389,6 +389,8 @@ SET(renderer_src
     Renderer/SDLGPU/SDLGPURenderer.cpp
     Renderer/SDLGPU/ShaderPassthru.hlsl
     Renderer/SDLGPU/ShaderPsx.hlsl
+    Renderer/SDLGPU/ft4.vert.glsl
+    Renderer/SDLGPU/ft4.frag.glsl
     Renderer/SDLGPU/colored.vert.hlsl
     Renderer/SDLGPU/colored.frag.hlsl
     Renderer/SDLGPU/generated/colored_vert_spv.hpp
@@ -398,6 +400,8 @@ SET(renderer_src
     Renderer/SDLGPU/generated/passthru_filter_frag_spv.hpp
     Renderer/SDLGPU/generated/psx_vert_spv.hpp
     Renderer/SDLGPU/generated/psx_frag_spv.hpp
+    Renderer/SDLGPU/generated/ft4_vert_spv.hpp
+    Renderer/SDLGPU/generated/ft4_frag_spv.hpp
     Renderer/PaletteCache.hpp
     Renderer/TextureCache.hpp
     Renderer/OpenGL3/Batcher.hpp

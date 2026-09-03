@@ -20,7 +20,7 @@ public:
     Uint32 Width() const { return mWidth; }
     Uint32 Height() const { return mHeight; }
 
-    void Upload(SDL_GPUCommandBuffer* commandBuffer, const void* pixels, Uint32 pitch);
+    void Upload(SDL_GPUCommandBuffer* commandBuffer, const void* pixels, Uint32 pitch, Uint32 bytesPerPixel = 4);
 
     void Reset();
 

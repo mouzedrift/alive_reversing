@@ -21,6 +21,8 @@ eval "$DXC_COMMAND" -spirv -T vs_6_0 -E psx_vertex "$SHADER_DIR/ShaderPsx.hlsl" 
 eval "$DXC_COMMAND" -spirv -T ps_6_0 -E psx_fragment "$SHADER_DIR/ShaderPsx.hlsl" -Fo "$BUILD_DIR/psx.frag.spv"
 eval "$DXC_COMMAND" -spirv -T vs_6_0 -E main "$SHADER_DIR/colored.vert.hlsl" -Fo "$BUILD_DIR/colored.vert.spv"
 eval "$DXC_COMMAND" -spirv -T ps_6_0 -E main "$SHADER_DIR/colored.frag.hlsl" -Fo "$BUILD_DIR/colored.frag.spv"
+glslangValidator -V --target-env vulkan1.2 -S vert -e main "$SHADER_DIR/ft4.vert.glsl" -o "$BUILD_DIR/ft4.vert.spv"
+glslangValidator -V --target-env vulkan1.2 -S frag -e main "$SHADER_DIR/ft4.frag.glsl" -o "$BUILD_DIR/ft4.frag.spv"
 
 for shader in "$BUILD_DIR"/*.spv; do
     name=$(basename "$shader" .spv | tr '.-' '__')
