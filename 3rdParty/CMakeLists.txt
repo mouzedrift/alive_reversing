@@ -74,6 +74,7 @@ add_library(imgui
     imgui/imgui_widgets.cpp
     imgui/backends/imgui_impl_sdl3.cpp
     imgui/backends/imgui_impl_opengl3.cpp
+    imgui/backends/imgui_impl_sdlgpu3.cpp
     )
 
 target_link_libraries(imgui

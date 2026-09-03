@@ -381,6 +381,23 @@ SET(AliveLibAESrc
 SET(renderer_src
     Renderer/IRenderer.hpp
     Renderer/IRenderer.cpp
+    Renderer/SDLGPU/SDLGPUContext.hpp
+    Renderer/SDLGPU/SDLGPUContext.cpp
+    Renderer/SDLGPU/SDLGPUTexture.hpp
+    Renderer/SDLGPU/SDLGPUTexture.cpp
+    Renderer/SDLGPU/SDLGPURenderer.hpp
+    Renderer/SDLGPU/SDLGPURenderer.cpp
+    Renderer/SDLGPU/ShaderPassthru.hlsl
+    Renderer/SDLGPU/ShaderPsx.hlsl
+    Renderer/SDLGPU/colored.vert.hlsl
+    Renderer/SDLGPU/colored.frag.hlsl
+    Renderer/SDLGPU/generated/colored_vert_spv.hpp
+    Renderer/SDLGPU/generated/colored_frag_spv.hpp
+    Renderer/SDLGPU/generated/passthru_vert_spv.hpp
+    Renderer/SDLGPU/generated/passthru_frag_spv.hpp
+    Renderer/SDLGPU/generated/passthru_filter_frag_spv.hpp
+    Renderer/SDLGPU/generated/psx_vert_spv.hpp
+    Renderer/SDLGPU/generated/psx_frag_spv.hpp
     Renderer/PaletteCache.hpp
     Renderer/TextureCache.hpp
     Renderer/OpenGL3/Batcher.hpp

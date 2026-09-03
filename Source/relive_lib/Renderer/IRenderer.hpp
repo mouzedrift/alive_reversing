@@ -87,7 +87,8 @@ public:
     enum class Renderers
     {
         Sdl3,
-        OpenGL
+        OpenGL,
+        SDLGPU
     };
 
     static IRenderer* GetRenderer();

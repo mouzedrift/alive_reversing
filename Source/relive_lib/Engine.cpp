@@ -77,6 +77,12 @@ void Engine::CmdLineRenderInit()
             LOG_INFO("Command line set renderer to sdl");
             rendererToCreate = IRenderer::Renderers::Sdl3;
         }
+
+        if (strcmpi(renderer.c_str(), "sdlgpu") == 0 || strcmpi(renderer.c_str(), "gpu") == 0)
+        {
+            LOG_INFO("Command line set renderer to sdlgpu");
+            rendererToCreate = IRenderer::Renderers::SDLGPU;
+        }
     }
 
     if (mGameType == GameType::eAe)
@@ -131,8 +137,8 @@ void Engine::Run()
     if (mGameType == GameType::eAe)
     {
         LOG_INFO("AE standalone starting...");
-        //Game_Main(EReliveLevelIds::eMines, 1, 4);
-        Game_Main(EReliveLevelIds::eMenu, 1, 25);
+        Game_Main(EReliveLevelIds::eMines, 1, 4);
+        //Game_Main(EReliveLevelIds::eMenu, 1, 25);
     }
     else
     {

@@ -1,6 +1,7 @@
 #include "../stdafx.h"
 #include "IRenderer.hpp"
 #include "OpenGL3/OpenGLRenderer.hpp"
+#include "SDLGPU/SDLGPURenderer.hpp"
 #include "SDL3/Sdl3Renderer.hpp"
 
 #include "../../relive_lib/FatalError.hpp"
@@ -72,6 +73,11 @@ bool IRenderer::CreateRenderer(Renderers type, const std::string& windowTitle)
             case Renderers::OpenGL:
                 LOG_INFO("Create OpenGL renderer");
                 MakeRenderer<OpenGLRenderer>(windowTitle + " [OpenGL3]", SDL_WINDOW_OPENGL);
+                break;
+
+            case Renderers::SDLGPU:
+                LOG_INFO("Create SDL GPU renderer");
+                MakeRenderer<SDLGPURenderer>(windowTitle + " [SDL GPU]", 0);
                 break;
 
             default:
