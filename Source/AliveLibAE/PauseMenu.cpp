@@ -1057,7 +1057,9 @@ void PauseMenu::VUpdate()
                     if (currentCamChar >= '0' && currentCamChar <= '9')
                     {
                         // "Lower" case numbers in the font atlas
-                        sScreenStringBuffer[i] = currentCamChar - 58;
+                        // TODO: fix this since we no longer look up glyphs by checking the index
+                        //sScreenStringBuffer[i] = currentCamChar - 58;
+                        sScreenStringBuffer[i] = currentCamChar;
                     }
                     else
                     {

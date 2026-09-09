@@ -14,7 +14,7 @@
 #include "../relive_lib/GameObjects/ScreenManager.hpp"
 #include "../relive_lib/PsxDisplay.hpp"
 
-static const char_type* sLCDMessageTable[101] = {
+static const char_type* sLCDMessageTable_EN[101] = {
     "",
     "                               SoulStorm Mining Company is an equal opportunity employer.",
     "                               Work! Do it!",
@@ -118,6 +118,20 @@ static const char_type* sLCDMessageTable[101] = {
     "",
 };
 
+/*
+enum class Language
+{
+    English,
+    German
+};
+
+
+std::map<Language, const char_type* const*> sLanguageLCDTables =
+{
+    {Language::English, sLCDMessageTable_EN},
+    {Language::German, sLCDMessageTable_DE}
+};
+*/
 
 static const StringTable* sPerLvlMessages[static_cast<u32>(LevelIds::eCredits_16) + 1][99] = {};
 
@@ -131,6 +145,9 @@ class LCDMessages final
 public:
     const char_type* GetMessage(EReliveLevelIds lvlId, u32 pathId, u32 msgId) const
     {
+        static const char_type* kTestStr = u8"           !+,-.0123456789:;=?ABCDEFGHIJKLMNOPQRSTUVWXYZ\\abcdefghijklmnopqrstuvwxyzçÜÉâÄàÇêëèïîìäéôÖòûùöáíóúÑñ¿¡";
+        return kTestStr;
+
         const StringTable* pTable = sPerLvlMessages[static_cast<u32>(MapWrapper::ToAE(lvlId))][pathId];
         if (pTable && pTable->mStringCount > 0)
         {
@@ -145,14 +162,14 @@ public:
             }
         }
 
-        if (msgId < ALIVE_COUNTOF(sLCDMessageTable))
+        if (msgId < ALIVE_COUNTOF(sLCDMessageTable_EN))
         {
-            return sLCDMessageTable[msgId];
+            return sLCDMessageTable_EN[msgId];
         }
         else
         {
             LOG_WARNING("LCD message out of bounds using original message table id: %d", msgId);
-            return sLCDMessageTable[0];
+            return sLCDMessageTable_EN[0];
         }
     }
 };

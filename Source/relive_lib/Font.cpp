@@ -46,6 +46,24 @@ static s32 ScreenSpaceToWorldSpace(s32 x)
     return GetGameType() == GameType::eAo ? PCToPsxX(x, 20) : static_cast<s32>(x * 0.575);
 }
 
+static std::string decodeUtf8(const char* text, size_t& i)
+{
+    size_t start = i;
+
+    unsigned char c = text[i];
+
+    if (c < 0x80)
+        i += 1;
+    else if ((c & 0xE0) == 0xC0)
+        i += 2;
+    else if ((c & 0xF0) == 0xE0)
+        i += 3;
+    else if ((c & 0xF8) == 0xF0)
+        i += 4;
+
+    return std::string(text + start, i - start);
+}
+
 s32 AliveFont::DrawString(OrderingTable& ot, const char_type* text, s32 x, s16 y, relive::TBlendModes blendMode, s32 bSemiTrans, s32 disableBlending, Layer layer, u8 r, u8 g, u8 b, s32 polyOffset, FP scale, s32 maxRenderWidth, s16 colorRandomRange)
 {
     if (!gFontDrawScreenSpace)
@@ -59,82 +77,81 @@ s32 AliveFont::DrawString(OrderingTable& ot, const char_type* text, s32 x, s16 y
     s32 charInfoIndex = 0;
     auto poly = &mFntPolyArray[polyOffset];
 
-    for (u32 i = 0; i < strlen(text); i++)
+    size_t i = 0;
+    while (i < strlen(text))
     {
         if (offsetX >= maxRenderX)
         {
             break;
         }
 
-        const u8 c = text[i];
-        if (c <= 32 || c > 175)
+        std::string glyph = decodeUtf8(text, i);
+        if (glyph == u8" ")
         {
-            if (c < (GetGameType() == GameType::eAo ? 8 : 7) || c > 31)
+            if (GetGameType() == GameType::eAo)
             {
-                if (GetGameType() == GameType::eAo)
-                {
-                    offsetX += mFontContext->mAtlasArray[0].mWidth;
-                }
-
-                offsetX += mFontContext->mAtlasArray[1].mWidth;
-                continue;
+                offsetX += mFontContext->GetGlyphSpacing();
             }
 
-            charInfoIndex = c + (GetGameType() == GameType::eAo ? 84 : 137);
+            offsetX += mFontContext->GetSpaceWidth();
+            continue;
+        }
+
+        auto it = mFontContext->mAtlas->find(glyph);
+        if (it != mFontContext->mAtlas->end())
+        {
+            const Font_AtlasEntry& atlasEntry = it->second;
+            const s8 charWidth = atlasEntry.mWidth;
+            const auto charHeight = atlasEntry.mHeight;
+
+            // TODO: Recalc when atlas is converted
+            const s8 texture_u = static_cast<s8>(atlasEntry.x);
+            const s8 texture_v = static_cast<s8>(atlasEntry.mY);
+
+            const s16 widthScaled = static_cast<s16>(charWidth * FP_GetDouble(scale));
+            const s16 heightScaled = static_cast<s16>(charHeight * FP_GetDouble(scale));
+
+            poly->SetSemiTransparent(bSemiTrans);
+            poly->SetShadeTex(disableBlending);
+
+            poly->SetRGB0(
+                static_cast<u8>(r + Math_RandomRange(-colorRandomRange, colorRandomRange)),
+                static_cast<u8>(g + Math_RandomRange(-colorRandomRange, colorRandomRange)),
+                static_cast<u8>(b + Math_RandomRange(-colorRandomRange, colorRandomRange)));
+
+            // P0
+            poly->SetXY0(offsetX, y);
+            poly->SetUV0(texture_u, texture_v);
+
+            // P1
+            poly->SetXY1(offsetX + widthScaled, y);
+            poly->SetUV1(texture_u + charWidth, texture_v);
+
+            // P2
+            poly->SetXY2(offsetX, y + heightScaled);
+            poly->SetUV2(texture_u, texture_v + charHeight);
+
+            // P3
+            poly->SetXY3(offsetX + widthScaled, y + heightScaled);
+            poly->SetUV3(texture_u + charWidth, texture_v + charHeight);
+
+            poly->SetBlendMode(blendMode);
+
+            poly->mFont = mFontContext;
+
+            ot.Add(layer, poly);
+
+            ++characterRenderCount;
+
+            offsetX += widthScaled + FP_GetExponent(FP_FromInteger(mFontContext->GetGlyphSpacing()) * scale);
+
+            poly++;
         }
         else
         {
-            charInfoIndex = c - 31;
+            LOG_INFO("unsupported glyph: %s", glyph.c_str());
+            break;
         }
-
-        const auto fContext = mFontContext;
-        const auto atlasEntry = &fContext->mAtlasArray[charInfoIndex];
-
-        const s8 charWidth = atlasEntry->mWidth;
-        const auto charHeight = atlasEntry->mHeight;
-
-        // TODO: Recalc when atlas is converted
-        const s8 texture_u = static_cast<s8>(atlasEntry->x);
-        const s8 texture_v = static_cast<s8>(atlasEntry->mY);
-
-        const s16 widthScaled = static_cast<s16>(charWidth * FP_GetDouble(scale));
-        const s16 heightScaled = static_cast<s16>(charHeight * FP_GetDouble(scale));
-
-        poly->SetSemiTransparent(bSemiTrans);
-        poly->SetShadeTex(disableBlending);
-
-        poly->SetRGB0(
-            static_cast<u8>(r + Math_RandomRange(-colorRandomRange, colorRandomRange)),
-            static_cast<u8>(g + Math_RandomRange(-colorRandomRange, colorRandomRange)),
-            static_cast<u8>(b + Math_RandomRange(-colorRandomRange, colorRandomRange)));
-
-        // P0
-        poly->SetXY0(offsetX, y);
-        poly->SetUV0(texture_u, texture_v);
-
-        // P1
-        poly->SetXY1(offsetX + widthScaled, y);
-        poly->SetUV1(texture_u + charWidth, texture_v);
-
-        // P2
-        poly->SetXY2(offsetX, y + heightScaled);
-        poly->SetUV2(texture_u, texture_v + charHeight);
-
-        // P3
-        poly->SetXY3(offsetX + widthScaled, y + heightScaled);
-        poly->SetUV3(texture_u + charWidth, texture_v + charHeight);
-
-        poly->SetBlendMode(blendMode);
-
-        poly->mFont = mFontContext;
-
-        ot.Add(layer, poly);
-
-        ++characterRenderCount;
-
-        offsetX += widthScaled + FP_GetExponent(FP_FromInteger(mFontContext->mAtlasArray[0].mWidth) * scale);
-
-        poly++;
     }
 
     return polyOffset + characterRenderCount;
@@ -144,38 +161,34 @@ s32 AliveFont::MeasureTextWidth(const char_type* text)
 {
     s32 result = 0;
 
-    for (u32 i = 0; i < strlen(text); i++)
+    size_t i = 0;
+    while (i < strlen(text))
     {
-        const s8 c = text[i];
+        const u8 c = text[i];
         s32 charIndex = 0;
 
-        if (c <= 32 || static_cast<u8>(c) > 175)
+        std::string glyph = decodeUtf8(text, i);
+
+        // space or control char (button prompt)
+        if (glyph == u8" ")
         {
-            if (c < 7 || c > 31)
-            {
-                result += mFontContext->mAtlasArray[1].mWidth;
-                continue;
-            }
-            else
-            {
-                charIndex = c + 137;
-            }
-        }
-        else
-        {
-            charIndex = c - 31;
+            result += mFontContext->GetSpaceWidth();
+            continue;
         }
 
-        result += mFontContext->mAtlasArray[0].mWidth;
-        result += mFontContext->mAtlasArray[charIndex].mWidth;
+        auto it = mFontContext->mAtlas->find(glyph);
+        if (it != mFontContext->mAtlas->end())
+        {
+            result += mFontContext->GetGlyphSpacing();
+            result += it->second.mWidth;
+        }
     }
 
     if (!gFontDrawScreenSpace)
     {
         if (GetGameType() == GameType::eAo)
         {
-            // sub 2??
-            result -= mFontContext->mAtlasArray[0].mWidth;
+            result -= mFontContext->GetGlyphSpacing();
         }
         result = ScreenSpaceToWorldSpace(result);
     }
@@ -198,17 +211,21 @@ s32 AliveFont::MeasureCharacterWidth(char_type character)
 
     if (character <= 32)
     {
+        // space or control char (button prompt)
         if (character < (GetGameType() == GameType::eAo ? 8 : 7)  || character > 31)
         {
-            return mFontContext->mAtlasArray[1].mWidth;
+            return mFontContext->GetSpaceWidth();
         }
-        charIndex = character + (GetGameType() == GameType::eAo ? 84 : 137) ;
+        charIndex = character + 137;
     }
     else
     {
         charIndex = character - 31;
     }
-    result = mFontContext->mAtlasArray[charIndex].mWidth;
+
+    // TODO:
+    result = 12;
+    //result = mFontContext->mAtlasArray[charIndex].mWidth;
 
     if (!gFontDrawScreenSpace)
     {
@@ -220,7 +237,7 @@ s32 AliveFont::MeasureCharacterWidth(char_type character)
     return result;
 }
 
-// Wasn't too sure what to call this. Returns the s8 offset of where the text is cut off. (left and right region)
+// Wasn't too sure what to call this. Returns the char offset of where the text is cut off. (left and right region)
 const char_type* AliveFont::SliceText(const char_type* text, s32 left, FP scale, s32 right)
 {
     s32 xOff = 0;
@@ -243,30 +260,32 @@ const char_type* AliveFont::SliceText(const char_type* text, s32 left, FP scale,
         xOff = WorldSpaceToScreenSpace(left);
     }
 
-    for (const char_type* strPtr = text; *strPtr; strPtr++)
+    size_t i = 0;
+    while (i < strlen(text))
     {
-        s32 atlasIdx = 0;
-        char_type character = *strPtr;
         if (xOff >= rightWorldSpace)
         {
             break;
         }
 
-        if (character <= 32 || character > 122)
+        std::string glyph = decodeUtf8(&text[i], i);
+        if (glyph == u8" ")
         {
-            if (character < (GetGameType() == GameType::eAo ? 8 : 7)  || character > 31)
-            {
-                xOff += mFontContext->mAtlasArray[1].mWidth;
-                continue;
-            }
-            atlasIdx = character + (GetGameType() == GameType::eAo ? 84 : 137) ;
+            xOff += mFontContext->GetSpaceWidth();
+            continue;
+        }
+
+        auto it = mFontContext->mAtlas->find(glyph);
+        if (it != mFontContext->mAtlas->end())
+        {
+            // TODO:
+            xOff += 12 * FP_GetDouble(scale) + mFontContext->GetGlyphSpacing();
         }
         else
         {
-            atlasIdx = character - 31;
+            LOG_INFO("unsupported glyph: %s", glyph.c_str());
+            break;
         }
-
-        xOff += static_cast<s32>(mFontContext->mAtlasArray[atlasIdx].mWidth * FP_GetDouble(scale)) + mFontContext->mAtlasArray->mWidth;
     }
 
     return text;
@@ -276,7 +295,12 @@ void FontContext::LoadFontType(FontType resourceID, ResourceManagerWrapper& resM
 {
     if (resourceID == FontType::Debug)
     {
-        mAtlasArray = sDebugFontAtlas;
+        mFntResource = resMan.LoadFont(FontType::LcdFont);
+        mAtlas = &sLcdFontAtlas;
+
+        // TODO:
+        //mAtlas = sDebugFontAtlas;
+        return;
 
         mFntResource.mId = resourceID;
         mFntResource.mPngPtr = std::make_shared<PngData>();
@@ -308,19 +332,17 @@ void FontContext::LoadFontType(FontType resourceID, ResourceManagerWrapper& resM
         return;
     }
 
-
     FontResource fontRes = resMan.LoadFont(resourceID);
     mFntResource = fontRes;
 
     // TODO: Will get moved to a json file in FontResource
-    // which will remove the need for GetGameType() in here also
     switch (resourceID)
     {
         case FontType::PauseMenu:
-            mAtlasArray = GetGameType() == GameType::eAe ? sPauseMenuFontAtlas : AO::sPauseMenuFontAtlas;
+            mAtlas = &sPauseMenuFontAtlas;
             break;
         case FontType::LcdFont:
-            mAtlasArray = GetGameType() == GameType::eAe ? sLcdFontAtlas : AO::sLcdFontAtlas;
+            mAtlas = &sLcdFontAtlas;
             break;
         default:
             ALIVE_FATAL("Unknown font resource ID !!!");

@@ -25,17 +25,21 @@ struct Font_AtlasEntry final
     u8 mY;
     u8 mWidth;
     u8 mHeight;
-    std::string mCharName;
 };
 
 class FontContext final
 {
 public:
-    const Font_AtlasEntry* mAtlasArray = nullptr;
+    std::unordered_map<std::string, Font_AtlasEntry>* mAtlas = nullptr;
     FontResource mFntResource;
 
     void LoadFontType(FontType resourceID, ResourceManagerWrapper& resMan);
-
+    //inline u8 GetGlyphSpacing() { return mAtlasArray[0].mWidth; }
+    // this is used for both button prompt width and space character width
+    //inline u8 GetSpaceWidth() { return mAtlasArray[1].mWidth; }
+    // TODO: temp hack
+    inline u8 GetGlyphSpacing() { return 2; }
+    inline u8 GetSpaceWidth() { return 14; }
 };
 
 
