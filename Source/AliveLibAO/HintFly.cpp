@@ -25,6 +25,9 @@ class HintFlyMessages final
 public:
     const char_type* GetMessage(u32 msgId) const
     {
+        static const char_type* kTestStr = u8"ABCD EFGH IJKL MNOP QRST UVWX YZÄÆ ÀÁÂŒ ÇÈÉÊ ÏÌÎÑ ÖÒÓÔ ÜÙÚÛ '-";
+        return kTestStr;
+
         if (msgId < ALIVE_COUNTOF(sHintFlyMessages))
         {
             return sHintFlyMessages[msgId];
@@ -101,7 +104,11 @@ HintFly::HintFly(relive::Path_HintFly* pTlv, const Guid& tlvId, ResourceManagerW
         }
         else
         {
-            curWordLen += pHintFlyAlphabet_4C7268[(*pMsg) - 'A'][0];
+            auto it = pHintFlyAlphabet_4C7268.find(GlyphId::FromUtf8(pMsg));
+            if (it != pHintFlyAlphabet_4C7268.end())
+            {
+                curWordLen += it->second[0];
+            }
         }
         pMsg++;
     }
@@ -205,7 +212,13 @@ void HintFly::FormWordAndAdvanceToNextWord()
     s32 particleIdx = 0;
     for (s32 i = 0; i < letterCount; i++)
     {
-        const auto pArray = pHintFlyAlphabet_4C7268[msgPtr[i] - 'A'];
+        auto it = pHintFlyAlphabet_4C7268.find(GlyphId::FromUtf8(&msgPtr[i]));
+        if (it == pHintFlyAlphabet_4C7268.end())
+        {
+            continue;
+        }
+
+        const auto pArray = it->second;
         //const auto pArray = HintFlyLetter_E_circumflex_4C7120; // letter test code
         // First element is the count of "pixels" that make up a word
         const s32 total = pArray[0];
@@ -406,7 +419,12 @@ void HintFly::VUpdate()
                 const char_type* pMsgIter = gHintFlyMessages.GetMessage(mMessageId) + mMsgIdx;
                 while (*pMsgIter != ' ' && *pMsgIter != '\0')
                 {
-                    len += pHintFlyAlphabet_4C7268[(*pMsgIter) - 'A'][0];
+                    auto it = pHintFlyAlphabet_4C7268.find(GlyphId::FromUtf8(pMsgIter));
+                    if (it != pHintFlyAlphabet_4C7268.end())
+                    {
+                        len += it->second[0];
+                    }
+
                     pMsgIter++;
                 }
                 mHintFlyIdx = 0;

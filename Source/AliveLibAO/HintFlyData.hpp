@@ -628,7 +628,7 @@ const u8 sHintFlyLetter_Z[22] = {
     223u,
 };
 
-[[maybe_unused]] const u8 HintFlyLetter_A_diaeresis_4C7028[23] = {
+const u8 sHintFlyLetter_A_Diaeresis[23] = {
     22u,
     15u,
     29u,
@@ -654,8 +654,7 @@ const u8 sHintFlyLetter_Z[22] = {
     239u,
 };
 
-// the letter that looks like AE
-[[maybe_unused]] const u8 HintFlyLetter_ash_4C7040[29] = {
+const u8 sHintFlyLetter_Ash[29] = {
     28u,
     15u,
     29u,
@@ -687,7 +686,7 @@ const u8 sHintFlyLetter_Z[22] = {
     223u,
 };
 
-[[maybe_unused]] const u8 HintFlyLetter_A_grave_4C7060[21] = {
+const u8 sHintFlyLetter_A_Grave[21] = {
     20u,
     15u,
     29u,
@@ -711,7 +710,7 @@ const u8 sHintFlyLetter_Z[22] = {
     239u,
 };
 
-[[maybe_unused]] const u8 HintFlyLetter_A_acute_4C7078[21] = {
+const u8 sHintFlyLetter_A_Acute[21] = {
     20u,
     15u,
     29u,
@@ -735,7 +734,7 @@ const u8 sHintFlyLetter_Z[22] = {
     239u,
 };
 
-[[maybe_unused]] const u8 HintFlyLetter_A_circumflex_4C7090[21] = {
+const u8 sHintFlyLetter_A_Circumflex[21] = {
     20u,
     15u,
     29u,
@@ -759,8 +758,7 @@ const u8 sHintFlyLetter_Z[22] = {
     239u,
 };
 
-// something that looks like euro ?
-[[maybe_unused]] const u8 byte_4C70A8[28] = {
+const u8 sHintFlyLetter_Ethel[28] = {
     27u,
     21u,
     23u,
@@ -791,7 +789,7 @@ const u8 sHintFlyLetter_Z[22] = {
     223u,
 };
 
-[[maybe_unused]] const u8 HintFlyLetter_C_cedilla_4C70C8[20] = {
+const u8 sHintFlyLetter_C_Cedilla[20] = {
     19u,
     21u,
     23u,
@@ -814,7 +812,7 @@ const u8 sHintFlyLetter_Z[22] = {
     218u,
 };
 
-[[maybe_unused]] const u8 HintFlyLetter_E_grave_4C70E0[28] = {
+const u8 sHintFlyLetter_E_Grave[28] = {
     27u,
     19u,
     21u,
@@ -845,7 +843,7 @@ const u8 sHintFlyLetter_Z[22] = {
     223u,
 };
 
-[[maybe_unused]] const u8 HintFlyLetter_E_acute_4C7100[28] = {
+const u8 sHintFlyLetter_E_Acute[28] = {
     27u,
     19u,
     21u,
@@ -876,7 +874,7 @@ const u8 sHintFlyLetter_Z[22] = {
     223u,
 };
 
-[[maybe_unused]] const u8 HintFlyLetter_E_circumflex_4C7120[28] = {
+const u8 sHintFlyLetter_E_Circumflex[28] = {
     27u,
     19u,
     21u,
@@ -907,8 +905,7 @@ const u8 sHintFlyLetter_Z[22] = {
     223u,
 };
 
-// I with two dots??
-[[maybe_unused]] const u8 byte_4C7140[24] = {
+const u8 sHintFlyLetter_I_Diaeresis[24] = {
     23u,
     19u,
     31u,
@@ -934,8 +931,7 @@ const u8 sHintFlyLetter_Z[22] = {
     211u,
     223u};
 
-// also looks like the one below
-[[maybe_unused]] const u8 byte_4C7158[23] = {
+const u8 sHintFlyLetter_I_Grave[23] = {
     22u,
     19u,
     31u,
@@ -960,7 +956,7 @@ const u8 sHintFlyLetter_Z[22] = {
     211u,
     223u};
 
-[[maybe_unused]] const u8 HintFlyLetter_I_circumflex_4C7170[23] = {
+const u8 sHintFlyLetter_I_Circumflex[23] = {
     22u,
     19u,
     31u,
@@ -986,7 +982,7 @@ const u8 sHintFlyLetter_Z[22] = {
     223u,
 };
 
-[[maybe_unused]] const u8 HintFlyLetter_N_tilde_4C7188[24] = {
+const u8 sHintFlyLetter_N_Tilde[24] = {
     23u,
     21u,
     23u,
@@ -1012,7 +1008,7 @@ const u8 sHintFlyLetter_Z[22] = {
     221u,
     223u};
 
-[[maybe_unused]] const u8 HintFlyLetter_O_diaeresis_4C71A0[21] = {
+const u8 sHintFlyLetter_O_Diaeresis[21] = {
     20u,
     24u,
     27u,
@@ -1036,7 +1032,7 @@ const u8 sHintFlyLetter_Z[22] = {
     235u,
 };
 
-[[maybe_unused]] const u8 HintFlyLetter_O_grave_4C71B8[19] = {
+const u8 sHintFlyLetter_O_Grave[19] = {
     18u,
     24u,
     27u,
@@ -1058,7 +1054,7 @@ const u8 sHintFlyLetter_Z[22] = {
     235u,
 };
 
-[[maybe_unused]] const u8 HintFlyLetter_O_acute_4C71D0[19] = {
+const u8 sHintFlyLetter_O_Acute[19] = {
     18u,
     24u,
     27u,
@@ -1080,7 +1076,7 @@ const u8 sHintFlyLetter_Z[22] = {
     235u,
 };
 
-[[maybe_unused]] const u8 HintFlyLetter_O_circumflex_4C71E8[19] = {
+const u8 sHintFlyLetter_O_Circumflex[19] = {
     18u,
     24u,
     27u,
@@ -1102,8 +1098,7 @@ const u8 sHintFlyLetter_Z[22] = {
     235u,
 };
 
-// u with two dots at the top?
-[[maybe_unused]] const u8 byte_4C7200[22] = {
+const u8 sHintFlyLetter_U_Diaeresis[22] = {
     21u,
     35u,
     37u,
@@ -1128,7 +1123,7 @@ const u8 sHintFlyLetter_Z[22] = {
     205u,
 };
 
-[[maybe_unused]] const u8 HintFlyLetter_U_grave_4C7218[19] = {
+const u8 sHintFlyLetter_U_Grave[19] = {
     18u,
     37u,
     39u,
@@ -1150,7 +1145,7 @@ const u8 sHintFlyLetter_Z[22] = {
     205u,
 };
 
-[[maybe_unused]] const u8 HintFlyLetter_U_acute_4C7230[19] = {
+const u8 sHintFlyLetter_U_Acute[19] = {
     18u,
     37u,
     39u,
@@ -1172,7 +1167,7 @@ const u8 sHintFlyLetter_Z[22] = {
     205u,
 };
 
-[[maybe_unused]] const u8 HintFlyLetter_U_circumflex_4C7248[19] = {
+const u8 sHintFlyLetter_U_Circumflex[19] = {
     18u,
     37u,
     39u,
@@ -1194,38 +1189,62 @@ const u8 sHintFlyLetter_Z[22] = {
     205u,
 };
 
-[[maybe_unused]] const u8 HintFlyLetters_dot_4C725C[3] = {2u, 113u, 115u};
+const u8 sHintFlyLetters_SingleQuote[3] = {2u, 113u, 115u};
 
-[[maybe_unused]] const u8 HintFlyLetter_underscore_4C7260[7] = {6u, 42u, 74u, 106u, 138u, 170u, 202u};
+const u8 sHintFlyLetter_Dash[7] = {6u, 42u, 74u, 106u, 138u, 170u, 202u};
 
-
-const u8* pHintFlyAlphabet_4C7268[] = {
-    sHintFlyLetter_A,
-    sHintFlyLetter_B,
-    sHintFlyLetter_C,
-    sHintFlyLetter_D,
-    sHintFlyLetter_E,
-    sHintFlyLetter_F,
-    sHintFlyLetter_G,
-    sHintFlyLetter_H,
-    sHintFlyLetter_I,
-    sHintFlyLetter_J,
-    sHintFlyLetter_K,
-    sHintFlyLetter_L,
-    sHintFlyLetter_M,
-    sHintFlyLetter_N,
-    sHintFlyLetter_O,
-    sHintFlyLetter_P,
-    sHintFlyLetter_Q,
-    sHintFlyLetter_R,
-    sHintFlyLetter_S,
-    sHintFlyLetter_T,
-    sHintFlyLetter_U,
-    sHintFlyLetter_V,
-    sHintFlyLetter_W,
-    sHintFlyLetter_X,
-    sHintFlyLetter_Y,
-    sHintFlyLetter_Z,
+std::unordered_map<GlyphId, const u8*, GlyphIdHash> pHintFlyAlphabet_4C7268 =
+{
+    { GlyphId::FromUtf8(u8"A"), sHintFlyLetter_A },
+    { GlyphId::FromUtf8(u8"B"), sHintFlyLetter_B },
+    { GlyphId::FromUtf8(u8"C"), sHintFlyLetter_C },
+    { GlyphId::FromUtf8(u8"D"), sHintFlyLetter_D },
+    { GlyphId::FromUtf8(u8"E"), sHintFlyLetter_E },
+    { GlyphId::FromUtf8(u8"F"), sHintFlyLetter_F },
+    { GlyphId::FromUtf8(u8"G"), sHintFlyLetter_G },
+    { GlyphId::FromUtf8(u8"H"), sHintFlyLetter_H },
+    { GlyphId::FromUtf8(u8"I"), sHintFlyLetter_I },
+    { GlyphId::FromUtf8(u8"J"), sHintFlyLetter_J },
+    { GlyphId::FromUtf8(u8"K"), sHintFlyLetter_K },
+    { GlyphId::FromUtf8(u8"L"), sHintFlyLetter_L },
+    { GlyphId::FromUtf8(u8"M"), sHintFlyLetter_M },
+    { GlyphId::FromUtf8(u8"N"), sHintFlyLetter_N },
+    { GlyphId::FromUtf8(u8"O"), sHintFlyLetter_O },
+    { GlyphId::FromUtf8(u8"P"), sHintFlyLetter_P },
+    { GlyphId::FromUtf8(u8"Q"), sHintFlyLetter_Q },
+    { GlyphId::FromUtf8(u8"R"), sHintFlyLetter_R },
+    { GlyphId::FromUtf8(u8"S"), sHintFlyLetter_S },
+    { GlyphId::FromUtf8(u8"T"), sHintFlyLetter_T },
+    { GlyphId::FromUtf8(u8"U"), sHintFlyLetter_U },
+    { GlyphId::FromUtf8(u8"V"), sHintFlyLetter_V },
+    { GlyphId::FromUtf8(u8"W"), sHintFlyLetter_W },
+    { GlyphId::FromUtf8(u8"X"), sHintFlyLetter_X },
+    { GlyphId::FromUtf8(u8"Y"), sHintFlyLetter_Y },
+    { GlyphId::FromUtf8(u8"Z"), sHintFlyLetter_Z },
+    { GlyphId::FromUtf8(u8"Ä"), sHintFlyLetter_A_Diaeresis },
+    { GlyphId::FromUtf8(u8"Æ"), sHintFlyLetter_Ash },
+    { GlyphId::FromUtf8(u8"À"), sHintFlyLetter_A_Grave },
+    { GlyphId::FromUtf8(u8"Á"), sHintFlyLetter_A_Acute },
+    { GlyphId::FromUtf8(u8"Â"), sHintFlyLetter_A_Circumflex },
+    { GlyphId::FromUtf8(u8"Œ"), sHintFlyLetter_Ethel },
+    { GlyphId::FromUtf8(u8"Ç"), sHintFlyLetter_C_Cedilla },
+    { GlyphId::FromUtf8(u8"È"), sHintFlyLetter_E_Grave },
+    { GlyphId::FromUtf8(u8"É"), sHintFlyLetter_E_Acute },
+    { GlyphId::FromUtf8(u8"Ê"), sHintFlyLetter_E_Circumflex },
+    { GlyphId::FromUtf8(u8"Ï"), sHintFlyLetter_I_Diaeresis },
+    { GlyphId::FromUtf8(u8"Ì"), sHintFlyLetter_I_Grave },
+    { GlyphId::FromUtf8(u8"Î"), sHintFlyLetter_I_Circumflex },
+    { GlyphId::FromUtf8(u8"Ñ"), sHintFlyLetter_N_Tilde },
+    { GlyphId::FromUtf8(u8"Ö"), sHintFlyLetter_O_Diaeresis },
+    { GlyphId::FromUtf8(u8"Ò"), sHintFlyLetter_O_Grave },
+    { GlyphId::FromUtf8(u8"Ó"), sHintFlyLetter_O_Acute },
+    { GlyphId::FromUtf8(u8"Ô"), sHintFlyLetter_O_Circumflex },
+    { GlyphId::FromUtf8(u8"Ü"), sHintFlyLetter_U_Diaeresis },
+    { GlyphId::FromUtf8(u8"Ù"), sHintFlyLetter_U_Grave },
+    { GlyphId::FromUtf8(u8"Ú"), sHintFlyLetter_U_Acute },
+    { GlyphId::FromUtf8(u8"Û"), sHintFlyLetter_U_Circumflex },
+    { GlyphId::FromUtf8(u8"'"), sHintFlyLetters_SingleQuote },
+    { GlyphId::FromUtf8(u8"-"), sHintFlyLetter_Dash },
 };
 
 const char_type* sHintFlyMessages[36] = {
