@@ -13,6 +13,7 @@
 #include "../relive_lib/Sys.hpp"
 #include "Map.hpp"
 #include "GameAutoPlayer.hpp"
+#include "../relive_lib/FontString.hpp"
 
 namespace AO {
 
@@ -469,7 +470,10 @@ PauseMenu::PauseEntry PauseEntry2_4CDE98[2] = {
 
 PauseMenu::PauseEntry quitEntries_4CDEA8[3] = {
     {184, 110, "REALLY QUIT?", 128u, 16u, 255u, '\x01'},
-    {184, 135, kAO_ConfirmContinue " yes   " kAO_Esc " no", 160u, 160u, 160u, '\x01'},
+    // Proof-of-concept for the new {MacroName} FontString syntax (see DrawEntries) - was
+    // kAO_ConfirmContinue " yes   " kAO_Esc " no" (a raw control-byte string decoded by
+    // AO::String_FormatString). Everything else in this file is untouched.
+    {184, 135, "{Button_A} yes   {Button_B} no", 160u, 160u, 160u, '\x01'},
     {0, 0, nullptr, 0u, 0u, 0u, '\0'}};
 
 PauseMenu::PauseEntry saveEntries_4CDED0[4] = {
@@ -569,34 +573,71 @@ void PauseMenu::DrawEntries(OrderingTable& ot, PauseEntry* entry, s16 selectedEn
         {
             break;
         }
+        // Strings authored with the new {MacroName} FontString syntax (see quitEntries_4CDEA8)
+        // skip the legacy control-byte formatter entirely - String_FormatString doesn't know
+        // about '{' and would just pass it through as literal (unrenderable) text.
+        const bool isFontStringMacroText = strchr(stringBuffer, '{') != nullptr;
+
         char_type formattedString[128] = {};
-        String_FormatString(stringBuffer, formattedString);
+        FontString fontString;
+        if (isFontStringMacroText)
+        {
+            fontString.SetText(stringBuffer);
+        }
+        else
+        {
+            String_FormatString(stringBuffer, formattedString);
+        }
+
         s16 clampedFontWidth;
         if (entry[entryId].field_B == 1)
         {
-            s16 font_width_2 = static_cast<s16>(field_E4_font.MeasureTextWidth(formattedString));
+            s16 font_width_2 = static_cast<s16>(isFontStringMacroText ? field_E4_font.MeasureTextWidth(fontString) : field_E4_font.MeasureTextWidth(formattedString));
             clampedFontWidth = font_width_2 >= 608 ? 16 : (entry[entryId].x - font_width_2 / 2);
         }
         else
         {
             clampedFontWidth = entry[entryId].x;
         }
-        polyOffset = field_E4_font.DrawString(
-            ot,
-            formattedString,
-            clampedFontWidth,
-            entry[entryId].y,
-            relive::TBlendModes::eBlend_0,
-            1,
-            0,
-            Layer::eLayer_Menu_41,
-            static_cast<u8>(colourOffset + entry[entryId].mRed),
-            static_cast<u8>(colourOffset + entry[entryId].mGreen),
-            static_cast<u8>(colourOffset + entry[entryId].mBlue),
-            polyOffset,
-            FP_FromInteger(1),
-            640,
-            0);
+
+        if (isFontStringMacroText)
+        {
+            polyOffset = field_E4_font.DrawString(
+                ot,
+                fontString,
+                clampedFontWidth,
+                entry[entryId].y,
+                relive::TBlendModes::eBlend_0,
+                1,
+                0,
+                Layer::eLayer_Menu_41,
+                static_cast<u8>(colourOffset + entry[entryId].mRed),
+                static_cast<u8>(colourOffset + entry[entryId].mGreen),
+                static_cast<u8>(colourOffset + entry[entryId].mBlue),
+                polyOffset,
+                FP_FromInteger(1),
+                640,
+                0);
+        }
+        else
+        {
+            polyOffset = field_E4_font.DrawString(
+                ot,
+                formattedString,
+                clampedFontWidth,
+                entry[entryId].y,
+                relive::TBlendModes::eBlend_0,
+                1,
+                0,
+                Layer::eLayer_Menu_41,
+                static_cast<u8>(colourOffset + entry[entryId].mRed),
+                static_cast<u8>(colourOffset + entry[entryId].mGreen),
+                static_cast<u8>(colourOffset + entry[entryId].mBlue),
+                polyOffset,
+                FP_FromInteger(1),
+                640,
+                0);
+        }
     }
 
     const u8 color = field_126_page != PauseMenuPages::ePause_0 ? 100 : 160;

@@ -3,6 +3,31 @@
 #include "stdlib.hpp"
 #include "Input.hpp"
 
+// Only the directional macros have an obvious NamedGlyph equivalent - AE's other control
+// bytes (kAction, kRun, kConfirm, ...) always resolve through Input_GetButtonString_492530 to
+// literal display text, never to an icon glyph, so there's nothing meaningful to translate them
+// to here.
+bool AE_ControlByteToNamedGlyph(char_type controlByte, NamedGlyph& out)
+{
+    switch (controlByte)
+    {
+        case kUp[0]:
+            out = NamedGlyph::Dpad_Up;
+            return true;
+        case kDown[0]:
+            out = NamedGlyph::Dpad_Down;
+            return true;
+        case kLeft[0]:
+            out = NamedGlyph::Dpad_Left;
+            return true;
+        case kRight[0]:
+            out = NamedGlyph::Dpad_Right;
+            return true;
+        default:
+            return false;
+    }
+}
+
 void String_FormatString(const char_type* src, char_type* dst, s8 isAbeMotionsMenuWithAController)
 {
     const char_type* pSrcIter = src;

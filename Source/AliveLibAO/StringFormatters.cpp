@@ -156,3 +156,28 @@ void String_FormatString(const char_type* pInput, char_type* pOutput)
 }
 
 } // namespace AO
+
+// Only the directional macros have an obvious NamedGlyph equivalent - AO's other control
+// bytes always resolve through Input_GetButtonString to literal display text (or, for the
+// \x16-\x1F/\x2D range, to a raw control byte the atlas doesn't currently key by anything
+// meaningful - see FontResources.cpp), never to a NamedGlyph icon.
+bool AO_ControlByteToNamedGlyph(char_type controlByte, NamedGlyph& out)
+{
+    switch (controlByte)
+    {
+        case kAO_Up[0]:
+            out = NamedGlyph::Dpad_Up;
+            return true;
+        case kAO_Down[0]:
+            out = NamedGlyph::Dpad_Down;
+            return true;
+        case kAO_Left[0]:
+            out = NamedGlyph::Dpad_Left;
+            return true;
+        case kAO_Right[0]:
+            out = NamedGlyph::Dpad_Right;
+            return true;
+        default:
+            return false;
+    }
+}

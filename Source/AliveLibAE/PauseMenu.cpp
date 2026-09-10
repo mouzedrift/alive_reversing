@@ -1056,9 +1056,14 @@ void PauseMenu::VUpdate()
 
                     if (currentCamChar >= '0' && currentCamChar <= '9')
                     {
-                        // "Lower" case numbers in the font atlas
-                        // TODO: fix this since we no longer look up glyphs by checking the index
-                        //sScreenStringBuffer[i] = currentCamChar - 58;
+                        // "Lower"/small case numbers in the font atlas (GlyphId::FromUtf8(digit,
+                        // GlyphSize::Small) - see FontResources.cpp). sScreenStringBuffer is a
+                        // plain char_type[16] fed through the legacy DrawString(const char_type*)
+                        // path, which always resolves digits to GlyphSize::Normal - there's no
+                        // way to request the small variant through a plain char buffer.
+                        // TODO: switch this display to a FontString and emit the small digit
+                        // variant directly instead of leaving it as normal-size (matches
+                        // pre-existing behavior on this branch, not a regression).
                         sScreenStringBuffer[i] = currentCamChar;
                     }
                     else

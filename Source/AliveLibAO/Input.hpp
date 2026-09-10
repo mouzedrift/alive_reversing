@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../relive_lib/Function.hpp"
+#include "../relive_lib/Font.hpp"
 
 class BaseGameAutoPlayer;
 
@@ -92,6 +93,10 @@ enum InputCommands : u32
 #define kAO_Throw "\x0e"
 #define kAO_Crouch "\x0f"
 
+// Translates one of the legacy control-byte macros above (kAO_Up, kAO_Action, ...) onto the
+// shared NamedGlyph vocabulary used by {Button_A}-style FontString macros - see the AE
+// equivalent (AE_ControlByteToNamedGlyph) for why this only covers directional macros.
+bool AO_ControlByteToNamedGlyph(char_type controlByte, NamedGlyph& out);
 
 bool Input_IsChanting();
 void Input_InitKeyStateArray();

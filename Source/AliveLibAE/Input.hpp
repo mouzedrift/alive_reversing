@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../relive_lib/Function.hpp"
+#include "../relive_lib/Font.hpp"
 
 typedef s32 (*t_InputCallback)();
 
@@ -100,6 +101,13 @@ enum InputCommands : u32
 
 #define kHoistZTurn "\x1b"
 #define kDPad "\x1a"
+
+// Translates one of the legacy control-byte macros above (kUp, kAction, ...) onto the shared
+// NamedGlyph vocabulary used by {Button_A}-style FontString macros, so new text authored with
+// {Button_A} and old text authored with kUp/kAction/etc. can eventually share one atlas lookup.
+// Only covers bytes that map onto an actual button/dpad icon glyph; returns false for anything
+// that resolves to literal display text instead (see String_FormatString).
+bool AE_ControlByteToNamedGlyph(char_type controlByte, NamedGlyph& out);
 
 s32 Input_Remap_492680(InputCommands inputCmd);
 void Input_ResetBinding_4925A0(s32 input_command, s32 bIsGamePad);
