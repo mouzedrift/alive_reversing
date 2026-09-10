@@ -25,17 +25,18 @@ class HintFlyMessages final
 public:
     const char_type* GetMessage(u32 msgId) const
     {
-        static const char_type* kTestStr = u8"ABCD EFGH IJKL MNOP QRST UVWX YZÄÆ ÀÁÂŒ ÇÈÉÊ ÏÌÎÑ ÖÒÓÔ ÜÙÚÛ '-";
-        return kTestStr;
+        //static const char_type* kTestStr = u8"ABCD EFGH IJKL MNOP QRST UVWX YZÄÆ ÀÁÂŒ ÇÈÉÊ ÏÌÎÑ ÖÒÓÔ ÜÙÚÛ '-";
+        //return kTestStr;
 
-        if (msgId < ALIVE_COUNTOF(sHintFlyMessages))
+        auto it = sLanguageHintFlyTables.find(Language::English);
+        if (it != sLanguageHintFlyTables.end() && msgId < kHintFlyMessagesCount)
         {
-            return sHintFlyMessages[msgId];
+            return it->second[msgId];
         }
         else
         {
             LOG_WARNING("HintFly message out of bounds using original message table id: %d", msgId);
-            return sHintFlyMessages[0];
+            return it->second[0];
         }
     }
 };

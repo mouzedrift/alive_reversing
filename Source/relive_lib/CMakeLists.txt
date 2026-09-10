@@ -702,6 +702,7 @@ SET(relive_lib_src
     Font.cpp
     FontString.hpp
     FontString.cpp
+    Localization.hpp
 )
 add_library(relive_lib ${relive_lib_src})
 

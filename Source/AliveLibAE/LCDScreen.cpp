@@ -119,12 +119,6 @@ static const char_type* sLCDMessageTable_EN[101] = {
 };
 
 /*
-enum class Language
-{
-    English,
-    German
-};
-
 
 std::map<Language, const char_type* const*> sLanguageLCDTables =
 {
@@ -145,8 +139,9 @@ class LCDMessages final
 public:
     const char_type* GetMessage(EReliveLevelIds lvlId, u32 pathId, u32 msgId) const
     {
-        static const char_type* kTestStr = u8"           !+,-.0123456789:;=?ABCDEFGHIJKLMNOPQRSTUVWXYZ\\abcdefghijklmnopqrstuvwxyzçÜÉâÄàÇêëèïîìäéôÖòûùöáíóúÑñ¿¡";
-        return kTestStr;
+        //static const char_type* kTestStr = u8"           !+,-.0123456789:;=?ABCDEFGHIJKLMNOPQRSTUVWXYZ\\abcdefghijklmnopqrstuvwxyzçÜÉâÄàÇêëèïîìäéôÖòûùöáíóúÑñ¿¡";
+        //static const char_type* kTestStr = u8"                   {Dpad_Left} {Dpad_Right} {Dpad_Up} {Dpad_Down}";
+        //return kTestStr;
 
         const StringTable* pTable = sPerLvlMessages[static_cast<u32>(MapWrapper::ToAE(lvlId))][pathId];
         if (pTable && pTable->mStringCount > 0)
