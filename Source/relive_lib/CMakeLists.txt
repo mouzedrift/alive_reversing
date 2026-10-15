@@ -793,7 +793,7 @@ target_compile_definitions(relive_lib PRIVATE "_CRT_SECURE_NO_WARNINGS")
 target_compile_definitions(relive_lib PRIVATE "JSON_DISABLE_ENUM_SERIALIZATION=1")
 
 if (MSVC)
-    target_compile_options(relive_lib PRIVATE /W4 /wd4996 /WX /MP)
+    target_compile_options(relive_lib PRIVATE /W4 /wd4996 /MP)
 endif()
 
 target_compile_features(relive_lib
