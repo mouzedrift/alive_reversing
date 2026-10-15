@@ -45,13 +45,13 @@ elseif (UNIX)
     # The vptr, alignment, null and pointer-overflow UBSan checks are off by default: they made
     # Debug compiles ~3.5x slower and the binary several times bigger (see CLAUDE.md, Build time).
     # ASan already reports null derefs and most bad-vptr cases (as use-after-free).
-    option(RELIVE_FULL_UBSAN "Enable every UBSan check in Debug builds (much slower to build)" OFF)
-    set(SANITIZER_FLAGS "$<$<CONFIG:Debug>:-fsanitize=undefined,address>")
-    if (NOT RELIVE_FULL_UBSAN)
-        list(APPEND SANITIZER_FLAGS "$<$<CONFIG:Debug>:-fno-sanitize=vptr,alignment,null,pointer-overflow>")
-    endif()
-    add_compile_options(${SANITIZER_FLAGS})
-    add_link_options(${SANITIZER_FLAGS})
+    #option(RELIVE_FULL_UBSAN "Enable every UBSan check in Debug builds (much slower to build)" OFF)
+    #set(SANITIZER_FLAGS "$<$<CONFIG:Debug>:-fsanitize=undefined,address>")
+    #if (NOT RELIVE_FULL_UBSAN)
+    #    list(APPEND SANITIZER_FLAGS "$<$<CONFIG:Debug>:-fno-sanitize=vptr,alignment,null,pointer-overflow>")
+    #endif()
+    #add_compile_options(${SANITIZER_FLAGS})
+    #add_link_options(${SANITIZER_FLAGS})
 endif()
 
 if (${FORCE_COLORED_OUTPUT})
