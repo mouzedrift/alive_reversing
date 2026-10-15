@@ -320,10 +320,12 @@ s16 Animation::Set_Animation_Data(AnimResource& pAnimRes)
     mAnimRes = pAnimRes;
 
     // Keep the custom pal that was set
+    /*
     if (oldPal)
     {
         mAnimRes.mCurPal = oldPal;
     }
+    */
 
     mFrameDelay = pAnimRes.mJsonPtr->mAttributes.mFrameRate;
 
