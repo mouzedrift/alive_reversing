@@ -14,7 +14,7 @@ on:
 
 # build setting(s)
 env:
-  CONFIGURATION: Debug
+  CONFIGURATION: Release
   # Some 3rdParty submodules still declare cmake_minimum_required < 3.10, which CMake 4 rejects
   # (< 3.5) or warns about. As an env var it also reaches the `cmake -P` scripts aom runs itself,
   # at configure and build time. The Windows image's CMake 3.31 predates it, so the Windows
