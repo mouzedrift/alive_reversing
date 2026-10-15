@@ -249,7 +249,7 @@ protected:
 
     bool mFramebufferFilter = true;
     bool mKeepAspectRatio = true;
-    bool mUseOriginalResolution = true;
+    bool mUseOriginalResolution = false;
 
 private:
     std::unique_ptr<FrameStatsOverlay> mFrameStats;
