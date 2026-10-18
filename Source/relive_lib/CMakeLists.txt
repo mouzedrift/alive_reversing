@@ -853,6 +853,8 @@ add_executable(relive_lib_tests
     tests/CommandLineParserTests.cpp
     tests/CommandLineOptionsTests.cpp
     tests/AutomationTests.cpp
+    tests/BinaryPathTests.cpp
+    tests/SfxTests.cpp
     tests/MovieFrameSyncTests.cpp
     tests/ConversionProgressTests.cpp
     tests/EtaEstimatorTests.cpp
